@@ -7,6 +7,9 @@ build/
 .project
 .settings/
 bin/
+# Eclipse の bin/ は除外したいが、研修ハーネスの guard スクリプトは追跡対象。
+!containers/codex-devbox/bin/
+!containers/codex-devbox/bin/**
 .metadata
 *.launch
 

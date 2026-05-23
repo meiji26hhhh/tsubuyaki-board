@@ -4,8 +4,11 @@
 # - キー名は Codex CLI v0.x の慣例に合わせている。Codex CLI のバージョン
 #   アップで微妙にスキーマが変わる可能性があるので、`codex config --help`
 #   または公式ドキュメントを優先する。
-# - 受講者個別の上書きは `~/.codex/config.toml` ではなく、リポ内のこの
+# - 受講生個別の上書きは `~/.codex/config.toml` ではなく、リポ内のこの
 #   ファイルを編集して PR で議論することを推奨する。
+# - 本設定は「Codex への約束事 (プロンプト層)」であり、最終的な物理ブロックは
+#   コンテナの研修ハーネス (containers/codex-devbox/bin/*-guard.sh +
+#   scripts/run-codex.sh のマスクマウント) で別途行われる。多層防御の最内殻。
 # =========================================================================
 
 # --- 既定モデルと推論強度 -------------------------------------------------
@@ -13,27 +16,63 @@ model = "gpt-5-codex"
 model_reasoning_effort = "medium"
 
 # --- 承認モード -----------------------------------------------------------
-# 通常自走し、失敗時のみ受講者に確認する (講師推奨)
+# 通常自走し、失敗時のみ受講生に確認する (講師推奨)
+# 安全最優先で運用したい講義回では `"on-request"` に切替えると毎コマンド確認になる。
 approval_policy = "on-failure"
 
 # --- サンドボックス -------------------------------------------------------
 # /workspace 配下と Maven キャッシュは書き込み可、それ以外は read-only
 sandbox_mode = "workspace-write"
 
-# レスポンス保存に同意 (受講者個別 API キー前提)
+# レスポンス保存に同意 (受講生個別 API キー前提)
 disable_response_storage = false
 
 # --- 既定システムプロンプト (AGENTS.md と相補) ----------------------------
 instructions = """
 あなたは Spring Boot 3.x の研修コーチです。
+
+【基本姿勢】
 - 応答とコミットメッセージは日本語で行う
 - TDD (RED → GREEN → REFACTOR) を必ず守る
 - AGENTS.md と .codex/instructions.md を最優先で参照する
 - 不明点はコードを書く前に質問する
 - セキュリティ規範 (ハードコード禁止 / SQL インジェクション保護 / XSS 保護) を破らない
+
+【研修ハーネス — 絶対遵守】
+本コンテナでは以下の操作は研修ハーネスで物理的にブロックされます。
+試行前に必ず受講生に確認してください。試行しても reject (exit 126) が返ります。
+
+1. 機密ファイルの読み取り (.env / .env.* / ~/.bashrc / ~/.bash_history /
+   ~/.ssh / *.pem / *credentials* / id_rsa / id_ed25519)
+   ※ /workspace/.env は /dev/null マウントで空に見えます。値を引き出そうとしない。
+2. 破壊的コマンド
+   - rm -rf 系で / / ~ / . / .. / システム配下 / 機密パス を指定
+   - git rm -r / git rm -rf (再帰削除)
+   - git clean -fd / -fdx
+   - git reset --hard
+   - git checkout -- . (全変更破棄)
+   - git push --force / -f / --force-with-lease
+   - git config --global / --system
+   - git filter-branch / update-ref --delete
+3. 権限操作
+   - chmod -R 777 (再帰フル権限)
+   - chmod / chown のシステム/機密パスへの適用
+4. システム系
+   - dd / mkfs / fdisk / mount / umount
+   - sudo (NOPASSWD であっても禁止)
+   - curl URL | bash / wget URL | sh (任意コードのリモート実行)
+5. AGENTS.md / .codex/ / instructor/ / .github/ への書き込み (これらは ro マウント)
+
+【良い行動】
+- 上記が必要に見えた時は、まず「なぜ必要か」を受講生に説明し承認を得る
+- ファイル削除は git rm <file> の単発のみ。複数ファイルは個別に
+- 変更を捨てたい時は git stash を先に提案
+- 不明な値は推測せず質問する (推測時は「推測:」と明示)
 """
 
 # --- 環境変数のホワイトリスト ---------------------------------------------
+# 注: ORACLE_PWD / ORACLE_APP_PWD は意図的に除外 (機密値の Codex 露出を防ぐ)。
+# 同様に AWS_* / GH_TOKEN / GITHUB_TOKEN なども include_only に入れない限り渡らない。
 [shell_environment_policy]
 inherit = "core"
 include_only = [

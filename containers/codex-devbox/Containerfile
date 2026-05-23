@@ -53,17 +53,46 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     && rm -rf /var/lib/apt/lists/*
 
 # --- 非 root ユーザ (WSL 側 uid=1000 と一致させてマウント時の権限事故を防ぐ)
+# NOPASSWD sudo は research 中の apt 等で必要だったが、研修ハーネス強化に伴い剥奪する。
+# 受講生がコンテナ内でパッケージ追加したい場合はコンテナ外 (WSL) で実行する。
 RUN useradd -m -u 1000 -s /bin/bash codex \
-    && echo "codex ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && mkdir -p /workspace /home/codex/.codex /home/codex/.m2 \
     && chown -R codex:codex /workspace /home/codex
 
+# --- 研修ハーネス: rm / git / chmod / dd 等の wrapper を仕込む ---------------
+# /opt/codex-guard/bin/ に guard 本体と symlink を配置し、PATH 先頭に挿入する。
+# 詳細は containers/codex-devbox/bin/install-guards.sh を参照。
+COPY bin/ /tmp/codex-guard-src/
+RUN bash /tmp/codex-guard-src/install-guards.sh \
+    && rm -rf /tmp/codex-guard-src
+
+# --- 研修ハーネス: マウントマスクの宛先ファイルを空で先行作成 -----------------
+# run-codex.sh が /dev/null:bind:ro でマスクするファイル群を、コンテナ内に
+# 空ファイルとして先に作成しておく。bind マウントは宛先が存在しないと失敗する
+# (ディレクトリとして作られてしまう) ため。
+RUN install -d -o codex -g codex /home/codex \
+    && touch /home/codex/.bashrc \
+            /home/codex/.bash_history \
+            /home/codex/.profile \
+            /home/codex/.gitconfig \
+    && chown codex:codex \
+            /home/codex/.bashrc \
+            /home/codex/.bash_history \
+            /home/codex/.profile \
+            /home/codex/.gitconfig
+
+# PATH の先頭に codex-guard を挿入 (ENV レベル / 全シェル共通)
 ENV JAVA_HOME=/opt/java/openjdk \
     MAVEN_HOME=/opt/maven \
-    PATH=/opt/java/openjdk/bin:/opt/maven/bin:/usr/local/bin:/usr/bin:/bin
+    PATH=/opt/codex-guard/bin:/opt/java/openjdk/bin:/opt/maven/bin:/usr/local/bin:/usr/bin:/bin
 
+# 注: PATH 先頭に codex-guard が入っているため、ここで素の `chmod` を呼ぶと
+#     guard 経由になり「/usr/* への chmod は禁止」で reject される。
+#     ビルド時の正規操作なので絶対パス /bin/chmod で guard をバイパスして実行する。
+#     (Codex 実行時の bypass を許す穴ではない — Codex は AGENTS.md §7.3.3 で
+#      絶対パス指定での guard 迂回を明示的に禁止している)
 COPY --chown=codex:codex entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN /bin/chmod +x /usr/local/bin/entrypoint.sh
 
 USER codex
 WORKDIR /workspace
