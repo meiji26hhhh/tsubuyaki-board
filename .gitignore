@@ -1,0 +1,52 @@
+# Maven
+target/
+build/
+
+# IDE - Eclipse / Pleiades
+.classpath
+.project
+.settings/
+bin/
+.metadata
+*.launch
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IDE - VS Code (ただしテンプレが用意する .vscode/settings.json は除く)
+.vscode/*
+!.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Environment / Secrets
+.env
+.env.local
+.env.*.local
+*.pid
+
+# Codex / AI
+.codex/sessions/
+.codex/history.jsonl
+.codex/log/
+codex-*.log
+
+# Spring Boot
+HELP.md
+out/
+
+# Podman / Docker
+oracle-data/
+
+# Kitting logs
+.kitting/

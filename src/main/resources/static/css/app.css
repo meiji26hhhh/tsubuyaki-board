@@ -1,0 +1,56 @@
+/* 最小スタイル — 受講者が必要に応じて拡張する */
+:root {
+    --color-bg: #fafafa;
+    --color-text: #222;
+    --color-accent: #1d4ed8;
+    --color-border: #e5e7eb;
+    --color-muted: #6b7280;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+                 "Noto Sans CJK JP", "Yu Gothic UI", sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+main {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.post {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    background: white;
+}
+
+.post__author {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.post__created-at {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+}
+
+.post__body {
+    margin-top: 0.5rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

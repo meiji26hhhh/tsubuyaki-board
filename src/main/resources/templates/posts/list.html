@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>投稿一覧 - 社内つぶやきボード</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main>
+    <h1>社内つぶやきボード</h1>
+    <nav>
+        <a th:href="@{/posts}">一覧</a>
+        |
+        <a th:href="@{/posts/new}">新規投稿</a>
+    </nav>
+
+    <section>
+        <p th:if="${#lists.isEmpty(posts)}">まだ投稿はありません。最初の一言を投稿しよう。</p>
+        <article class="post" th:each="post : ${posts}">
+            <header>
+                <span class="post__author" th:text="${post.author}">投稿者</span>
+                <span class="post__created-at"
+                      th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-23 09:00</span>
+            </header>
+            <p class="post__body" th:text="${post.body}">本文</p>
+        </article>
+    </section>
+</main>
+</body>
+</html>

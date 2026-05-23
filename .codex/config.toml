@@ -1,0 +1,82 @@
+# =========================================================================
+# 社内つぶやきボード 研修用 Codex CLI 設定
+#
+# - キー名は Codex CLI v0.x の慣例に合わせている。Codex CLI のバージョン
+#   アップで微妙にスキーマが変わる可能性があるので、`codex config --help`
+#   または公式ドキュメントを優先する。
+# - 受講者個別の上書きは `~/.codex/config.toml` ではなく、リポ内のこの
+#   ファイルを編集して PR で議論することを推奨する。
+# =========================================================================
+
+# --- 既定モデルと推論強度 -------------------------------------------------
+model = "gpt-5-codex"
+model_reasoning_effort = "medium"
+
+# --- 承認モード -----------------------------------------------------------
+# 通常自走し、失敗時のみ受講者に確認する (講師推奨)
+approval_policy = "on-failure"
+
+# --- サンドボックス -------------------------------------------------------
+# /workspace 配下と Maven キャッシュは書き込み可、それ以外は read-only
+sandbox_mode = "workspace-write"
+
+# レスポンス保存に同意 (受講者個別 API キー前提)
+disable_response_storage = false
+
+# --- 既定システムプロンプト (AGENTS.md と相補) ----------------------------
+instructions = """
+あなたは Spring Boot 3.x の研修コーチです。
+- 応答とコミットメッセージは日本語で行う
+- TDD (RED → GREEN → REFACTOR) を必ず守る
+- AGENTS.md と .codex/instructions.md を最優先で参照する
+- 不明点はコードを書く前に質問する
+- セキュリティ規範 (ハードコード禁止 / SQL インジェクション保護 / XSS 保護) を破らない
+"""
+
+# --- 環境変数のホワイトリスト ---------------------------------------------
+[shell_environment_policy]
+inherit = "core"
+include_only = [
+    "OPENAI_API_KEY",
+    "JAVA_HOME",
+    "MAVEN_OPTS",
+    "TZ",
+    "LANG",
+    "SPRING_PROFILES_ACTIVE",
+]
+
+# --- workspace-write のサブ設定 -------------------------------------------
+[sandbox_workspace_write]
+network_access = true
+writable_roots = [
+    "/workspace",
+    "/home/codex/.m2",
+]
+
+# --- 許可ネットワーク先 (Codex CLI が allowlist をサポートしない版では無視される) ---
+[network]
+allow = [
+    "repo.maven.apache.org",
+    "repo1.maven.org",
+    "plugins.gradle.org",
+    "github.com",
+    "api.github.com",
+    "objects.githubusercontent.com",
+    "raw.githubusercontent.com",
+    "api.openai.com",
+]
+
+# --- ツール許可 -----------------------------------------------------------
+[tools]
+shell = true
+apply_patch = true
+# 研修中は web 検索オフ (脱線防止)。仕上げフェーズ以降の応用課題で true に切り替え可。
+web_search = false
+
+# --- 履歴 -----------------------------------------------------------------
+[history]
+persistence = "save-all"
+max_bytes = 5000000
+
+# --- MCP サーバ (応用課題用、デフォルトは空) ------------------------------
+[mcp_servers]

@@ -1,0 +1,72 @@
+# =========================================================================
+# 社内つぶやきボード Codex devbox
+#   - JDK 21 + Maven + Node.js 20 + @openai/codex を同梱した開発コンテナ
+#   - 受講者は WSL2 上で `bash scripts/run-codex.sh` で本コンテナに入る
+#   - 詳細は AGENTS.md と ONBOARDING.md を参照
+# =========================================================================
+FROM docker.io/library/eclipse-temurin:21-jdk-jammy
+
+ARG CODEX_VERSION=latest
+ARG MAVEN_VERSION=3.9.9
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=ja_JP.UTF-8 \
+    LANGUAGE=ja_JP:ja \
+    LC_ALL=ja_JP.UTF-8 \
+    TZ=Asia/Tokyo
+
+# --- 基本パッケージ --------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git curl wget ca-certificates gnupg locales tzdata \
+        ripgrep fd-find jq unzip less vim-tiny sudo build-essential \
+        netcat-openbsd \
+    && ln -sf /usr/bin/fdfind /usr/local/bin/fd \
+    && locale-gen ja_JP.UTF-8 \
+    && update-locale LANG=ja_JP.UTF-8 \
+    && ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Node.js 20 LTS + Codex CLI -------------------------------------------
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g "@openai/codex@${CODEX_VERSION}" \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Maven (Wrapper フォールバック用) --------------------------------------
+RUN curl -fsSL "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${MAVEN_VERSION}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+        -o /tmp/maven.tar.gz \
+    && tar -xzf /tmp/maven.tar.gz -C /opt \
+    && ln -s "/opt/apache-maven-${MAVEN_VERSION}" /opt/maven \
+    && ln -s /opt/maven/bin/mvn /usr/local/bin/mvn \
+    && rm -f /tmp/maven.tar.gz
+
+# --- GitHub CLI (PR 操作・任意) -------------------------------------------
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+        > /etc/apt/sources.list.d/github-cli.list \
+    && apt-get update && apt-get install -y --no-install-recommends gh \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- 非 root ユーザ (WSL 側 uid=1000 と一致させてマウント時の権限事故を防ぐ)
+RUN useradd -m -u 1000 -s /bin/bash codex \
+    && echo "codex ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && mkdir -p /workspace /home/codex/.codex /home/codex/.m2 \
+    && chown -R codex:codex /workspace /home/codex
+
+ENV JAVA_HOME=/opt/java/openjdk \
+    MAVEN_HOME=/opt/maven \
+    PATH=/opt/java/openjdk/bin:/opt/maven/bin:/usr/local/bin:/usr/bin:/bin
+
+COPY --chown=codex:codex entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+USER codex
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["bash", "-l"]

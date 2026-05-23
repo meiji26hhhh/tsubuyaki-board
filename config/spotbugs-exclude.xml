@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    社内つぶやきボード 研修用 SpotBugs 除外フィルタ
+-->
+<FindBugsFilter
+        xmlns="https://github.com/spotbugs/filter/3.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0_dev/spotbugs/etc/findbugsfilter.xsd">
+
+    <!-- Spring Boot のエントリポイント -->
+    <Match>
+        <Class name="~.*Application"/>
+        <Bug pattern="DM_EXIT,UC_USELESS_OBJECT"/>
+    </Match>
+
+    <!-- JPA Entity / DTO は内部配列の expose をスタイル上許容 -->
+    <Match>
+        <Or>
+            <Class name="~.*\.domain\..*"/>
+            <Class name="~.*\.dto\..*"/>
+            <Class name="~.*\.web\.dto\..*"/>
+        </Or>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Lombok 等で生成される equals/hashCode -->
+    <Match>
+        <Bug pattern="HE_EQUALS_USE_HASHCODE"/>
+        <Class name="~.*\$.*"/>
+    </Match>
+</FindBugsFilter>

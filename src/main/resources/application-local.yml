@@ -1,0 +1,21 @@
+# =========================================================================
+# ローカル開発プロファイル: Oracle XE (Podman) に接続
+# 詳細は Step 3 で完成。ここでは雛形のみ。
+# =========================================================================
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+    username: butsubutsu
+    password: ${ORACLE_APP_PWD:butsubutsu_pw}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    schemas: BUTSUBUTSU
+    default-schema: BUTSUBUTSU

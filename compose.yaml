@@ -1,0 +1,35 @@
+# =========================================================================
+# 社内つぶやきボード ローカル開発用コンテナ群
+#   - Oracle DB XE (gvenzl/oracle-xe slim-faststart)
+#   - Codex devbox は別途 `scripts/run-codex.sh` で起動 (永続サービス化しない)
+#
+# 使い方:
+#   bash scripts/start-oracle.sh    # 起動 + ready 待機
+#   bash scripts/stop-oracle.sh     # 停止
+# =========================================================================
+services:
+  oracle:
+    image: docker.io/gvenzl/oracle-xe:21.3.0-slim-faststart
+    container_name: butsubutsu-oracle
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: "${ORACLE_PWD:-Training#2026}"
+      APP_USER: butsubutsu
+      APP_USER_PASSWORD: "${ORACLE_APP_PWD:-butsubutsu_pw}"
+      ORACLE_CHARACTERSET: AL32UTF8
+      TZ: Asia/Tokyo
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./containers/oracle-init:/container-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 20s
+      timeout: 10s
+      retries: 30
+      start_period: 180s
+    restart: unless-stopped
+
+volumes:
+  oracle-data:
+    name: butsubutsu-oracle-data

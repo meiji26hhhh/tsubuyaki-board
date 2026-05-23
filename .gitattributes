@@ -1,0 +1,37 @@
+# 改行コードは LF 統一 (Windows ↔ WSL の CRLF/LF 事故を防止)
+* text=auto eol=lf
+
+# Windows ネイティブで実行されるスクリプトは CRLF
+*.cmd       text eol=crlf
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+
+# バイナリ (改行変換なし)
+*.jar       binary
+*.war       binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.pdf       binary
+*.zip       binary
+
+# テキスト (LF 強制)
+*.java      text eol=lf diff=java
+*.properties text eol=lf
+*.xml       text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.html      text eol=lf
+*.css       text eol=lf
+*.js        text eol=lf
+*.sh        text eol=lf
+*.sql       text eol=lf
+*.toml      text eol=lf
+*.editorconfig text eol=lf
+Containerfile text eol=lf
+Dockerfile  text eol=lf
+mvnw        text eol=lf
