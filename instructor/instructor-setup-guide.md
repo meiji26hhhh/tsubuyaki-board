@@ -242,48 +242,65 @@ git clone https://github.com/<org>/tsubuyaki-board.git
 cd tsubuyaki-board
 ```
 
-### 6-2. Windows キッティング
+### 6-2. Windows キッティング → 受講生ガイドと同手順
 
-受講生ガイドの **4. Windows キッティング**と同じ：
+[../education/student-setup-guide.md §4](../education/student-setup-guide.md) の手順をそのまま実施。要約：
 
-```powershell
-.\scripts\setup.ps1
-```
+1. 🪟 管理者 PowerShell を起動
+2. `Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1`
+3. PC 再起動
 
-完了後、PC 再起動。
+**講師固有の差分**: 無し（同じ）。
 
-### 6-3. WSL キッティング
+### 6-3. WSL キッティング → 受講生ガイドと同手順
 
-```bash
-bash scripts/setup-wsl.sh
-```
+[../education/student-setup-guide.md §5](../education/student-setup-guide.md) の手順をそのまま実施。要約：
 
-### 6-4. `OPENAI_API_KEY` 設定
+1. スタートメニュー → Ubuntu 起動 → 初回ユーザ・パスワード設定
+2. `cd /mnt/c/workspace/tsubuyaki-board`
+3. `bash scripts/setup-wsl.sh`
+
+**講師固有の差分**: 無し（同じ）。
+
+### 6-4. `OPENAI_API_KEY` 設定 → 受講生ガイドと同手順
+
+[../education/student-setup-guide.md §7-2](../education/student-setup-guide.md) のとおり。
 
 ```bash
 echo 'export OPENAI_API_KEY=sk-...' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-### 6-5. 動作確認（フル）
+**講師固有の差分**: 受講生に貸与する**予備キー**は **`~/.bashrc` に書かない**（誤って共有・公開しないため）。予備キーは 1Password / `pass` 等のシークレットマネージャに保管し、配布時のみ手動で渡す。
 
-受講生は `--quick` で良いが、講師は**全件チェック**：
+### 6-5. 動作確認（フル — 受講生より厳しめ）
+
+受講生ガイド [§8](../education/student-setup-guide.md) の 5 点セットに加え、講師は **Oracle 経路と全件 doctor** も確認：
 
 ```bash
+# 受講生は --quick だが、講師は全件
 bash scripts/doctor.sh           # 全件
-bash scripts/start-oracle.sh
-./mvnw -B -Plocal verify          # Oracle XE 経由
-./mvnw -B -Ph2 verify             # H2 経由
-SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
-# 別ターミナル
-curl http://localhost:8080/actuator/health
-curl http://localhost:8080/posts
 
+bash scripts/start-oracle.sh
+
+# Oracle XE 経路でも verify が通ること（受講生は H2 のみで OK）
+./mvnw -B -Plocal verify
+
+# 受講生と同じ H2 経路
+./mvnw -B -Ph2 verify
+
+# Oracle 接続でアプリ起動 → /posts まで描画されること
+SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
+# 別タブで:
+curl http://localhost:8080/actuator/health   # {"status":"UP"}
+curl -I http://localhost:8080/posts          # 200 OK
+
+# Codex も必ず実機で 1 度動かす
 codex-shell
 # (コンテナ内) codex --help
 ```
 
-すべて通れば講師キッティング完了。
+すべて通れば講師キッティング完了。**受講生向けには H2 経路のみで OK**（Oracle はバックアップ）。
 
 ---
 
@@ -300,8 +317,8 @@ codex-shell
 
 ### 7-2. 0-1 時間目（セットアップ確認）
 
-受講生ガイドの **8. 動作確認 5 点セット**を全員クリアさせる。
-講師は「詰まっている受講生」を回って TROUBLESHOOTING.md を一緒に追う。
+受講生ガイドの [§8 動作確認 5 点セット](../education/student-setup-guide.md) を全員クリアさせる。
+講師は「詰まっている受講生」を回って [../education/TROUBLESHOOTING.md](../education/TROUBLESHOOTING.md) を一緒に追う。
 
 ### 7-3. PR レビューフロー（演習中）
 

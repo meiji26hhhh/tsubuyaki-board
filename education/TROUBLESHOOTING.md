@@ -1,17 +1,26 @@
-# TROUBLESHOOTING — 受講者向け FAQ
+# TROUBLESHOOTING — 受講生向け FAQ
 
 困ったらまず `bash scripts/doctor.sh` を実行。それでも分からなければ下記を参照。
+緊急ではない Git 操作の安全策は本ページ末尾の[Git 操作の安全ガイド](#git-操作の安全ガイド)も参照。
 
 ## セットアップ
 
 ### Q1. `wsl --install` が「機能が無効です」で失敗する
 
+🪟 管理者 PowerShell で：
+
+```powershell
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All -NoRestart
 ```
-管理者 PowerShell で:
-  Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All -NoRestart
-  Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All -NoRestart
-PC 再起動 → wsl --install -d Ubuntu-22.04 --no-launch
+
+PC 再起動 → 再度 🪟 管理者 PowerShell で：
+
+```powershell
+wsl --install -d Ubuntu-22.04 --no-launch
 ```
+
+完了後にスタートメニューから「Ubuntu」を起動して初回ユーザ設定。
 
 ### Q2. Pleiades の文字化け (MS932 で `.java` が読めない)
 
@@ -38,14 +47,55 @@ codex-shell
 
 `~/.bashrc` に書いておくと毎回入れずに済む。
 
+### Q4-2. Codex がコマンド実行で `[codex-guard]` と出して止まる
+
+研修ハーネスがブロックした合図。**そのまま再試行しないこと**。ハーネスは「研修中に必要のない破壊的操作」を物理的に止める仕組み。
+
+```
+[codex-guard] rm は研修ハーネスでブロックされました。
+理由: システム/機密パスの削除は禁止 (rm -rf /, rm -rf ~, rm -rf . など)
+コマンド: rm -rf /workspace
+```
+
+このような出力が出たら、以下の順で対応：
+
+1. **Codex に「代替案を出して」と返す**。ハーネスは Codex のためのレールで、迂回する必要はない。
+2. それでも必要に見える操作（典型例: 大量のテンポラリファイルの一括削除）は **コンテナを抜けて** WSL 側で自分の手で実行する：
+   ```bash
+   exit                                          # 📦 コンテナを抜ける
+   # 🐧 WSL 側で実行
+   rm -rf /mnt/c/workspace/<repo>/target/
+   ```
+3. 履歴は `/tmp/codex-guard.log`（コンテナ内）で確認可能。何度も同じ拒否が出るなら、プロンプト設計を見直すサイン。
+
+### Q4-3. Codex に `.env` の中身を聞いても答えない
+
+仕様。`/workspace/.env` は研修ハーネスで `/dev/null` 上書きマウントされており、コンテナ内からは「空ファイル」に見える。これは `OPENAI_API_KEY` や DB パスワードが Codex のコンテキストに渡らないための保護機構。
+
+API キーや DB パスワードを操作したい場合は、コンテナを抜けて WSL 側で `.env` を直接編集すること。
+
 ### Q5. Codex が大量のファイルを書き換えはじめた
 
+**まず中断、次に状況確認、最後に破棄判断**の順で。
+
 ```bash
-# Codex 側で Ctrl+C で中断
-# シェルに戻ったら:
-git status
-git restore .              # 未コミットの変更を全て破棄
+# 1. Codex 側で Ctrl+C で中断 (📦 コンテナ内、または codex プロセスを kill)
+
+# 2. シェルに戻ったら、まず何が変わったか把握する
+git status                 # 変更ファイル一覧
+git diff                   # 内容を確認（量が多ければ git diff --stat で件数だけ）
+
+# 3. (オプション) 一部を救いたい場合は退避してから戻す
+git stash push -u -m "codex-runaway-$(date +%H%M%S)"
+# 後で `git stash list` で確認、`git stash pop` で戻せる
+
+# 4. それでも全部捨てたい場合だけ
+git restore .              # 未コミットの変更 (tracked) を全て破棄
+git clean -fd              # 新規生成ファイル (untracked) も削除する場合のみ
 ```
+
+> ⚠️ `git restore .` は**確認ダイアログ無しで全変更を破棄**します。事前に `git status` / `git diff` で内容を必ず確認、惜しい部分があれば `git stash` で退避してから実行。
+> ⚠️ `git clean -fd` は `.gitignore` 対象でないファイルが対象。`.env` などは `.gitignore` で除外済なので消えませんが、念のため `-n`（ドライラン）で確認推奨：`git clean -fdn`。
 
 その後、AGENTS.md の「触ってよいパス」をプロンプトに添えて再依頼。
 
@@ -114,27 +164,92 @@ podman compose down --volumes && bash scripts/start-oracle.sh
 - Actions タブで「Disable Actions」になっていないか
 - fork でなく Template から作ったリポか (fork だと Actions がデフォルト無効)
 - branch protection の status check 名が一致しているか
+- 自分のリポの **Settings → Actions → General → Actions permissions** が「Allow all actions and reusable workflows」になっているか
 
 ### Q13. CRLF / LF の差分が大量に出る
 
-```bash
-git config --global core.autocrlf input   # WSL / Mac
-# Windows Git でも同じ
-```
-
-リポ内の `.gitattributes` で `* text=auto eol=lf` を強制しているので、
-新規ファイルは LF になる。既存ファイルを直したい場合:
+通常は `setup.ps1` が `core.autocrlf=input` を自動設定するので発生しません。別マシンに環境を持ち込んだ場合のみ：
 
 ```bash
-git rm --cached -r .
-git reset --hard
-git add -A
+git config --global core.autocrlf input   # WSL / Mac でも同じ
 ```
 
-(未コミット変更がある場合は必ず一時退避 = `git stash`)
+リポ内の `.gitattributes` で `* text=auto eol=lf` を強制しているので、新規ファイルは LF になる。
+
+既存ファイルを LF に揃え直したい場合（破壊操作のため手順厳守）：
+
+```bash
+# ⚠️ 危険: 以下は「未コミット変更を全消去」する操作。必ず順序を守る。
+
+# 1. 未コミット変更があるか確認
+git status
+
+# 2. 未コミット変更があるなら、まず必ず stash で退避
+git stash push -u -m "before-eol-normalize-$(date +%H%M%S)"
+
+# 3. .gitattributes に従って再正規化
+git rm --cached -r .       # インデックスを空に (作業ツリーは温存)
+git reset --hard           # ⚠️ HEAD の状態に強制リセット (この時点で何も変更が残らないはず)
+git add -A                 # 再 add で .gitattributes ルールが適用される
+git commit -m "chore: normalize line endings to LF"
+
+# 4. 退避していた場合は戻す
+git stash pop              # コンフリクトしたら手動マージ
+```
+
+> ⚠️ `git reset --hard` は **作業ツリーとインデックスを HEAD に合わせて破棄**します。未コミットの修正は全て失われます。退避（`git stash`）を必ず先に。
+> ⚠️ チームで作業中なら、本操作の前に `git fetch` で remote の状態を取得し、コンフリクトを最小化。研修中は自分専用リポなので影響は自分のみ。
+
+### Q14. Classroom Assignment URL で「You don't have access」と出る
+
+- 自分の GitHub アカウントが正しく Organization に招待されているか
+- メールに届く Organization の招待を Accept したか（GitHub の Notifications で確認可能）
+- SAML SSO 必須の Organization なら、ブラウザで Organization トップを開いて SSO 認証を済ませる
+- それでもダメなら講師に **自分の GitHub ID** を伝えて、Organization 側で seat 状態を確認してもらう
+
+---
+
+## Git 操作の安全ガイド
+
+「捨てる」「戻す」「退避する」の使い分けの早見表。**未コミット変更がある時は必ず `git status` で確認してから**。
+
+### ケース別フロー
+
+| やりたいこと | 推奨コマンド | 注意 |
+|---|---|---|
+| 今の変更を一時退避（後で戻したい） | `git stash push -u -m "<理由>"` | `-u` で新規ファイルも含む。後で `git stash pop` |
+| 1 ファイルだけ変更を破棄 | `git restore <file>` | tracked ファイルのみ。新規ファイルは消えない |
+| 全ファイルの未コミット変更を破棄 | `git restore .` | ⚠️ 戻せない。事前に `git diff` 確認 |
+| ステージング（`git add`）を取り消す | `git restore --staged <file>` | 作業ツリーの変更は残る |
+| 直前のコミットメッセージだけ修正 | `git commit --amend` | push 済みなら force 必要 → 避ける |
+| 直前のコミットを取り消したい（変更は残す） | `git reset --soft HEAD^` | 変更は staging に残る |
+| 直前のコミットを完全取り消し | `git reset --hard HEAD^` | ⚠️ 変更も消える。先に stash 推奨 |
+| push 済みのコミットを打ち消す | `git revert <commit>` | 新規の打ち消しコミットを作る安全な方法 |
+| 新規ファイル（untracked）も消したい | `git clean -fd` | ⚠️ 先に `git clean -fdn`（ドライラン）で確認 |
+| ブランチごとなかったことにしたい | `git switch main && git branch -D feature/xxx` | ローカルだけ。push 済みは別操作 |
+
+### 鉄則
+
+1. **破壊操作の前に必ず `git status` と `git diff` で内容を確認**
+2. **惜しい変更があれば必ず `git stash push -u` で退避**してから破壊操作
+3. **`git push --force`（main 系）は禁止**（[AGENTS.md §7.3](../AGENTS.md)）
+4. **完全に詰まったら、リポ自体を Template から再生成**したほうが安全（後述の「最後の手段」参照）
+
+### stash の使い方クイック
+
+```bash
+git stash push -u -m "実験中-2026-05-24"   # 退避（-u で新規ファイルも含む）
+git stash list                              # 退避一覧
+git stash show -p stash@{0}                 # 中身を diff で見る
+git stash pop                               # 最新の stash を戻す（同時に削除）
+git stash apply stash@{1}                   # 戻すだけ（削除しない）
+git stash drop stash@{0}                    # 退避を削除
+```
+
+---
 
 ## 最後の手段
 
 - 環境を破壊した気がする → `bash scripts/setup-wsl.sh --rollback` → 再セットアップ
-- リポを壊した気がする → 自分のリポを Settings から delete → Template から再生成
+- リポを壊した気がする → 自分のリポを Settings から delete → Classroom Assignment URL を再度踏んで Template から再生成
 - 何もかも分からない → 講師に「何を試して何が起きたか」を 3 行で報告する
