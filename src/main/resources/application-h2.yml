@@ -12,7 +12,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: validate
+      # スキーマ管理は Flyway に一任。Oracle 互換 DDL (NUMBER(19) など) を
+      # H2(MODE=Oracle) で読ませると、Hibernate validate が NUMERIC↔BIGINT を
+      # 不一致と判定して失敗するため、validate ではなく none を使う。
+      ddl-auto: none
     show-sql: false
   flyway:
     enabled: true
