@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     社内つぶやきボード Day0 Doctor (Windows 側)
 .DESCRIPTION

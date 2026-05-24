@@ -97,15 +97,45 @@ fi
 
 echo ""
 echo "==> 5. Podman / podman-compose"
-if ! command -v podman >/dev/null 2>&1; then
-    ${SUDO} apt-get install -y --no-install-recommends podman
-fi
+# Ubuntu 22.04 で rootless podman を動かすのに必要なパッケージ:
+#   - podman: コンテナランタイム本体
+#   - uidmap: newuidmap/newgidmap (rootless 必須)
+#   - slirp4netns: rootless ネットワーク
+#   - fuse-overlayfs: rootless ストレージドライバ
+${SUDO} apt-get install -y --no-install-recommends \
+    podman uidmap slirp4netns fuse-overlayfs
+# podman-compose は Ubuntu 22.04 jammy/universe には存在しないため pip 経由で導入
 if ! command -v podman-compose >/dev/null 2>&1; then
-    ${SUDO} apt-get install -y --no-install-recommends podman-compose || true
+    if ! command -v pip3 >/dev/null 2>&1; then
+        ${SUDO} apt-get install -y --no-install-recommends python3-pip
+    fi
+    ${SUDO} pip3 install --break-system-packages podman-compose 2>/dev/null \
+        || ${SUDO} pip3 install podman-compose
 fi
 USER_NAME="$(whoami)"
 if ! grep -q "^${USER_NAME}:" /etc/subuid 2>/dev/null; then
     ${SUDO} usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "${USER_NAME}" || true
+fi
+
+# rootless podman のストレージドライバを overlay + fuse-overlayfs に固定。
+# Ubuntu 22.04 + WSL2 では何も指定しないと vfs にフォールバックすることがあり、
+# その場合 "graph driver \"vfs\" from database" の警告が以降ずっと出続ける。
+USER_CONTAINERS_DIR="${HOME}/.config/containers"
+mkdir -p "${USER_CONTAINERS_DIR}"
+if [[ ! -f "${USER_CONTAINERS_DIR}/storage.conf" ]]; then
+    cat > "${USER_CONTAINERS_DIR}/storage.conf" <<'EOF'
+[storage]
+driver = "overlay"
+
+[storage.options.overlay]
+mount_program = "/usr/bin/fuse-overlayfs"
+EOF
+fi
+# 既に vfs で初期化されていて、ローカルイメージがまだ無ければ
+# storage を一度だけリセットして overlay で再初期化する (初回セットアップ救済)
+CURRENT_DRIVER="$(podman info --format '{{.Store.GraphDriverName}}' 2>/dev/null | tail -n 1 || true)"
+if [[ "${CURRENT_DRIVER}" == "vfs" ]] && [[ -z "$(podman images -q 2>/dev/null)" ]]; then
+    podman system reset --force >/dev/null 2>&1 || true
 fi
 
 echo ""
@@ -168,6 +198,11 @@ rm -f "${TMP_BLOCK}"
 
 echo ""
 echo "==> 9. Doctor (quick)"
+# 直前に書き込んだ /etc/profile.d/jdk.sh と TZ を当該プロセスにも反映させる
+# (新シェルでは bashrc/profile から自動的に読まれるため、ここの補完はセットアップ完了時の表示用)
+# shellcheck disable=SC1091
+source /etc/profile.d/jdk.sh 2>/dev/null || true
+export TZ="${TZ:-Asia/Tokyo}"
 bash "${REPO_ROOT}/scripts/doctor.sh" --quick || true
 
 echo ""

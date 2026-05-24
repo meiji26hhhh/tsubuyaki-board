@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     社内つぶやきボード Windows 側キッティング (要管理者)
 .DESCRIPTION

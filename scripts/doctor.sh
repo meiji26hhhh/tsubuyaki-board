@@ -93,6 +93,8 @@ if section "locale" "ロケール / TZ"; then
     fi
     CURRENT_TZ="$(timedatectl 2>/dev/null | awk -F': *' '/Time zone/ {print $2}' | awk '{print $1}')"
     [[ -z "${CURRENT_TZ}" ]] && CURRENT_TZ="${TZ:-}"
+    # WSL では timedatectl が systemd 未起動で空を返すため、/etc/timezone を最終フォールバックにする
+    [[ -z "${CURRENT_TZ}" && -r /etc/timezone ]] && CURRENT_TZ="$(cat /etc/timezone)"
     if [[ "${CURRENT_TZ}" == "Asia/Tokyo" ]]; then
         ok "TZ" "${CURRENT_TZ}"
     else
@@ -200,7 +202,9 @@ fi
 # --- 9. Codex CLI (コンテナ内バージョン取得) ----------------------------
 if ! ${MODE_QUICK} && section "codex-cli" "codex CLI"; then
     if podman image exists codex-devbox:latest 2>/dev/null; then
-        CODEX_VER=$(podman run --rm codex-devbox:latest codex --version 2>/dev/null | head -n 1 || echo "")
+        # entrypoint.sh は OPENAI_API_KEY 未設定で exit 1 するため、
+        # バージョン取得時は --entrypoint codex で entrypoint を素通りさせる
+        CODEX_VER=$(podman run --rm --entrypoint codex codex-devbox:latest --version 2>/dev/null | head -n 1 || echo "")
         if [[ -n "${CODEX_VER}" ]]; then
             ok "codex CLI" "${CODEX_VER}"
         else
@@ -283,7 +287,7 @@ fi
 if ! ${MODE_QUICK} && section "java-smoke" "Java からの XE smoke 接続"; then
     if podman ps --format '{{.Names}}' 2>/dev/null | grep -q '^butsubutsu-oracle$' \
         && [[ -x "${REPO_ROOT}/mvnw" ]]; then
-        if "${REPO_ROOT}/mvnw" -B -q -Plocal -Dtest='*Smoke*' test 2>/dev/null; then
+        if "${REPO_ROOT}/mvnw" -B -q -Plocal -Dtest='*Smoke*' test >/dev/null 2>&1; then
             ok "smoke テスト成功"
         else
             warn "smoke テスト未定義 or 失敗 (受講者作成後に再実行)"
