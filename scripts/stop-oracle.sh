@@ -21,5 +21,5 @@ echo "Stopping Oracle XE..."
 
 echo ""
 echo "停止しました。"
-echo "  - データはボリューム butsubutsu-oracle-data に保持されています。"
+echo "  - データはボリューム tsubuyaki-oracle-data に保持されています。"
 echo "  - データごと削除するには: ${COMPOSE_CMD[*]} down --volumes"

@@ -43,6 +43,8 @@ logs/
 .codex/history.jsonl
 .codex/log/
 codex-*.log
+Plan.md
+tasks/
 
 # Spring Boot
 HELP.md
@@ -53,3 +55,6 @@ oracle-data/
 
 # Kitting logs
 .kitting/
+
+# Local tooling (PlantUML jar など、各自ローカルで取得する成果物)
+tools/

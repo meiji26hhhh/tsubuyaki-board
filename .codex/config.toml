@@ -4,8 +4,9 @@
 # - キー名は Codex CLI v0.x の慣例に合わせている。Codex CLI のバージョン
 #   アップで微妙にスキーマが変わる可能性があるので、`codex config --help`
 #   または公式ドキュメントを優先する。
-# - 受講生個別の上書きは `~/.codex/config.toml` ではなく、リポ内のこの
-#   ファイルを編集して PR で議論することを推奨する。
+# - 受講生個別の上書きは通常ホームの `~/.codex/config.toml` ではなく、リポ内のこの
+#   ファイルを編集して PR で議論することを推奨する。run-codex.sh は研修専用 CODEX_HOME
+#   (`~/.codex-training/tsubuyaki-board`) に履歴・認証情報を隔離する。
 # - 本設定は「Codex への約束事 (プロンプト層)」であり、最終的な物理ブロックは
 #   コンテナの研修ハーネス (containers/codex-devbox/bin/*-guard.sh +
 #   scripts/run-codex.sh のマスクマウント) で別途行われる。多層防御の最内殻。
@@ -24,8 +25,9 @@ approval_policy = "on-failure"
 # /workspace 配下と Maven キャッシュは書き込み可、それ以外は read-only
 sandbox_mode = "workspace-write"
 
-# レスポンス保存に同意 (受講生個別 API キー前提)
-disable_response_storage = false
+# 研修初期は保守的に保存を抑制する。講師が評価・再現性のため保存を許可する
+# 場合のみ、受講生に説明した上で false に戻す。
+disable_response_storage = true
 
 # --- 既定システムプロンプト (AGENTS.md と相補) ----------------------------
 instructions = """
@@ -76,7 +78,6 @@ instructions = """
 [shell_environment_policy]
 inherit = "core"
 include_only = [
-    "OPENAI_API_KEY",
     "JAVA_HOME",
     "MAVEN_OPTS",
     "TZ",
@@ -114,8 +115,10 @@ web_search = false
 
 # --- 履歴 -----------------------------------------------------------------
 [history]
+# 研修では通常の受講生ホームではなく scripts/run-codex.sh が用意する
+# 研修専用 CODEX_HOME (~/.codex-training/tsubuyaki-board) に履歴を隔離する。
 persistence = "save-all"
-max_bytes = 5000000
+max_bytes = 1000000
 
 # --- MCP サーバ (応用課題用、デフォルトは空) ------------------------------
 [mcp_servers]

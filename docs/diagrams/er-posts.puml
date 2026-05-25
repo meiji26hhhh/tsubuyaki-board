@@ -1,0 +1,37 @@
+@startuml er-posts
+title データモデル: POSTS テーブル (スキーマ: TSUBUYAKI)
+
+skinparam shadowing false
+skinparam defaultFontName "Yu Gothic UI"
+skinparam linetype ortho
+
+!define TABLE(name) entity name << (T,#FFF4E5) Table >>
+!define PK(name) <b>name</b> <<PK>>
+!define IDX(name) <i>name</i> <<idx>>
+
+TABLE(POSTS) {
+  PK(ID)            : NUMBER(19)        NOT NULL
+  --
+  AUTHOR            : VARCHAR2(30 CHAR) NOT NULL
+  BODY              : VARCHAR2(280 CHAR) NOT NULL
+  IDX(CREATED_AT)   : TIMESTAMP(6)      NOT NULL
+}
+
+note right of POSTS
+  **採番**: SEQUENCE POSTS_SEQ
+    START WITH 1 INCREMENT BY 1 NOCACHE
+  **主キー制約**: posts_pk (ID)
+  **インデックス**: posts_created_at_idx (CREATED_AT)
+
+  **Flyway**: V1__init.sql で作成
+  **DDL 互換性**: Oracle XE 21c / H2(MODE=Oracle)
+end note
+
+note bottom of POSTS
+  **JPA マッピング**: com.example.tsubuyaki.domain.Post
+  ID は @SequenceGenerator(allocationSize=1) で採番
+  AUTHOR ≦ 30 文字、BODY ≦ 280 文字 (Twitter 互換)
+  CREATED_AT は UTC で保存 (hibernate.jdbc.time_zone=UTC)
+end note
+
+@enduml

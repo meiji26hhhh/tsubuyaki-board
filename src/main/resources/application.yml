@@ -4,7 +4,7 @@
 # =========================================================================
 spring:
   application:
-    name: butsubutsu-board
+    name: tsubuyaki-board
   profiles:
     default: local
   jpa:
@@ -42,6 +42,6 @@ management:
 logging:
   level:
     root: INFO
-    com.example.butsubutsu: DEBUG
+    com.example.tsubuyaki: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"

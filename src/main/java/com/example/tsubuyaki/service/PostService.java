@@ -1,7 +1,7 @@
-package com.example.butsubutsu.service;
+package com.example.tsubuyaki.service;
 
-import com.example.butsubutsu.domain.Post;
-import com.example.butsubutsu.repository.PostRepository;
+import com.example.tsubuyaki.domain.Post;
+import com.example.tsubuyaki.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

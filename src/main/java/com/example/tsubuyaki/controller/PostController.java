@@ -1,7 +1,7 @@
-package com.example.butsubutsu.controller;
+package com.example.tsubuyaki.controller;
 
-import com.example.butsubutsu.service.PostService;
-import com.example.butsubutsu.web.dto.PostForm;
+import com.example.tsubuyaki.service.PostService;
+import com.example.tsubuyaki.web.dto.PostForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,0 +1,102 @@
+@startuml spring-class
+title Spring アプリケーション クラス図 (com.example.tsubuyaki)
+
+skinparam shadowing false
+skinparam defaultFontName "Yu Gothic UI"
+skinparam class {
+  BackgroundColor #F0F7FF
+  BorderColor #4A90E2
+  ArrowColor #555555
+}
+skinparam package {
+  BackgroundColor #FAFAFA
+  BorderColor #999999
+}
+
+package "com.example.tsubuyaki" {
+
+  class TsubuyakiApplication <<@SpringBootApplication>> {
+    +main(args: String[]): void
+  }
+
+  package "controller" {
+    class PostController <<@Controller>> {
+      -postService: PostService
+      +list(model: Model): String
+      +newForm(model: Model): String
+      .. 演習で追加 ..
+      ' +create(form: PostForm, br: BindingResult): String
+      ' +detail(id: Long, model: Model): String
+    }
+  }
+
+  package "service" {
+    class PostService <<@Service>> <<@Transactional(readOnly=true)>> {
+      -repository: PostRepository
+      +latest(): List<Post>
+    }
+  }
+
+  package "repository" {
+    interface PostRepository <<@Repository>> {
+      ' JpaRepository<Post, Long> 継承
+      +findAll(): List<Post>
+      +findById(id: Long): Optional<Post>
+      +save(post: Post): Post
+      .. 演習で追加 ..
+      ' +findTop50ByOrderByCreatedAtDesc(): List<Post>
+    }
+  }
+
+  package "domain" {
+    class Post <<@Entity>> <<@Table(name="posts")>> {
+      -id: Long
+      -author: String
+      -body: String
+      -createdAt: Instant
+      +Post(author, body, createdAt)
+      +getId(): Long
+      +getAuthor(): String
+      +getBody(): String
+      +getCreatedAt(): Instant
+      +equals(o: Object): boolean
+      +hashCode(): int
+    }
+  }
+
+  package "web.dto" {
+    class PostForm <<DTO>> {
+      -author: String <<@NotBlank @Size(max=30)>>
+      -body: String <<@NotBlank @Size(max=280)>>
+      +getAuthor() / setAuthor()
+      +getBody() / setBody()
+    }
+  }
+}
+
+interface "JpaRepository<Post, Long>" as JpaRepo <<Spring Data>>
+
+PostController --> PostService : 依存\n(Constructor Injection)
+PostController ..> PostForm : 入力受け取り
+PostService --> PostRepository : 依存\n(Constructor Injection)
+PostService ..> Post : 戻り値
+PostRepository --|> JpaRepo
+PostRepository ..> Post : 永続化対象
+
+note right of PostService
+  @Transactional(readOnly=true)
+  latest() は最新 50 件を新着順で返す予定
+  (現状は TODO で空リスト)
+end note
+
+note bottom of Post
+  posts_seq + GenerationType.SEQUENCE
+  不変設計: Setter なし、equals/hashCode は id ベース
+end note
+
+note bottom of PostForm
+  Bean Validation で入力検証
+  Controller の @Valid で発火
+end note
+
+@enduml

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Codex devbox コンテナを起動する標準ラッパ。
 # - 現在のディレクトリ (リポルート想定) を /workspace に bind
-# - ~/.codex (履歴) と ~/.m2 (Maven キャッシュ) を WSL ホストと共有
+# - 研修専用 CODEX_HOME と ~/.m2 (Maven キャッシュ) を WSL ホストと共有
 # - OPENAI_API_KEY を環境変数経由で渡す
 #
 # 使い方:
@@ -12,7 +12,7 @@ set -euo pipefail
 
 IMAGE_TAG="${IMAGE_TAG:-codex-devbox:latest}"
 WORKSPACE_HOST="${WORKSPACE_HOST:-$(pwd)}"
-CODEX_HOME="${CODEX_HOME:-${HOME}/.codex}"
+CODEX_HOME="${CODEX_HOME:-${HOME}/.codex-training/tsubuyaki-board}"
 M2_HOME="${M2_HOME:-${HOME}/.m2}"
 
 if ! command -v podman >/dev/null 2>&1; then
@@ -28,7 +28,7 @@ fi
 
 if [[ -z "${OPENAI_API_KEY:-}" ]]; then
     echo "OPENAI_API_KEY 環境変数を設定してから実行してください。" >&2
-    echo "  例: export OPENAI_API_KEY=sk-xxxxxxxx" >&2
+    echo "  手順: education/student-setup-guide.md §7-2" >&2
     exit 1
 fi
 
@@ -36,6 +36,28 @@ if [[ ! -d "${WORKSPACE_HOST}" ]]; then
     echo "ワークスペース ${WORKSPACE_HOST} が存在しません。" >&2
     exit 1
 fi
+
+WORKSPACE_HOST="$(cd "${WORKSPACE_HOST}" && pwd -P)"
+HOME_REAL="$(cd "${HOME}" && pwd -P)"
+
+case "${WORKSPACE_HOST}" in
+    /|/home|/home/*|/mnt|/mnt/c|/mnt/c/|/mnt/c/workspace|/mnt/c/workspace/|/workspace|/tmp)
+        echo "ワークスペースとして広すぎるパスは指定できません: ${WORKSPACE_HOST}" >&2
+        exit 1
+        ;;
+esac
+if [[ "${WORKSPACE_HOST}" == "${HOME_REAL}" || "${WORKSPACE_HOST}" == "${HOME_REAL}/"* ]]; then
+    echo "ホーム配下全体を /workspace にマウントすることはできません: ${WORKSPACE_HOST}" >&2
+    exit 1
+fi
+
+REQUIRED_MARKERS=("pom.xml" "AGENTS.md" ".codex/config.toml")
+for marker in "${REQUIRED_MARKERS[@]}"; do
+    if [[ ! -e "${WORKSPACE_HOST}/${marker}" ]]; then
+        echo "ワークスペースが tsubuyaki-board のリポルートではありません (${marker} が見つかりません): ${WORKSPACE_HOST}" >&2
+        exit 1
+    fi
+done
 
 mkdir -p "${CODEX_HOME}" "${M2_HOME}"
 
@@ -88,17 +110,19 @@ for mask_path in "${HARNESS_ALWAYS_MASK[@]}"; do
 done
 
 # ホスト側に存在する場合のみマスク (/workspace 配下の機密)
-HARNESS_WORKSPACE_MASK=(
-    ".env"
-    ".env.local"
-    ".env.production"
-    ".env.development"
+while IFS= read -r -d '' secret_path; do
+    rel_path="${secret_path#${WORKSPACE_HOST}/}"
+    RUN_OPTS+=(--mount "type=bind,src=/dev/null,dst=/workspace/${rel_path},ro=true")
+done < <(
+    find "${WORKSPACE_HOST}" -path "${WORKSPACE_HOST}/.git" -prune -o \
+        -path "${WORKSPACE_HOST}/target" -prune -o \
+        -path "${WORKSPACE_HOST}/.codex/sessions" -prune -o \
+        -type f \( \
+            -name '.env' -o -name '.env.*' -o -name '*secret*' -o -name '*Secret*' -o \
+            -name '*credentials*' -o -name '*Credentials*' -o -name '*.pem' -o \
+            -name '*id_rsa*' -o -name '*id_ed25519*' \
+        \) -print0
 )
-for rel_path in "${HARNESS_WORKSPACE_MASK[@]}"; do
-    if [[ -f "${WORKSPACE_HOST}/${rel_path}" ]]; then
-        RUN_OPTS+=(--mount "type=bind,src=/dev/null,dst=/workspace/${rel_path},ro=true")
-    fi
-done
 
 # --- 研修ハーネス: 規範ファイルを読み取り専用に -----------------------------
 # AGENTS.md / .codex / instructor / .github は Codex に書き換えさせない。

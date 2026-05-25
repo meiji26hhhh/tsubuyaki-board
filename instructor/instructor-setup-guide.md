@@ -62,7 +62,7 @@ tsubuyaki-board.git                 (template 化)                       <org>/<
 1. https://github.com/account/organizations/new で「Create a free organization」または有料プラン。
 2. Organization 名（例: `acme-training-2026q2`）と請求先メールを設定。
 
-> 本研修では GitHub Actions による CI を使わない方針（受講生・講師ともローカル `./mvnw -B -Ph2 verify` で品質ゲートを回す）。Organization のプランは Free で問題ない。
+> 本研修では GitHub Actions による CI を使わない方針（受講生・講師ともローカル `./mvnw -B -Ph2 verify` で基本検証し、仕上げは `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify` で合否判定する）。Organization のプランは Free で問題ない。
 
 ### 2-2. Member seat 数の確認
 
@@ -203,7 +203,7 @@ cd tsubuyaki-board
 - `setup.ps1` 完走後、🪟 PowerShell（管理者でも通常でも可）で Windows 側 Doctor を一度回し、緑揃いを確認:
 
   ```powershell
-  bash scripts/doctor.ps1
+  .\scripts\doctor.ps1
   ```
 
   期待: `Pleiades` / `WSL2` / `Podman Desktop` / `Git for Windows` / `C:\workspace` の各セクションが `[ OK ]` または `[WARN]` で揃う。`[ NG ]` があれば §6-3 へ進む前に解消する。
@@ -293,6 +293,9 @@ bash scripts/start-oracle.sh
 
 # 受講生と同じ H2 経路
 ./mvnw -B -Ph2 verify
+
+# 仕上げ合否ゲート
+./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify
 
 # Oracle 接続でアプリ起動 → /posts まで描画されること
 SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
@@ -491,7 +494,8 @@ rm -rf /mnt/c/workspace/.rehearsal/<assignment>-<test-account-id>
 - [ ] `OPENAI_API_KEY` 設定済（`~/.bashrc`）
 - [ ] `bash scripts/doctor.sh`（**全件**）緑
 - [ ] `./mvnw -B -Plocal verify`（Oracle XE）緑
-- [ ] `./mvnw -B -Ph2 verify`（H2）緑
+- [ ] `./mvnw -B -Ph2 verify`（H2 基本検証）緑
+- [ ] `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify`（仕上げ合否ゲート）緑
 - [ ] `codex-shell` → `codex --help` 表示
 
 ### 配布物

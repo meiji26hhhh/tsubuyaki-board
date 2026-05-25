@@ -5,8 +5,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@//localhost:1521/XEPDB1
-    username: butsubutsu
-    password: ${ORACLE_APP_PWD:butsubutsu_pw}
+    username: tsubuyaki
+    password: ${ORACLE_APP_PWD:tsubuyaki_pw}
     driver-class-name: oracle.jdbc.OracleDriver
     hikari:
       maximum-pool-size: 5
@@ -17,5 +17,5 @@ spring:
       ddl-auto: validate
     show-sql: false
   flyway:
-    schemas: BUTSUBUTSU
-    default-schema: BUTSUBUTSU
+    schemas: TSUBUYAKI
+    default-schema: TSUBUYAKI

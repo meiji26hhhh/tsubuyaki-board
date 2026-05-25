@@ -10,13 +10,13 @@
 services:
   oracle:
     image: docker.io/gvenzl/oracle-xe:21.3.0-slim-faststart
-    container_name: butsubutsu-oracle
+    container_name: tsubuyaki-oracle
     ports:
       - "1521:1521"
     environment:
       ORACLE_PASSWORD: "${ORACLE_PWD:-Training#2026}"
-      APP_USER: butsubutsu
-      APP_USER_PASSWORD: "${ORACLE_APP_PWD:-butsubutsu_pw}"
+      APP_USER: tsubuyaki
+      APP_USER_PASSWORD: "${ORACLE_APP_PWD:-tsubuyaki_pw}"
       ORACLE_CHARACTERSET: AL32UTF8
       TZ: Asia/Tokyo
     volumes:
@@ -32,4 +32,4 @@ services:
 
 volumes:
   oracle-data:
-    name: butsubutsu-oracle-data
+    name: tsubuyaki-oracle-data

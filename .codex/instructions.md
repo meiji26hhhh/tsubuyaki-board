@@ -14,9 +14,9 @@
 
 | パス | 役割 |
 |---|---|
-| `src/main/java/com/example/butsubutsu/` | 業務コード本体 |
-| `src/test/java/com/example/butsubutsu/` | テスト本体 |
-| `src/test/java/com/example/butsubutsu/sample/` | TDD 雛形 (最後まで残す、削除禁止) |
+| `src/main/java/com/example/tsubuyaki/` | 業務コード本体 |
+| `src/test/java/com/example/tsubuyaki/` | テスト本体 |
+| `src/test/java/com/example/tsubuyaki/sample/` | TDD 雛形 (最後まで残す、削除禁止) |
 | `src/main/resources/db/migration/` | Flyway マイグレーション (Oracle / H2 両対応) |
 | `.codex/prompts/` | 共通プロンプト集 (TDD サイクル等) |
 | `instructor/` | 講師資料 (受講生は読み取りのみ) |
@@ -27,9 +27,9 @@
 
 | パス | 読み取り | 書き込み | 削除 |
 |---|---|---|---|
-| `src/main/java/com/example/butsubutsu/**` | ✅ | ✅ | ✅ (個別ファイルのみ、ディレクトリ再帰削除は 🟡) |
-| `src/test/java/com/example/butsubutsu/**` | ✅ | ✅ | ✅ (`sample/` 配下は 🛑) |
-| `src/test/java/com/example/butsubutsu/sample/**` | ✅ | 🟡 (テスト雛形なので慎重に) | 🛑 |
+| `src/main/java/com/example/tsubuyaki/**` | ✅ | ✅ | ✅ (個別ファイルのみ、ディレクトリ再帰削除は 🟡) |
+| `src/test/java/com/example/tsubuyaki/**` | ✅ | ✅ | ✅ (`sample/` 配下は 🛑) |
+| `src/test/java/com/example/tsubuyaki/sample/**` | ✅ | 🟡 (テスト雛形なので慎重に) | 🛑 |
 | `src/main/resources/**` (templates / static / application*.yml) | ✅ | ✅ | ✅ |
 | `src/main/resources/db/migration/**` | ✅ | ✅ (新規 V*.sql 追加) | 🟡 (既存マイグレーション削除は不可) |
 | `pom.xml` | ✅ | ✅ (依存追加) | 🛑 (削除不可) |
@@ -49,10 +49,10 @@
 詳細は [AGENTS.md §7.5](../AGENTS.md) を参照。要点：
 
 - 破壊的コマンド (`rm -rf /`、`git rm -r`、`git reset --hard`、`git clean -fd`、
-  `git push --force`、`dd`、`sudo` 等) は **コンテナ内 wrapper が物理 reject**
+  `git push --force`、`dd`、`sudo` 等) は **コンテナ内 wrapper が reject**
 - 機密ファイル (`.env` 等) は **コンテナマウント層で `/dev/null` 上書き**
 - 規範ファイル (`AGENTS.md`、`.codex/`、`instructor/`、`.github/`) は **ro マウント**
-- ブロックされたら再試行せず代替手段を提案、受講生に判断を仰ぐ
+- 絶対パスや別シェルで wrapper を迂回しない。ブロックされたら再試行せず代替手段を提案、受講生に判断を仰ぐ
 
 ## 困ったときの対処
 

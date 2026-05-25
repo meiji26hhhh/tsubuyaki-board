@@ -64,14 +64,14 @@ ELAPSED=0
 INTERVAL=10
 
 while (( ELAPSED < TIMEOUT )); do
-    if podman exec butsubutsu-oracle healthcheck.sh >/dev/null 2>&1; then
+    if podman exec tsubuyaki-oracle healthcheck.sh >/dev/null 2>&1; then
         echo ""
         echo "✅ Oracle XE is ready."
         echo ""
         echo "接続情報:"
         echo "  URL      : jdbc:oracle:thin:@//localhost:1521/XEPDB1"
-        echo "  User     : butsubutsu"
-        echo "  Password : \$ORACLE_APP_PWD (デフォルト butsubutsu_pw)"
+        echo "  User     : tsubuyaki"
+        echo "  Password : \$ORACLE_APP_PWD (デフォルト tsubuyaki_pw)"
         exit 0
     fi
     sleep "${INTERVAL}"
@@ -81,5 +81,5 @@ done
 
 echo "" >&2
 echo "❌ Oracle XE がタイムアウト ${TIMEOUT}s 以内に ready になりませんでした。" >&2
-echo "   ログ確認: podman logs butsubutsu-oracle" >&2
+echo "   ログ確認: podman logs tsubuyaki-oracle" >&2
 exit 1

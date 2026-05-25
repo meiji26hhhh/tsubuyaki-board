@@ -1,7 +1,7 @@
-package com.example.butsubutsu.sample;
+package com.example.tsubuyaki.sample;
 
-import com.example.butsubutsu.repository.PostRepository;
-import com.example.butsubutsu.service.PostService;
+import com.example.tsubuyaki.repository.PostRepository;
+import com.example.tsubuyaki.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
