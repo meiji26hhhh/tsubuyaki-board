@@ -10,7 +10,7 @@
 | 4h-4.25h | 2日目 | ウォームアップ | doctor --quick、前日 PR のスモークテストとセルフレビュー | 前日コミット品質を確認、再現性 NG を早期発見 | 前日環境差分で起動失敗 |
 | 4.25h-6.5h | 2日目 | 投稿作成＋バリデーション (M2/M3) | フォーム描画、バリデーション込みで POST 実装 | Bean Validation の手書きチェック化を阻止 | `@NotBlank` を `if (... == null)` にしがち |
 | 6.5h-8h | 2日目 | 投稿詳細＋ヘルスチェック (M4/M5) | 404 ハンドリング、`/actuator/health` 緑、`-Pcoverage-day2` (70%) 緑 | Controller での `Optional.isEmpty()` 早期 return を確認、70% gate 未達を早期検出 | `orElseThrow` で 500 系を出してしまう |
-| 8h-9.5h | 2日目 | リファクタ＋カバレッジ80%到達 | JaCoCo 確認、`-Pcoverage-day3` 緑、Service の Spring 非依存化 | 「Codex が書いたコードを 1 つ選んで日本語で説明する」5 分セッションを挟む | カバレッジ偽装テストを書きがち |
+| 8h-9.5h | 2日目 | リファクタ＋カバレッジ80%到達 | JaCoCo 確認、`-Pcoverage-day3 -Pstrict` 緑、Service の Spring 非依存化 | 「Codex が書いたコードを 1 つ選んで日本語で説明する」5 分セッションを挟む | カバレッジ偽装テストを書きがち |
 | 9.5h-11.5h | 2日目 | いいね機能 (S1) | Flyway V2、いいねトグルの冪等性、clientHash のハッシュ保存 | IP の生保存を NG として指摘、salt のハードコード阻止 | clientHash の salt をハードコード |
 | 11.5h-13h | 2日目 | キーワード検索 (S2) | `?q=` 実装、bind 変数、空文字フォールバック | `@Query` の文字列連結を即時 NG | 文字列連結で SQL を組んで Checkstyle 警告 |
 | 13h-13.25h | 3日目 | ウォームアップ | doctor --quick、前日 PR のセルフレビュー | 前日終端のスモークと差分確認 | 朝イチの環境差分 |
@@ -33,7 +33,7 @@ wsl -l -v                              # WSL2 + Ubuntu が出ること
 # WSL
 podman ps -a                           # butsubutsu-oracle が exited でも OK
 podman image exists codex-devbox:latest && echo OK
-echo "${OPENAI_API_KEY:0:7}..."        # 設定済みなら sk-... が見える（履歴に平文を残さない）
+test -n "${OPENAI_API_KEY:-}" && echo "OPENAI_API_KEY 設定済み"
 bash /mnt/c/workspace/<repo>/scripts/doctor.sh --quick
 ```
 
@@ -52,7 +52,7 @@ bash /mnt/c/workspace/<repo>/scripts/doctor.sh --quick
 3. **2日目終業 (13時間目) で MUST 未完走の受講生はフォロー対象**。3日目朝に H2 強制移行を含む救済策を提示する。
 4. **個別質問は時間を切って受ける**。1 件 5 分で打ち切り、長引くものは昼休み or 終業後に。
 5. **Codex の操作画面を全員に 1 度ずつ見せてもらう**。早い人を指名してデモにすると、遅い人が真似できる。
-6. **`git restore .` を使う場面を必ず 1 回作る**。最初の Codex 暴走時にデモ。
+6. **`git status` → `git diff` → `git stash push -u` → `git restore <file>` の安全手順を必ず 1 回デモする**。全変更破棄は通常手順にしない。
 7. **COULD 選択 (14.5h) の前にミニ全体ガイダンス 10 分**。3 課題の難度比較と選び方を見せる。
 8. **17h-19h の仕上げで `docs/prompts-i-used.md` の記入状況を巡回確認**。空のまま 20h を迎えさせない。
 

@@ -12,7 +12,7 @@ RESET='\033[0m'
 # --- 1. OPENAI_API_KEY 検査 ----------------------------------------------
 if [[ -z "${OPENAI_API_KEY:-}" ]]; then
     echo -e "${RED}[codex-devbox] OPENAI_API_KEY が未設定です。${RESET}" >&2
-    echo -e "${YELLOW}WSL 側で 'export OPENAI_API_KEY=sk-...' を実行してから run-codex.sh を呼んでください。${RESET}" >&2
+    echo -e "${YELLOW}WSL 側で education/student-setup-guide.md §7-2 の手順を実施してから run-codex.sh を呼んでください。${RESET}" >&2
     exit 1
 fi
 
@@ -32,12 +32,6 @@ if [[ -x "${REAL_GIT}" ]]; then
 fi
 
 # --- 3. 起動バナー -------------------------------------------------------
-KEY_LEN=${#OPENAI_API_KEY}
-if (( KEY_LEN >= 12 )); then
-    KEY_MASKED="${OPENAI_API_KEY:0:7}…${OPENAI_API_KEY: -4}"
-else
-    KEY_MASKED="(short)"
-fi
 CODEX_VERSION_INFO="$(codex --version 2>/dev/null || echo 'unknown')"
 JAVA_LINE="$(java -version 2>&1 | head -n 1)"
 MAVEN_LINE="$(mvn -v 2>/dev/null | head -n 1 || echo 'mvn not found')"
@@ -62,7 +56,7 @@ ${GREEN}╚═══════════════════════
   ${CYAN}Java${RESET}         : ${JAVA_LINE}
   ${CYAN}Maven${RESET}        : ${MAVEN_LINE}
   ${CYAN}Workspace${RESET}    : $(pwd)
-  ${CYAN}API Key${RESET}      : ${KEY_MASKED}
+  ${CYAN}API Key${RESET}      : 設定済み (値は表示しません)
   ${CYAN}研修ハーネス${RESET} : ${GUARD_STATUS}
   ${CYAN}.env${RESET}         : ${ENV_STATUS}
 

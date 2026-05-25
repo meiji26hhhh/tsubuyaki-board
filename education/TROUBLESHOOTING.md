@@ -41,15 +41,17 @@ Eclipse の Project > Build Automatically をオフに。Eclipse はあくまで
 ### Q4. `codex-shell` で `OPENAI_API_KEY` 未設定エラー
 
 ```bash
-export OPENAI_API_KEY=sk-...
+read -rsp 'OPENAI_API_KEY: ' OPENAI_API_KEY
+printf '\nexport OPENAI_API_KEY=%q\n' "$OPENAI_API_KEY" >> ~/.bashrc
+source ~/.bashrc
 codex-shell
 ```
 
-`~/.bashrc` に書いておくと毎回入れずに済む。
+値は画面や履歴に表示しない。`~/.bashrc` に書いておくと毎回入れずに済む。
 
 ### Q4-2. Codex がコマンド実行で `[codex-guard]` と出して止まる
 
-研修ハーネスがブロックした合図。**そのまま再試行しないこと**。ハーネスは「研修中に必要のない破壊的操作」を物理的に止める仕組み。
+研修ハーネスがブロックした合図。**そのまま再試行しないこと**。ハーネスは「研修中に必要のない破壊的操作」を止める多層防御です。
 
 ```
 [codex-guard] rm は研修ハーネスでブロックされました。
@@ -89,13 +91,12 @@ git diff                   # 内容を確認（量が多ければ git diff --sta
 git stash push -u -m "codex-runaway-$(date +%H%M%S)"
 # 後で `git stash list` で確認、`git stash pop` で戻せる
 
-# 4. それでも全部捨てたい場合だけ
-git restore .              # 未コミットの変更 (tracked) を全て破棄
-git clean -fd              # 新規生成ファイル (untracked) も削除する場合のみ
+# 4. 戻す対象をファイル単位で決める
+git restore src/main/java/com/example/butsubutsu/controller/PostController.java
+# 新規ファイルを消す場合も、git status で確認した上で個別に rm <file>
 ```
 
-> ⚠️ `git restore .` は**確認ダイアログ無しで全変更を破棄**します。事前に `git status` / `git diff` で内容を必ず確認、惜しい部分があれば `git stash` で退避してから実行。
-> ⚠️ `git clean -fd` は `.gitignore` 対象でないファイルが対象。`.env` などは `.gitignore` で除外済なので消えませんが、念のため `-n`（ドライラン）で確認推奨：`git clean -fdn`。
+> ⚠️ 全変更の一括破棄や untracked の一括削除は、研修中の通常手順では使いません。必要に見える場合は講師に相談し、まず `git stash push -u` で退避してください。
 
 その後、AGENTS.md の「触ってよいパス」をプロンプトに添えて再依頼。
 
@@ -181,17 +182,14 @@ git status
 git stash push -u -m "before-eol-normalize-$(date +%H%M%S)"
 
 # 3. .gitattributes に従って再正規化
-git rm --cached -r .       # インデックスを空に (作業ツリーは温存)
-git reset --hard           # ⚠️ HEAD の状態に強制リセット (この時点で何も変更が残らないはず)
-git add -A                 # 再 add で .gitattributes ルールが適用される
+git add --renormalize .    # 作業ツリーを破壊せず、改行コードの正規化差分を作る
 git commit -m "chore: normalize line endings to LF"
 
 # 4. 退避していた場合は戻す
 git stash pop              # コンフリクトしたら手動マージ
 ```
 
-> ⚠️ `git reset --hard` は **作業ツリーとインデックスを HEAD に合わせて破棄**します。未コミットの修正は全て失われます。退避（`git stash`）を必ず先に。
-> ⚠️ チームで作業中なら、本操作の前に `git fetch` で remote の状態を取得し、コンフリクトを最小化。研修中は自分専用リポなので影響は自分のみ。
+> ⚠️ 改行コードの正規化で一括破棄コマンドは使いません。差分を `git diff --staged` で確認してから commit してください。
 
 ### Q13. Classroom Assignment URL で「You don't have access」と出る
 
@@ -212,19 +210,19 @@ git stash pop              # コンフリクトしたら手動マージ
 |---|---|---|
 | 今の変更を一時退避（後で戻したい） | `git stash push -u -m "<理由>"` | `-u` で新規ファイルも含む。後で `git stash pop` |
 | 1 ファイルだけ変更を破棄 | `git restore <file>` | tracked ファイルのみ。新規ファイルは消えない |
-| 全ファイルの未コミット変更を破棄 | `git restore .` | ⚠️ 戻せない。事前に `git diff` 確認 |
+| 複数ファイルの変更を退避 | `git stash push -u -m "<理由>"` | 戻す可能性がある場合の第一選択 |
 | ステージング（`git add`）を取り消す | `git restore --staged <file>` | 作業ツリーの変更は残る |
 | 直前のコミットメッセージだけ修正 | `git commit --amend` | push 済みなら force 必要 → 避ける |
 | 直前のコミットを取り消したい（変更は残す） | `git reset --soft HEAD^` | 変更は staging に残る |
-| 直前のコミットを完全取り消し | `git reset --hard HEAD^` | ⚠️ 変更も消える。先に stash 推奨 |
+| 直前のコミットを打ち消す | `git revert HEAD` | push 済みでも安全。履歴を書き換えない |
 | push 済みのコミットを打ち消す | `git revert <commit>` | 新規の打ち消しコミットを作る安全な方法 |
-| 新規ファイル（untracked）も消したい | `git clean -fd` | ⚠️ 先に `git clean -fdn`（ドライラン）で確認 |
+| 新規ファイル（untracked）を消したい | `rm <file>` | `git status` で確認したファイルを個別に消す |
 | ブランチごとなかったことにしたい | `git switch main && git branch -D feature/xxx` | ローカルだけ。push 済みは別操作 |
 
 ### 鉄則
 
-1. **破壊操作の前に必ず `git status` と `git diff` で内容を確認**
-2. **惜しい変更があれば必ず `git stash push -u` で退避**してから破壊操作
+1. **変更を捨てる前に必ず `git status` と `git diff` で内容を確認**
+2. **惜しい変更があれば必ず `git stash push -u` で退避**
 3. **`git push --force`（main 系）は禁止**（[AGENTS.md §7.3](../AGENTS.md)）
 4. **完全に詰まったら、リポ自体を Template から再生成**したほうが安全（後述の「最後の手段」参照）
 

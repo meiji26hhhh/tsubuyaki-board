@@ -13,7 +13,7 @@ EXERCISES.md と一緒に読む。
 | 4h-4.25h | 2日目 | ウォームアップ | 前日 PR のスモークと読み返し |
 | 4.25h-6.5h | 2日目 | 投稿作成＋バリデーション (M2/M3) | フォームから投稿登録、異常系で再表示 |
 | 6.5h-8h | 2日目 | 投稿詳細＋ヘルスチェック (M4/M5) | `GET /posts/{id}` が動き 404 ハンドリング、actuator/health 緑、`-Pcoverage-day2` (70%) 緑 |
-| 8h-9.5h | 2日目 | リファクタ＋カバレッジ80%到達 | JaCoCo 80%、`-Pcoverage-day3` 緑 |
+| 8h-9.5h | 2日目 | リファクタ＋カバレッジ80%到達 | JaCoCo 80%、`-Pcoverage-day3 -Pstrict` 緑 |
 | 9.5h-11.5h | 2日目 | いいね機能 (S1) | 詳細でいいね操作、冪等性、IP ハッシュ保存 |
 | 11.5h-13h | 2日目 | キーワード検索 (S2) | `?q=` で本文 LIKE 検索、空文字フォールバック |
 | 13h-13.25h | 3日目 | ウォームアップ | 前日 PR のスモークとセルフレビュー |
@@ -44,7 +44,7 @@ EXERCISES.md と一緒に読む。
 
 1. **Doctor** が `[ OK ]` または `[WARN]` のみ
 2. **Oracle XE** が `butsubutsu-oracle` で healthy
-3. **`OPENAI_API_KEY`** が先頭 7 文字確認で `sk-...` 表示
+3. **`OPENAI_API_KEY`** が設定済み（値は表示しない）
 4. **空アプリ起動 → `/actuator/health`** が `{"status":"UP"}`
 5. **`./mvnw -B -Ph2 verify`** が BUILD SUCCESS
 

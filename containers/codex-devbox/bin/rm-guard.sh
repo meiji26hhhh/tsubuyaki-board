@@ -27,6 +27,59 @@ if guard_contains_dangerous_path "$@"; then
     guard_reject rm "システム/機密パスの削除は禁止 (rm -rf /, rm -rf ~, rm -rf . など)" "$@"
 fi
 
+# --- 再帰削除は生成物 allowlist のみに限定 -----------------------------------
+RECURSIVE=0
+OPERANDS=()
+SAW_DASHDASH=0
+for arg in "$@"; do
+    if (( SAW_DASHDASH == 0 )); then
+        case "${arg}" in
+            --)
+                SAW_DASHDASH=1
+                continue
+                ;;
+            -r|-R|--recursive)
+                RECURSIVE=1
+                continue
+                ;;
+            -*)
+                if [[ "${arg}" == *r* || "${arg}" == *R* ]]; then
+                    RECURSIVE=1
+                fi
+                continue
+                ;;
+        esac
+    fi
+    OPERANDS+=("${arg}")
+done
+
+is_allowed_recursive_delete() {
+    local target="$1"
+    case "${target}" in
+        target|target/|target/*|./target|./target/|./target/*|/workspace/target|/workspace/target/|/workspace/target/*|\
+        build|build/|build/*|./build|./build/|./build/*|/workspace/build|/workspace/build/|/workspace/build/*|\
+        node_modules|node_modules/|node_modules/*|./node_modules|./node_modules/|./node_modules/*|/workspace/node_modules|/workspace/node_modules/|/workspace/node_modules/*|\
+        .cache|.cache/|.cache/*|./.cache|./.cache/|./.cache/*|/workspace/.cache|/workspace/.cache/|/workspace/.cache/*|\
+        tmp|tmp/|tmp/*|./tmp|./tmp/|./tmp/*|/workspace/tmp|/workspace/tmp/|/workspace/tmp/*|\
+        out|out/|out/*|./out|./out/|./out/*|/workspace/out|/workspace/out/|/workspace/out/*|\
+        logs|logs/|logs/*|./logs|./logs/|./logs/*|/workspace/logs|/workspace/logs/|/workspace/logs/*)
+            return 0
+            ;;
+    esac
+    return 1
+}
+
+if (( RECURSIVE == 1 )); then
+    if (( ${#OPERANDS[@]} == 0 )); then
+        guard_reject rm "再帰削除の対象が不明です" "$@"
+    fi
+    for operand in "${OPERANDS[@]}"; do
+        if ! is_allowed_recursive_delete "${operand}"; then
+            guard_reject rm "再帰削除は生成物ディレクトリのみ許可 (target/build/node_modules/.cache/tmp/out/logs): ${operand}" "$@"
+        fi
+    done
+fi
+
 # --- 機密ファイル個別削除のブロック ----------------------------------------
 for arg in "$@"; do
     case "${arg}" in

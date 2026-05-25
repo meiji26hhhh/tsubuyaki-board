@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
 
 カテゴリ:
   os, locale, network, git, jdk, maven, podman, codex-image,
-  codex-cli, openai, oracle, disk, eol, java-smoke
+  codex-cli, harness, openai, oracle, disk, eol, java-smoke
 EOF
             exit 0
             ;;
@@ -215,19 +215,96 @@ if ! ${MODE_QUICK} && section "codex-cli" "codex CLI"; then
     fi
 fi
 
+# --- 9.5. Codex training harness -----------------------------------------
+if ! ${MODE_QUICK} && section "harness" "Codex 研修ハーネス"; then
+    if ! command -v podman >/dev/null 2>&1; then
+        warn "podman がないためハーネス実行検証をスキップ"
+    elif ! podman image exists codex-devbox:latest 2>/dev/null; then
+        warn "codex-devbox:latest 未ビルドのためハーネス実行検証をスキップ" "bash scripts/build-codex-image.sh"
+    else
+        HARNESS_TMP="$(mktemp -d)"
+        mkdir -p "${HARNESS_TMP}/.codex" "${HARNESS_TMP}/instructor" "${HARNESS_TMP}/.github" "${HARNESS_TMP}/src" "${HARNESS_TMP}/target"
+        printf 'harness test\n' > "${HARNESS_TMP}/AGENTS.md"
+        printf '<project/>\n' > "${HARNESS_TMP}/pom.xml"
+        printf 'approval_policy = "on-failure"\n' > "${HARNESS_TMP}/.codex/config.toml"
+        printf 'ORACLE_APP_PWD=secret\n' > "${HARNESS_TMP}/.env"
+        printf 'SECRET=secret\n' > "${HARNESS_TMP}/secret.txt"
+
+        HARNESS_OUTPUT="$(
+            podman run --rm \
+                --userns=keep-id \
+                --security-opt label=disable \
+                --security-opt no-new-privileges \
+                --cap-drop=ALL \
+                -v "${HARNESS_TMP}:/workspace:rw" \
+                --mount "type=bind,src=/dev/null,dst=/workspace/.env,ro=true" \
+                --mount "type=bind,src=/dev/null,dst=/workspace/secret.txt,ro=true" \
+                --mount "type=bind,src=${HARNESS_TMP}/AGENTS.md,dst=/workspace/AGENTS.md,ro=true" \
+                --mount "type=bind,src=${HARNESS_TMP}/.codex,dst=/workspace/.codex,ro=true" \
+                --workdir /workspace \
+                --entrypoint bash \
+                codex-devbox:latest -lc '
+                    set +e
+                    git init -q /workspace >/dev/null 2>&1
+
+                    git -C /workspace reset --hard >/tmp/harness-git.log 2>&1
+                    git_rc=$?
+
+                    rm -rf src >/tmp/harness-rm-src.log 2>&1
+                    rm_src_rc=$?
+
+                    mkdir -p target
+                    rm -rf target >/tmp/harness-rm-target.log 2>&1
+                    rm_target_rc=$?
+
+                    env_mask=1
+                    [[ -e /workspace/.env && ! -s /workspace/.env && -e /workspace/secret.txt && ! -s /workspace/secret.txt ]] && env_mask=0
+
+                    echo "mutate" >> /workspace/AGENTS.md 2>/tmp/harness-ro.log
+                    ro_rc=$?
+
+                    printf "git=%s rm_src=%s rm_target=%s env_mask=%s ro=%s\n" \
+                        "${git_rc}" "${rm_src_rc}" "${rm_target_rc}" "${env_mask}" "${ro_rc}"
+                ' 2>/dev/null || true
+        )"
+        rm -rf "${HARNESS_TMP}"
+
+        if echo "${HARNESS_OUTPUT}" | grep -q 'git=126'; then
+            ok "git guard" "git -C /workspace reset --hard を拒否"
+        else
+            ng "git guard" "期待: git=126 / 実際: ${HARNESS_OUTPUT:-(出力なし)}"
+        fi
+        if echo "${HARNESS_OUTPUT}" | grep -q 'rm_src=126'; then
+            ok "rm guard" "rm -rf src を拒否"
+        else
+            ng "rm guard" "期待: rm_src=126 / 実際: ${HARNESS_OUTPUT:-(出力なし)}"
+        fi
+        if echo "${HARNESS_OUTPUT}" | grep -q 'rm_target=0'; then
+            ok "rm allowlist" "rm -rf target は許可"
+        else
+            ng "rm allowlist" "期待: rm_target=0 / 実際: ${HARNESS_OUTPUT:-(出力なし)}"
+        fi
+        if echo "${HARNESS_OUTPUT}" | grep -q 'env_mask=0'; then
+            ok "secret mask" ".env と secret.txt は空マウント"
+        else
+            ng "secret mask" "期待: env_mask=0 / 実際: ${HARNESS_OUTPUT:-(出力なし)}"
+        fi
+        if echo "${HARNESS_OUTPUT}" | grep -Eq 'ro=[1-9][0-9]*'; then
+            ok "readonly mount" "AGENTS.md は書き込み不可"
+        else
+            ng "readonly mount" "期待: ro!=0 / 実際: ${HARNESS_OUTPUT:-(出力なし)}"
+        fi
+    fi
+fi
+
 # --- 10. OPENAI_API_KEY --------------------------------------------------
 if section "openai" "OPENAI_API_KEY"; then
     if [[ -n "${OPENAI_API_KEY:-}" ]]; then
         KEY_LEN=${#OPENAI_API_KEY}
-        if (( KEY_LEN >= 12 )); then
-            KEY_MASK="${OPENAI_API_KEY:0:7}…${OPENAI_API_KEY: -4}"
-        else
-            KEY_MASK="(short)"
-        fi
         if [[ "${OPENAI_API_KEY}" == sk-* && ${KEY_LEN} -ge 20 ]]; then
-            ok "OPENAI_API_KEY 設定済み" "${KEY_MASK} (${KEY_LEN} chars)"
+            ok "OPENAI_API_KEY 設定済み" "値は表示しません"
         else
-            warn "OPENAI_API_KEY の形式が怪しい" "${KEY_MASK}"
+            warn "OPENAI_API_KEY の形式が怪しい" "値は表示しません"
         fi
     else
         ng "OPENAI_API_KEY が未設定"

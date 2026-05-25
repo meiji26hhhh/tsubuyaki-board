@@ -208,6 +208,6 @@ bash "${REPO_ROOT}/scripts/doctor.sh" --quick || true
 echo ""
 echo "==> WSL セットアップ完了"
 echo "新しいシェルで以下を試してください:"
-echo "  export OPENAI_API_KEY=sk-..."
+echo "  education/student-setup-guide.md §7-2 の手順で OPENAI_API_KEY を設定"
 echo "  bash scripts/start-oracle.sh"
 echo "  codex-shell           # コンテナに入って codex を起動"

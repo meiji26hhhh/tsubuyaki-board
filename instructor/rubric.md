@@ -20,8 +20,8 @@
 | B1 | Repository テスト 1 本以上 | `@DataJpaTest` を使っている |
 | B2 | Service テスト 1 本以上 (異常系含む) | Mockito、`assertThatThrownBy` を使う |
 | B3 | Controller テスト 1 本以上 | `@WebMvcTest`、`view().name()` と `model().attributeExists()` |
-| B4 | main で `./mvnw -B -Ph2 verify` が緑 | 最新 main をローカル clone して verify が BUILD SUCCESS |
-| B5 | JaCoCo HTML レポートが生成されている + 80% 到達 | `target/site/jacoco/index.html` を開いて line coverage が 80% 以上 |
+| B4 | main で `./mvnw -B -Ph2 verify` が緑 | 最新 main をローカル clone して基本検証が BUILD SUCCESS |
+| B5 | 仕上げ品質ゲートが緑 | `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify` が BUILD SUCCESS。JaCoCo line coverage 80% 以上、Checkstyle / SpotBugs 警告なし |
 
 ## C. コミットの質 (3 点)
 

@@ -28,14 +28,33 @@ if [[ $# -eq 0 ]]; then
     exec "${REAL_GIT}"
 fi
 
-# サブコマンドを取り出す (前置オプション -c foo=bar 等は飛ばす)
+# サブコマンドを取り出す。
+# `git -C /workspace reset --hard` のように値を消費する前置オプションがあるため、
+# オプション名だけでなく次の値も確実にスキップする。
 SUBCMD=""
-for arg in "$@"; do
+ARGS=("$@")
+idx=0
+while (( idx < ${#ARGS[@]} )); do
+    arg="${ARGS[$idx]}"
     case "${arg}" in
-        -c|-C|--git-dir|--work-tree|--namespace|--exec-path|--bare|--no-replace-objects|--literal-pathspecs|--noglob-pathspecs|--glob-pathspecs|--icase-pathspecs|--no-optional-locks)
+        -c|-C|--git-dir|--work-tree|--namespace|--exec-path)
+            idx=$((idx + 2))
+            continue
+            ;;
+        --git-dir=*|--work-tree=*|--namespace=*|--exec-path=*)
+            idx=$((idx + 1))
+            continue
+            ;;
+        --bare|--no-replace-objects|--literal-pathspecs|--noglob-pathspecs|--glob-pathspecs|--icase-pathspecs|--no-optional-locks)
+            idx=$((idx + 1))
+            continue
+            ;;
+        --)
+            idx=$((idx + 1))
             continue
             ;;
         -*)
+            idx=$((idx + 1))
             continue
             ;;
         *)

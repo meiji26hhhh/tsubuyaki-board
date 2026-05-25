@@ -49,10 +49,10 @@
 詳細は [AGENTS.md §7.5](../AGENTS.md) を参照。要点：
 
 - 破壊的コマンド (`rm -rf /`、`git rm -r`、`git reset --hard`、`git clean -fd`、
-  `git push --force`、`dd`、`sudo` 等) は **コンテナ内 wrapper が物理 reject**
+  `git push --force`、`dd`、`sudo` 等) は **コンテナ内 wrapper が reject**
 - 機密ファイル (`.env` 等) は **コンテナマウント層で `/dev/null` 上書き**
 - 規範ファイル (`AGENTS.md`、`.codex/`、`instructor/`、`.github/`) は **ro マウント**
-- ブロックされたら再試行せず代替手段を提案、受講生に判断を仰ぐ
+- 絶対パスや別シェルで wrapper を迂回しない。ブロックされたら再試行せず代替手段を提案、受講生に判断を仰ぐ
 
 ## 困ったときの対処
 
