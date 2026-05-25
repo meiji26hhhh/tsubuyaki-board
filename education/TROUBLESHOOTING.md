@@ -136,7 +136,7 @@ SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run
 podman compose down --volumes && bash scripts/start-oracle.sh
 ```
 
-### Q9. `H2 vs Oracle` で CI だけ落ちる
+### Q9. `H2 vs Oracle` で `-Ph2 verify` だけ落ちる
 
 - `SYSDATE` を使っていないか → `Instant.now()` に置き換える
 - ID 採番が `IDENTITY` になっていないか → `@SequenceGenerator` に統一
@@ -151,7 +151,7 @@ podman compose down --volumes && bash scripts/start-oracle.sh
 
 ### Q11. JaCoCo の閾値未達で fail
 
-序盤 60%、中盤 70%、仕上げ 80% にスライドする（フェーズ「投稿一覧」「リファクタ＋カバレッジ80%到達」「仕上げ」で段階引き上げ）。CI もデフォルトは序盤 (60%) 設定。
+序盤 60%、中盤 70%、仕上げ 80% にスライドする（フェーズ「投稿一覧」「リファクタ＋カバレッジ80%到達」「仕上げ」で段階引き上げ）。デフォルトは序盤 (60%) 設定。
 
 ```bash
 ./mvnw -B -Ph2 -Pcoverage-day2 verify   # 70% に上げる (プロファイル名は内部識別子)
@@ -159,14 +159,7 @@ podman compose down --volumes && bash scripts/start-oracle.sh
 
 ## Git / GitHub
 
-### Q12. PR を出したら CI が無限に走らない
-
-- Actions タブで「Disable Actions」になっていないか
-- fork でなく Template から作ったリポか (fork だと Actions がデフォルト無効)
-- branch protection の status check 名が一致しているか
-- 自分のリポの **Settings → Actions → General → Actions permissions** が「Allow all actions and reusable workflows」になっているか
-
-### Q13. CRLF / LF の差分が大量に出る
+### Q12. CRLF / LF の差分が大量に出る
 
 通常は `setup.ps1` が `core.autocrlf=input` を自動設定するので発生しません。別マシンに環境を持ち込んだ場合のみ：
 
@@ -200,7 +193,7 @@ git stash pop              # コンフリクトしたら手動マージ
 > ⚠️ `git reset --hard` は **作業ツリーとインデックスを HEAD に合わせて破棄**します。未コミットの修正は全て失われます。退避（`git stash`）を必ず先に。
 > ⚠️ チームで作業中なら、本操作の前に `git fetch` で remote の状態を取得し、コンフリクトを最小化。研修中は自分専用リポなので影響は自分のみ。
 
-### Q14. Classroom Assignment URL で「You don't have access」と出る
+### Q13. Classroom Assignment URL で「You don't have access」と出る
 
 - 自分の GitHub アカウントが正しく Organization に招待されているか
 - メールに届く Organization の招待を Accept したか（GitHub の Notifications で確認可能）

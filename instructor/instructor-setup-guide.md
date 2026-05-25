@@ -60,18 +60,11 @@ tsubuyaki-board.git                 (template 化)                       <org>/<
 新規作成する場合：
 
 1. https://github.com/account/organizations/new で「Create a free organization」または有料プラン。
-2. **Free プランは Actions の private リポ実行時間に上限あり**。受講生 10 名 × 3 日 = 累計 30 リポで CI を回すなら **Team プラン（または GitHub Education 経由）を推奨**。
-3. Organization 名（例: `acme-training-2026q2`）と請求先メールを設定。
+2. Organization 名（例: `acme-training-2026q2`）と請求先メールを設定。
 
-### 2-2. Actions の有効化
+> 本研修では GitHub Actions による CI を使わない方針（受講生・講師ともローカル `./mvnw -B -Ph2 verify` で品質ゲートを回す）。Organization のプランは Free で問題ない。
 
-Organization の **Settings > Actions > General** で以下を設定：
-
-- **Actions permissions**: 「Allow all actions and reusable workflows」
-- **Workflow permissions**: 「Read and write permissions」（必要に応じて）
-- **Allow GitHub Actions to create and approve pull requests**: チェック（任意）
-
-### 2-3. Member seat 数の確認
+### 2-2. Member seat 数の確認
 
 Free プランは無制限ですが、Team プランは seat 課金。受講生人数分の seat が確保されているか **Settings > Billing** で確認。
 
@@ -137,61 +130,11 @@ gh repo view <org>/tsubuyaki-board --json visibility,isTemplate,defaultBranchRef
 
 ---
 
-## 4. CI 初回緑化とブランチ保護
+## 4. main 直 push 禁止の運用方針
 
-ブランチ保護で `Build + Test (H2)` を required status check に指定するには、**CI 履歴に同名 check run が 1 回以上存在している必要**があります。順序が逆だと `422 Unprocessable Entity` で弾かれます。
+本研修では CI による物理ブロックは行わず、**規約遵守（AGENTS.md §3.2 / ONBOARDING.md 禁止事項）で main 直 push を禁止**します。受講生は必ず feature ブランチ + PR 経由で開発するよう、初日のキックオフで明示してください。
 
-### 4-1. CI を 1 回手動 push して緑化
-
-通常は `git push --mirror` で main が push された時点で `.github/workflows/ci.yml` がトリガされます。ブラウザで `https://github.com/<org>/tsubuyaki-board/actions` を開き、`build-test` ジョブ（job 名: `Build + Test (H2)`）が緑になるまで待機。
-
-### 4-2. main ブランチ保護を設定
-
-CI が一度緑になったら：
-
-```bash
-gh api -X PUT "repos/<org>/tsubuyaki-board/branches/main/protection" \
-    --input - <<EOF
-{
-  "required_status_checks": {
-    "strict": true,
-    "contexts": ["Build + Test (H2)"]
-  },
-  "enforce_admins": false,
-  "required_pull_request_reviews": {
-    "dismiss_stale_reviews": false,
-    "require_code_owner_reviews": false,
-    "required_approving_review_count": 0,
-    "require_last_push_approval": false
-  },
-  "restrictions": null,
-  "allow_force_pushes": false,
-  "allow_deletions": false,
-  "required_conversation_resolution": true,
-  "lock_branch": false,
-  "required_linear_history": false
-}
-EOF
-```
-
-### 4-3. 受講生個人リポへの保護伝播について
-
-**重要: branch protection は Classroom 生成リポへ自動伝播しません**。
-受講生各自のリポ main 保護は、初日朝に全員に以下を 1 行実行してもらうのが現実的です。受講生ガイドの「9. 初回 push と CI 緑化」の前に挿入推奨：
-
-```bash
-gh api -X PUT "repos/$(gh api user --jq .login)/<assignment>-$(gh api user --jq .login)/branches/main/protection" \
-    --input - <<EOF
-{
-  "required_status_checks": {"strict": true, "contexts": ["Build + Test (H2)"]},
-  "enforce_admins": false,
-  "required_pull_request_reviews": {"required_approving_review_count": 0},
-  "restrictions": null,
-  "allow_force_pushes": false,
-  "allow_deletions": false
-}
-EOF
-```
+事故が起きた場合の対処は §8-3「受講生が main に直 push してしまった」を参照。
 
 ---
 
@@ -216,7 +159,7 @@ EOF
 3. **Assignment type**: Individual
 4. **Repository visibility**: **Private**（必須）
 5. **Starter code**: 3 で作成した `<org>/tsubuyaki-board` を選択（**template repository としてマーク済の必要あり**、これが 3-4 をやる理由）
-6. **Repository permission**: Admin（受講生に branch protection 設定もさせる場合）または Write
+6. **Repository permission**: Write（本研修では受講生に branch protection を設定させないため）
 7. **Deadline**: 研修最終日の 21 時間目終了時刻
 8. **Feedback pull request**: 任意（自動作成のフィードバック PR を作成する）
 
@@ -348,29 +291,17 @@ codex-shell
 - 原因: Organization の seat 不足、または受講生が SAML SSO 未認証
 - 対処: Settings > Members で受講生を Pending invitation から Active に。SAML 必須 Org の場合は受講生に再認証を依頼
 
-### 8-2. Actions が動かない
-
-- 症状: 受講生個人リポで push しても workflow が起動しない
-- 原因: Classroom 経由で生成されたリポは Actions がデフォルト無効の場合あり
-- 対処: 受講生に **Settings > Actions > General** で「Allow all actions」を選択させる
-
-### 8-3. 受講生の `OPENAI_API_KEY` が当日発行不能
+### 8-2. 受講生の `OPENAI_API_KEY` が当日発行不能
 
 - 症状: 個人カード未登録 / 残高不足 / 発行制限
 - 対処: 講師が予備キー 1 本を保持しておき、当日のみ貸与（研修終了時に rotate）
 - 予備キーの管理: 1Password / 環境変数で保持し、共有時は Slack DM 等の流出しにくい経路で渡す
 
-### 8-4. branch protection 設定で 422 エラー
-
-- 症状: `gh api PUT .../protection` が `422 Unprocessable Entity`
-- 原因: `Build + Test (H2)` という名前の check run が CI 履歴に未登録
-- 対処: 一度 main に空コミットを push し、CI を緑にしてから再実行（手順 4-1 を実施）
-
-### 8-5. 受講生が main に直 push してしまった
+### 8-3. 受講生が main に直 push してしまった
 
 - 症状: 受講生個人リポの main に feature を介さず push される
-- 原因: 個人リポに branch protection が設定されていない
-- 対処: 4-3 のコマンドで保護を有効化。push 済の不正コミットは `git revert` で戻す（force push は禁止）
+- 原因: 規約違反（branch protection は本研修では設定しない方針）
+- 対処: push 済の不正コミットは `git revert` で打ち消しコミットを作って戻す（force push は禁止）。再発防止として feature ブランチ + PR 経由の徹底を再度周知
 
 ---
 
@@ -379,10 +310,9 @@ codex-shell
 研修開始前日までに以下が全て ✓ なら準備完了。
 
 ### Organization / リポ
-- [ ] Organization 作成済、Actions 有効化済
+- [ ] Organization 作成済
 - [ ] `<org>/tsubuyaki-board` が **private** かつ **isTemplate=true**
-- [ ] Actions タブの初回 run が緑（`Build + Test (H2)`）
-- [ ] main ブランチに保護設定（required status check, force push 禁止）
+- [ ] main 直 push 禁止規約を受講生に周知する用意ができている（CI による物理ブロックは行わない）
 
 ### Classroom
 - [ ] Classroom 作成、Organization 紐付け済

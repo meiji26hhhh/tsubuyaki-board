@@ -4,7 +4,7 @@
 
 | 時間目 | 物理日 | フェーズ名 | 受講生の動き | 講師の動き | 想定リスク |
 |---|---|---|---|---|---|
-| 0h-1h | 1日目 | セットアップ確認 | Doctor 実行、Oracle 起動、初回 CI 緑、Eclipse 自動ビルド OFF | Doctor の NG を 1 人ずつ確認、Pleiades 文字コードを念押し | Pleiades の MS932 文字化け、Podman Desktop 未起動 |
+| 0h-1h | 1日目 | セットアップ確認 | Doctor 実行、Oracle 起動、初回 `./mvnw -B -Ph2 verify` 緑、Eclipse 自動ビルド OFF | Doctor の NG を 1 人ずつ確認、Pleiades 文字コードを念押し | Pleiades の MS932 文字化け、Podman Desktop 未起動 |
 | 1h-2h | 1日目 | 仕様読解＋プロンプト準備 | EXERCISES.md を読み込み、TDD プロンプト雛形を自分用に整える、M1 受入基準を自分の言葉で再記述 | プロンプト読み合わせ、`th:utext` 不使用など規約の念押し | EXERCISES を流し読みして要件を取り違える |
 | 2h-4h | 1日目 | 投稿一覧 (M1) | feature/m1 ブランチ、TDD で Repository → Service → Controller、PR 作成 | プロンプトのレビュー、生成コードを 1 人ずつ目視 | Codex が `findAll().subList()` で済ませて DataJpaTest が薄い |
 | 4h-4.25h | 2日目 | ウォームアップ | doctor --quick、前日 PR のスモークテストとセルフレビュー | 前日コミット品質を確認、再現性 NG を早期発見 | 前日環境差分で起動失敗 |

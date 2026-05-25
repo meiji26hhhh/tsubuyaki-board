@@ -20,8 +20,8 @@
 | B1 | Repository テスト 1 本以上 | `@DataJpaTest` を使っている |
 | B2 | Service テスト 1 本以上 (異常系含む) | Mockito、`assertThatThrownBy` を使う |
 | B3 | Controller テスト 1 本以上 | `@WebMvcTest`、`view().name()` と `model().attributeExists()` |
-| B4 | CI が main で緑 | GitHub Actions の最新 main run が成功 |
-| B5 | JaCoCo HTML レポートが PR から閲覧可能 + 80% 到達 | artifacts に jacoco-html-report があり line coverage が 80% 以上 |
+| B4 | main で `./mvnw -B -Ph2 verify` が緑 | 最新 main をローカル clone して verify が BUILD SUCCESS |
+| B5 | JaCoCo HTML レポートが生成されている + 80% 到達 | `target/site/jacoco/index.html` を開いて line coverage が 80% 以上 |
 
 ## C. コミットの質 (3 点)
 

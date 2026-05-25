@@ -12,7 +12,6 @@
 ## テスト結果
 
 - ローカル `./mvnw -B -Ph2 verify` … <!-- 緑 / 赤 -->
-- CI ステータス … <!-- 緑 / 赤 -->
 - カバレッジ (JaCoCo) … <!-- XX% -->
 
 ログまたはスクショを貼ってください (target/site/jacoco/index.html の数値で OK)。

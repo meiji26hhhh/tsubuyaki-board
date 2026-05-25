@@ -34,7 +34,7 @@
 | `src/main/resources/db/migration/**` | ✅ | ✅ (新規 V*.sql 追加) | 🟡 (既存マイグレーション削除は不可) |
 | `pom.xml` | ✅ | ✅ (依存追加) | 🛑 (削除不可) |
 | `compose.yaml`, `containers/**` | ✅ | 🟡 (要受講生確認) | 🛑 |
-| `.github/workflows/**` | ✅ (ro マウント) | 🛑 (ハーネスで ro) | 🛑 |
+| `.github/**` (PR / Issue テンプレート) | ✅ (ro マウント) | 🛑 (ハーネスで ro) | 🛑 |
 | `AGENTS.md` | ✅ (ro マウント) | 🛑 | 🛑 |
 | `.codex/**` (`.codex/sessions/` を除く) | ✅ (ro マウント) | 🛑 | 🛑 |
 | `instructor/**` | ✅ (ro マウント) | 🛑 | 🛑 |
