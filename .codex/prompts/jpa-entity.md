@@ -15,7 +15,7 @@ Flyway マイグレーションを一式生成するプロンプト。
 - ...
 
 生成するもの:
-1. `@Entity` クラス (パッケージ: `com.example.butsubutsu.domain`)
+1. `@Entity` クラス (パッケージ: `com.example.tsubuyaki.domain`)
 2. `JpaRepository<EntityName, Long>` インタフェース
 3. `@DataJpaTest` のテストクラス (正常系 1 本以上 + 異常系 1 本以上)
 4. Flyway マイグレーション `V<n>__<entity>.sql` (Oracle / H2(MODE=Oracle) 両方で動く SQL)

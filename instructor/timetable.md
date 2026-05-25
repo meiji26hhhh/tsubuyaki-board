@@ -31,7 +31,7 @@ wsl -l -v                              # WSL2 + Ubuntu が出ること
 
 ```bash
 # WSL
-podman ps -a                           # butsubutsu-oracle が exited でも OK
+podman ps -a                           # tsubuyaki-oracle が exited でも OK
 podman image exists codex-devbox:latest && echo OK
 test -n "${OPENAI_API_KEY:-}" && echo "OPENAI_API_KEY 設定済み"
 bash /mnt/c/workspace/<repo>/scripts/doctor.sh --quick

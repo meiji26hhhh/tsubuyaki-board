@@ -321,7 +321,7 @@ grep -E '^(ORACLE_|SPRING_)' .env | cut -d= -f1
 
 ```dotenv
 ORACLE_PWD=Training#2026              # ← デフォルト値そのままで OK
-ORACLE_APP_PWD=butsubutsu_pw          # ← デフォルト値そのままで OK
+ORACLE_APP_PWD=tsubuyaki_pw          # ← デフォルト値そのままで OK
 SPRING_PROFILES_ACTIVE=local          # ← デフォルト値そのままで OK
 ```
 
@@ -404,7 +404,7 @@ bash scripts/start-oracle.sh
 期待出力（最終行）:
 
 ```
-✓ Oracle XE (container butsubutsu-oracle) is healthy.
+✓ Oracle XE (container tsubuyaki-oracle) is healthy.
 ```
 
 **初回は 5〜10 分かかります**（イメージ pull とスキーマ初期化）。2 回目以降は数十秒。
@@ -414,7 +414,7 @@ bash scripts/start-oracle.sh
 ```bash
 podman ps
 # CONTAINER ID  IMAGE                                     STATUS               PORTS                  NAMES
-# abc123def456  docker.io/gvenzl/oracle-xe:21.3.0-slim... Up 5 minutes (healthy)  0.0.0.0:1521->1521/tcp butsubutsu-oracle
+# abc123def456  docker.io/gvenzl/oracle-xe:21.3.0-slim... Up 5 minutes (healthy)  0.0.0.0:1521->1521/tcp tsubuyaki-oracle
 ```
 
 `STATUS` が `(healthy)` で確定。
@@ -454,7 +454,7 @@ JUnit テストが全て緑、JaCoCo カバレッジレポートが `target/site
 SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run
 ```
 
-`Started ButsubutsuApplication in X seconds` の行が出たら起動完了。**このターミナルはアプリのログを表示し続けるので、閉じずに残しておく**。
+`Started TsubuyakiApplication in X seconds` の行が出たら起動完了。**このターミナルはアプリのログを表示し続けるので、閉じずに残しておく**。
 
 #### 8-4-2. ヘルスチェック（タブ B — 新規タブ）
 
@@ -590,7 +590,7 @@ git push -u origin feature/setup-<your-name>
 - [ ] `setup.ps1` → `setup-wsl.sh` 完走
 - [ ] `feature/setup-<your-name>` ブランチを作成（M1 用ブランチは ONBOARDING の基本ループで別途切る）
 - [ ] `OPENAI_API_KEY` を `~/.bashrc` に設定
-- [ ] `bash scripts/start-oracle.sh` で `butsubutsu-oracle` が healthy（§8-2）
+- [ ] `bash scripts/start-oracle.sh` で `tsubuyaki-oracle` が healthy（§8-2）
 - [ ] `doctor.sh --quick` 全行 `[ OK ]` か `[WARN]`
 - [ ] `./mvnw -B -Ph2 verify` BUILD SUCCESS
 - [ ] `curl /actuator/health` が `{"status":"UP"}`

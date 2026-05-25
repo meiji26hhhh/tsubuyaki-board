@@ -43,7 +43,7 @@ EXERCISES.md と一緒に読む。
 毎朝 🐧 WSL Ubuntu のリポルートで以下 5 観点を確認する。**手順詳細は [student-setup-guide.md §8](./student-setup-guide.md) を正本とする**（順序もここに揃える）。
 
 1. **Doctor** が `[ OK ]` または `[WARN]` のみ
-2. **Oracle XE** が `butsubutsu-oracle` で healthy
+2. **Oracle XE** が `tsubuyaki-oracle` で healthy
 3. **`OPENAI_API_KEY`** が設定済み（値は表示しない）
 4. **空アプリ起動 → `/actuator/health`** が `{"status":"UP"}`
 5. **`./mvnw -B -Ph2 verify`** が BUILD SUCCESS
@@ -90,8 +90,8 @@ git status
 git diff                          # 内容を読んで「自分で説明できる」か自問
 
 # 2. ステージング (ファイル単位)
-git add src/main/java/com/example/butsubutsu/controller/PostController.java
-git add src/test/java/com/example/butsubutsu/controller/PostControllerTest.java
+git add src/main/java/com/example/tsubuyaki/controller/PostController.java
+git add src/test/java/com/example/tsubuyaki/controller/PostControllerTest.java
 # (まとめて: git add src/  でも可。ただし意図しないファイルを巻き込みやすい)
 
 # 3. ステージ済みの内容を再確認

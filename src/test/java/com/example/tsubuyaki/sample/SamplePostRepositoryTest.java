@@ -1,7 +1,7 @@
-package com.example.butsubutsu.sample;
+package com.example.tsubuyaki.sample;
 
-import com.example.butsubutsu.domain.Post;
-import com.example.butsubutsu.repository.PostRepository;
+import com.example.tsubuyaki.domain.Post;
+import com.example.tsubuyaki.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

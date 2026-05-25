@@ -1,7 +1,7 @@
 # tsubuyaki-board アーキテクチャ設計書
 
 > **対象読者**: 本リポジトリで研修を受ける受講生・講師、および新規参画する開発メンバー。
-> **目的**: AI 駆動開発研修テンプレートとしての全体構成（開発環境・コンテナ・AI ツール連携）と、Spring Boot アプリケーション「butsubutsu-board（社内つぶやきボード）」の基本設計を 1 ページで俯瞰すること。
+> **目的**: AI 駆動開発研修テンプレートとしての全体構成（開発環境・コンテナ・AI ツール連携）と、Spring Boot アプリケーション「tsubuyaki-board（社内つぶやきボード）」の基本設計を 1 ページで俯瞰すること。
 
 ---
 
@@ -9,7 +9,7 @@
 
 ### プロジェクト位置付け
 
-- **プロダクト名**: butsubutsu-board（社内つぶやきボード）
+- **プロダクト名**: tsubuyaki-board（社内つぶやきボード）
 - **性質**: AI 駆動開発研修テンプレート。Codex CLI（OpenAI）を講師として、TDD で短文投稿掲示板を Spring Boot で実装する 3 日間の演習素材。
 - **ドメイン**: 投稿者名・本文（最大 280 文字）・作成日時を持つ短文投稿（Twitter 互換の文字数制限）の一覧表示・投稿。
 
@@ -40,7 +40,7 @@
 | --- | --- | --- |
 | **PowerShell** (`scripts/setup.ps1`, `doctor.ps1`) | WSL 機能の有効化、Ubuntu 22.04 の導入、Windows 側の依存検査 | Windows ホスト |
 | **WSL2 Ubuntu** (`scripts/setup-wsl.sh`, `doctor.sh`) | Podman・JDK21・Maven キャッシュの初期化、`codex-shell` エイリアスの登録 | WSL2 |
-| **`butsubutsu-oracle`** コンテナ | Oracle XE 21c の本番系 DB。ポート `1521` を WSL に publish | Podman |
+| **`tsubuyaki-oracle`** コンテナ | Oracle XE 21c の本番系 DB。ポート `1521` を WSL に publish | Podman |
 | **`codex-devbox`** コンテナ | Codex CLI と Spring Boot ビルド環境（Temurin 21 JDK + Node 20 + Maven 3.9 + GitHub CLI） | Podman |
 | **OpenAI API** (`api.openai.com`) | Codex CLI の対話先。モデルは `gpt-5-codex` | 外部クラウド |
 
@@ -115,8 +115,8 @@ codex-shell           # = bash /mnt/c/workspace/<repo>/scripts/run-codex.sh
 ### パッケージ構成
 
 ```
-com.example.butsubutsu
-├── ButsubutsuApplication      … エントリーポイント (@SpringBootApplication)
+com.example.tsubuyaki
+├── TsubuyakiApplication       … エントリーポイント (@SpringBootApplication)
 ├── controller/
 │   └── PostController         … Thymeleaf 画面の MVC コントローラ
 ├── service/
@@ -151,7 +151,7 @@ com.example.butsubutsu
 
 ![ER 図 (posts)](diagrams/er-posts.png)
 
-### `POSTS` テーブル（スキーマ: `BUTSUBUTSU`）
+### `POSTS` テーブル（スキーマ: `TSUBUYAKI`）
 
 | カラム | 型 | 制約 / 備考 |
 | --- | --- | --- |
@@ -173,9 +173,9 @@ com.example.butsubutsu
 
 | ファイル | 役割 | 主な内容 |
 | --- | --- | --- |
-| `application.yml` | 共通設定 | アプリ名、Flyway 有効化、`open-in-view: false`、JPA UTC、Actuator `health,info`、`server.port: 8080`、`com.example.butsubutsu` を `DEBUG` |
-| `application-local.yml` | Oracle 接続 | `jdbc:oracle:thin:@//localhost:1521/XEPDB1`、`OracleDialect`、`ddl-auto: validate`、Flyway スキーマ `BUTSUBUTSU` |
-| `application-h2.yml` | H2 接続 | `jdbc:h2:mem:butsubutsu;MODE=Oracle;DATABASE_TO_UPPER=true`、`H2Dialect`、`ddl-auto: none`（Flyway 一任） |
+| `application.yml` | 共通設定 | アプリ名、Flyway 有効化、`open-in-view: false`、JPA UTC、Actuator `health,info`、`server.port: 8080`、`com.example.tsubuyaki` を `DEBUG` |
+| `application-local.yml` | Oracle 接続 | `jdbc:oracle:thin:@//localhost:1521/XEPDB1`、`OracleDialect`、`ddl-auto: validate`、Flyway スキーマ `TSUBUYAKI` |
+| `application-h2.yml` | H2 接続 | `jdbc:h2:mem:tsubuyaki;MODE=Oracle;DATABASE_TO_UPPER=true`、`H2Dialect`、`ddl-auto: none`（Flyway 一任） |
 
 `spring.profiles.default: local` のため、引数なしの `mvnw spring-boot:run` は Oracle に接続する。
 
@@ -202,7 +202,7 @@ com.example.butsubutsu
 
 ### テスト構成
 
-`src/test/java/com/example/butsubutsu/sample/` に **サンプル TDD 雛形** が配置されている（**削除禁止**）。
+`src/test/java/com/example/tsubuyaki/sample/` に **サンプル TDD 雛形** が配置されている（**削除禁止**）。
 
 | サンプル | テスト手法 | 対象 |
 | --- | --- | --- |
@@ -251,7 +251,7 @@ java -jar tools/plantuml.jar -tpng -charset UTF-8 \
 
 | カテゴリ | パス |
 | --- | --- |
-| アプリ本体 | `src/main/java/com/example/butsubutsu/**` |
+| アプリ本体 | `src/main/java/com/example/tsubuyaki/**` |
 | Spring 設定 | `src/main/resources/application*.yml` |
 | Flyway DDL | `src/main/resources/db/migration/V1__init.sql` |
 | Thymeleaf テンプレ | `src/main/resources/templates/posts/*.html` |

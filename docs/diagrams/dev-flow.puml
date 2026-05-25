@@ -59,7 +59,7 @@ mvn --> codex : BUILD SUCCESS / 失敗
 user -> codex : ./mvnw -B -Plocal verify
 codex -> mvn : Maven 起動 (profile=local)
 mvn -> oracle : JDBC 接続\nlocalhost:1521/XEPDB1
-mvn -> oracle : Flyway: V1__init.sql\nschema=BUTSUBUTSU
+mvn -> oracle : Flyway: V1__init.sql\nschema=TSUBUYAKI
 mvn -> mvn : JUnit / Checkstyle / SpotBugs
 mvn --> codex : BUILD SUCCESS
 codex --> user : 結果報告 + 次の提案

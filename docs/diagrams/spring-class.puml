@@ -1,5 +1,5 @@
 @startuml spring-class
-title Spring アプリケーション クラス図 (com.example.butsubutsu)
+title Spring アプリケーション クラス図 (com.example.tsubuyaki)
 
 skinparam shadowing false
 skinparam defaultFontName "Yu Gothic UI"
@@ -13,9 +13,9 @@ skinparam package {
   BorderColor #999999
 }
 
-package "com.example.butsubutsu" {
+package "com.example.tsubuyaki" {
 
-  class ButsubutsuApplication <<@SpringBootApplication>> {
+  class TsubuyakiApplication <<@SpringBootApplication>> {
     +main(args: String[]): void
   }
 

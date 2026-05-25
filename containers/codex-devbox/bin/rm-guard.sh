@@ -99,8 +99,8 @@ for arg in "$@"; do
         */AGENTS.md|AGENTS.md|\
         */.codex|.codex|*/.codex/*|\
         */instructor|instructor|*/instructor/*|\
-        */src/test/java/com/example/butsubutsu/sample|*/sample|\
-        */src/test/java/com/example/butsubutsu/sample/*)
+        */src/test/java/com/example/tsubuyaki/sample|*/sample|\
+        */src/test/java/com/example/tsubuyaki/sample/*)
             guard_reject rm "規範ファイル/不可削除パスは削除禁止: ${arg}" "$@"
             ;;
     esac

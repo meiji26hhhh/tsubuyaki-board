@@ -1,5 +1,5 @@
 @startuml er-posts
-title データモデル: POSTS テーブル (スキーマ: BUTSUBUTSU)
+title データモデル: POSTS テーブル (スキーマ: TSUBUYAKI)
 
 skinparam shadowing false
 skinparam defaultFontName "Yu Gothic UI"
@@ -28,7 +28,7 @@ note right of POSTS
 end note
 
 note bottom of POSTS
-  **JPA マッピング**: com.example.butsubutsu.domain.Post
+  **JPA マッピング**: com.example.tsubuyaki.domain.Post
   ID は @SequenceGenerator(allocationSize=1) で採番
   AUTHOR ≦ 30 文字、BODY ≦ 280 文字 (Twitter 互換)
   CREATED_AT は UTC で保存 (hibernate.jdbc.time_zone=UTC)

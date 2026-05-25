@@ -1,4 +1,4 @@
-package com.example.butsubutsu.domain;
+package com.example.tsubuyaki.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

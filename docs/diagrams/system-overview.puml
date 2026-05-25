@@ -34,13 +34,13 @@ node "WSL2 (Ubuntu 22.04)" as wsl {
   component "Maven Wrapper\n(mvnw)" as mvn
   component "Podman" as podman
 
-  node "Podman: butsubutsu-oracle\n(gvenzl/oracle-xe:21.3.0-slim-faststart)" as oracleCt {
-    database "Oracle XE 21c\nPDB: XEPDB1\nSchema: BUTSUBUTSU" as oracle
+  node "Podman: tsubuyaki-oracle\n(gvenzl/oracle-xe:21.3.0-slim-faststart)" as oracleCt {
+    database "Oracle XE 21c\nPDB: XEPDB1\nSchema: TSUBUYAKI" as oracle
   }
 
   node "Podman: codex-devbox\n(eclipse-temurin:21-jdk-jammy)" as codexCt {
     component "Codex CLI\n(@openai/codex)" as codex
-    component "Spring Boot 3.4.1\n(butsubutsu-board)" as spring
+    component "Spring Boot 3.4.1\n(tsubuyaki-board)" as spring
   }
 
   folder "ホストマウント" as mounts {
@@ -79,7 +79,7 @@ end note
 note bottom of oracleCt
   ポート: 1521 (Listener)
   init: containers/oracle-init/
-  APP_USER: butsubutsu
+  APP_USER: tsubuyaki
 end note
 
 @enduml

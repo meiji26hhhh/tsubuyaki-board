@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>butsubutsu-board</artifactId>
+    <artifactId>tsubuyaki-board</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>butsubutsu-board</name>
+    <name>tsubuyaki-board</name>
     <description>社内つぶやきボード — AI 駆動開発研修用 Spring Boot アプリ</description>
 
     <properties>

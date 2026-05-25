@@ -1,6 +1,6 @@
-package com.example.butsubutsu.repository;
+package com.example.tsubuyaki.repository;
 
-import com.example.butsubutsu.domain.Post;
+import com.example.tsubuyaki.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {

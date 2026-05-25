@@ -313,8 +313,8 @@ fi
 
 # --- 11. Oracle XE -------------------------------------------------------
 if section "oracle" "Oracle XE"; then
-    if podman ps --format '{{.Names}}' 2>/dev/null | grep -q '^butsubutsu-oracle$'; then
-        ok "butsubutsu-oracle コンテナ起動中"
+    if podman ps --format '{{.Names}}' 2>/dev/null | grep -q '^tsubuyaki-oracle$'; then
+        ok "tsubuyaki-oracle コンテナ起動中"
         if (echo > /dev/tcp/localhost/1521) >/dev/null 2>&1; then
             ok "localhost:1521 疎通"
         elif command -v nc >/dev/null 2>&1 && nc -z localhost 1521 2>/dev/null; then
@@ -362,7 +362,7 @@ fi
 
 # --- 14. Java から XE への smoke 接続 (オプション) -----------------------
 if ! ${MODE_QUICK} && section "java-smoke" "Java からの XE smoke 接続"; then
-    if podman ps --format '{{.Names}}' 2>/dev/null | grep -q '^butsubutsu-oracle$' \
+    if podman ps --format '{{.Names}}' 2>/dev/null | grep -q '^tsubuyaki-oracle$' \
         && [[ -x "${REPO_ROOT}/mvnw" ]]; then
         if "${REPO_ROOT}/mvnw" -B -q -Plocal -Dtest='*Smoke*' test >/dev/null 2>&1; then
             ok "smoke テスト成功"

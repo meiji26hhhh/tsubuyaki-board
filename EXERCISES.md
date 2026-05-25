@@ -8,7 +8,7 @@
 
 ### M1: 投稿一覧 `GET /posts`
 
-> 前提アセット: `Post` entity (`src/main/java/com/example/butsubutsu/domain/Post.java`) と V1 Flyway マイグレーション (`src/main/resources/db/migration/V1__init.sql`) は既に提供済。M1 ではこの上に Repository / Service / Controller を実装する。
+> 前提アセット: `Post` entity (`src/main/java/com/example/tsubuyaki/domain/Post.java`) と V1 Flyway マイグレーション (`src/main/resources/db/migration/V1__init.sql`) は既に提供済。M1 ではこの上に Repository / Service / Controller を実装する。
 
 - 新着順 (created_at DESC) で最大 50 件を返す
 - ビュー: `posts/list.html`
