@@ -1,0 +1,67 @@
+@startuml dev-flow
+title 開発フロー: 環境構築からビルド・テストまで
+
+skinparam shadowing false
+skinparam defaultFontName "Yu Gothic UI"
+skinparam sequence {
+  ArrowColor #555555
+  LifeLineBorderColor #4A90E2
+  ParticipantBorderColor #4A90E2
+  ParticipantBackgroundColor #F0F7FF
+  ActorBorderColor #555555
+  ActorBackgroundColor #FFFFFF
+}
+
+actor "受講生" as user
+participant "PowerShell\n(Windows)" as ps
+participant "Bash\n(WSL2 Ubuntu)" as bash
+participant "Podman" as podman
+participant "Oracle XE\nコンテナ" as oracle
+participant "Codex devbox\nコンテナ" as codex
+participant "Maven\n(mvnw)" as mvn
+participant "OpenAI API" as openai
+
+== 初回セットアップ ==
+user -> ps : .\\scripts\\setup.ps1
+ps -> ps : WSL 機能有効化\nUbuntu 22.04 取得
+ps --> user : 再起動指示
+user -> bash : bash scripts/setup-wsl.sh
+bash -> bash : Podman / JDK21 / Maven\nキャッシュ初期化
+bash -> bash : scripts/build-codex-image.sh\n→ codex-devbox image
+bash --> user : codex-shell エイリアス登録
+
+== OracleDB 起動 ==
+user -> bash : bash scripts/start-oracle.sh
+bash -> podman : podman compose up -d oracle
+podman -> oracle : 起動 (healthcheck.sh)
+oracle -> oracle : 初期化スクリプト実行\n01_create_schema.sql
+oracle --> podman : healthy
+podman --> bash : ready
+bash --> user : "Oracle XE is ready."
+
+== Codex CLI で開発 ==
+user -> bash : codex-shell
+bash -> podman : podman run codex-devbox\n(--userns=keep-id)
+podman -> codex : 起動 (/workspace bind)
+user -> codex : 自然言語で指示
+codex -> openai : HTTPS (gpt-5-codex)
+openai --> codex : 提案コード
+codex -> codex : apply_patch でファイル編集\n(sandbox: workspace-write)
+codex --> user : 変更内容を確認
+
+== テスト実行 (H2 軽量モード) ==
+user -> codex : ./mvnw -B -Ph2 verify
+codex -> mvn : Maven 起動
+mvn -> mvn : Flyway 適用 → H2 mem\nJUnit + JaCoCo
+mvn --> codex : BUILD SUCCESS / 失敗
+
+== Oracle 統合テスト ==
+user -> codex : ./mvnw -B -Plocal verify
+codex -> mvn : Maven 起動 (profile=local)
+mvn -> oracle : JDBC 接続\nlocalhost:1521/XEPDB1
+mvn -> oracle : Flyway: V1__init.sql\nschema=BUTSUBUTSU
+mvn -> mvn : JUnit / Checkstyle / SpotBugs
+mvn --> codex : BUILD SUCCESS
+codex --> user : 結果報告 + 次の提案
+
+@enduml

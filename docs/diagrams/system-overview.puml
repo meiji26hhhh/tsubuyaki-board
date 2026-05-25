@@ -1,0 +1,85 @@
+@startuml system-overview
+title tsubuyaki-board システム全体構成 (開発環境)
+
+skinparam shadowing false
+skinparam defaultFontName "Yu Gothic UI"
+skinparam ArrowColor #555555
+skinparam node {
+  BackgroundColor #FAFAFA
+  BorderColor #888888
+}
+skinparam component {
+  BackgroundColor #F0F7FF
+  BorderColor #4A90E2
+}
+skinparam database {
+  BackgroundColor #FFF4E5
+  BorderColor #E07B00
+}
+skinparam cloud {
+  BackgroundColor #F5F5F5
+  BorderColor #999999
+}
+
+actor "受講生" as user
+
+cloud "OpenAI API\n(api.openai.com)" as openai
+
+node "Windows ホスト" as winhost {
+  component "PowerShell\n(setup.ps1 / doctor.ps1)" as ps
+}
+
+node "WSL2 (Ubuntu 22.04)" as wsl {
+  component "Bash シェル" as bash
+  component "Maven Wrapper\n(mvnw)" as mvn
+  component "Podman" as podman
+
+  node "Podman: butsubutsu-oracle\n(gvenzl/oracle-xe:21.3.0-slim-faststart)" as oracleCt {
+    database "Oracle XE 21c\nPDB: XEPDB1\nSchema: BUTSUBUTSU" as oracle
+  }
+
+  node "Podman: codex-devbox\n(eclipse-temurin:21-jdk-jammy)" as codexCt {
+    component "Codex CLI\n(@openai/codex)" as codex
+    component "Spring Boot 3.4.1\n(butsubutsu-board)" as spring
+  }
+
+  folder "ホストマウント" as mounts {
+    file "/workspace\n(リポジトリ)" as repo
+    file "~/.m2\n(Maven キャッシュ)" as m2
+    file "~/.codex-training\n(Codex 履歴)" as codexHome
+    file "oracle-data\n(永続ボリューム)" as oradata
+  }
+}
+
+user --> ps : 初回セットアップ
+user --> bash : 日常操作
+ps ..> wsl : WSL 有効化 / 依存導入
+bash --> podman : compose up / run
+podman --> oracleCt
+podman --> codexCt
+
+codex --> spring : コード生成・編集
+codex ..> openai : HTTPS\n(gpt-5-codex)
+mvn --> spring : ビルド / テスト
+spring --> oracle : JDBC\njdbc:oracle:thin:@//\nlocalhost:1521/XEPDB1
+spring ..> repo : Flyway\nclasspath:db/migration
+
+codexCt -.-> repo : bind mount\n/workspace
+codexCt -.-> m2 : bind mount\n~/.m2
+codexCt -.-> codexHome : bind mount
+oracleCt -.-> oradata : named volume
+
+note right of codexCt
+  サンドボックス: workspace-write
+  approval_policy: on-failure
+  機密ファイル (.env / *.pem / ~/.ssh) は
+  研修ハーネスで物理ブロック
+end note
+
+note bottom of oracleCt
+  ポート: 1521 (Listener)
+  init: containers/oracle-init/
+  APP_USER: butsubutsu
+end note
+
+@enduml
