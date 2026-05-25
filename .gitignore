@@ -43,6 +43,8 @@ logs/
 .codex/history.jsonl
 .codex/log/
 codex-*.log
+Plan.md
+tasks/
 
 # Spring Boot
 HELP.md
