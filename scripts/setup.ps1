@@ -151,9 +151,10 @@ try {
     Write-Host "次のステップ:" -ForegroundColor Cyan
     Write-Host "  1. PC を再起動 (WSL2 機能の有効化を反映)"
     Write-Host "  2. スタートメニュー → 'Ubuntu' を起動 → 初回ユーザ名・パスワードを設定"
-    Write-Host "  3. Ubuntu ターミナルで:  cd /mnt/c/workspace/<repo> && bash scripts/setup-wsl.sh"
-    Write-Host "  4. Ubuntu ターミナルで:  bash scripts/doctor.sh"
+    Write-Host "  3. 'かんたんセットアップ' フォルダの「セットアップ2_Ubuntu準備.bat」をダブルクリック"
+    Write-Host "  4. 続けて「セットアップ3_APIキー設定.bat」→「環境チェック.bat」をダブルクリック"
     Write-Host ""
+    Write-Host "（上級者向け）手動で行う場合: cd /mnt/c/workspace/<repo> && bash scripts/setup-wsl.sh"
     Write-Host "詳細手順: education/student-setup-guide.md §4-5 以降"
     Write-Host "ログファイル: $logFile"
 }

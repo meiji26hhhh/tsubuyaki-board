@@ -179,7 +179,7 @@ Assignment 作成完了画面に表示される **Invitation URL**（`https://cl
 
 ### 6-1. 講師リポを clone（🪟 管理者 PowerShell）
 
-WSL2 機能はまだ有効化されていないので、**Windows 側の PowerShell** で clone する（受講生ガイド §4-3 と同じ流れ）：
+WSL2 機能はまだ有効化されていないので、**Windows 側の PowerShell** で clone する（受講生ガイド §4-2 と同じ流れ）：
 
 ```powershell
 New-Item -ItemType Directory -Force -Path "C:\workspace" | Out-Null
@@ -192,11 +192,13 @@ cd tsubuyaki-board
 
 ### 6-2. Windows キッティング → 受講生ガイドと同手順
 
-[../education/student-setup-guide.md §4](../education/student-setup-guide.md) の手順をそのまま実施。要約：
+[../education/student-setup-guide.md §4](../education/student-setup-guide.md) の手順をそのまま実施。受講生ガイドは**バッチをダブルクリックする経路**に統一されています。要約：
 
-1. 🪟 管理者 PowerShell を起動
-2. `Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1`
+1. clone 済みリポジトリ内の `かんたんセットアップ` フォルダを開く
+2. **`セットアップ1_Windows準備.bat`** をダブルクリック（UAC で「はい」→ 自動昇格で `scripts/setup.ps1` を実行）
 3. PC 再起動
+
+> 講師が内部挙動を直接確認したい場合は、🪟 管理者 PowerShell で `Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1` を実行しても同じです（バッチはこれを呼んでいるだけ）。
 
 **講師固有の差分**:
 - Pleiades は受講生に配布する媒体と**同じ zip** を `C:\Pleiades` に解凍してあること（配布媒体そのものの動作検証を兼ねる）。
@@ -213,8 +215,10 @@ cd tsubuyaki-board
 [../education/student-setup-guide.md §5](../education/student-setup-guide.md) の手順をそのまま実施。要約：
 
 1. スタートメニュー → Ubuntu 起動 → 初回ユーザ・パスワード設定
-2. `cd /mnt/c/workspace/tsubuyaki-board`
-3. `bash scripts/setup-wsl.sh`
+2. `かんたんセットアップ` フォルダの **`セットアップ2_Ubuntu準備.bat`** をダブルクリック（`sudo` パスワードを 1 回入力）
+3. 続けて **`セットアップ3_APIキー設定.bat`** で `OPENAI_API_KEY` と `.env` を登録（§6-4 参照）
+
+> バッチは内部で `scripts/setup-wsl.sh` を呼ぶだけです。講師が手動で確認したい場合は `cd /mnt/c/workspace/tsubuyaki-board && bash scripts/setup-wsl.sh`。
 
 **講師固有の差分**: 無し（同じ）。ただし以降のリハーサル（§7）と Oracle 経路 verify（§6-5）が **Temurin JDK 21 に強く依存する**ため、`setup-wsl.sh` が何を入れるかを把握し、完了後に必ず検証する。
 
@@ -269,10 +273,10 @@ cd /mnt/c/workspace/tsubuyaki-board
 
 ### 6-4. `OPENAI_API_KEY` 設定 → 受講生ガイドと同手順
 
-手順本体は [../education/student-setup-guide.md §7-2](../education/student-setup-guide.md) を参照（`~/.bashrc` への追記と `source`）。
+手順本体は [../education/student-setup-guide.md §7](../education/student-setup-guide.md) を参照。受講生は **`セットアップ3_APIキー設定.bat`**（内部で `scripts/setup-secrets.sh`）で `OPENAI_API_KEY` を `~/.bashrc` に、`.env` をリポジトリ直下に登録します。
 
 **講師固有の差分**:
-- **講師自身のキー** は `~/.bashrc` へ書く（普段使い用）
+- **講師自身のキー** は `セットアップ3_APIキー設定.bat`（または手動の `~/.bashrc` 追記）で設定（普段使い用）
 - **受講生へ貸与する予備キー** は **`~/.bashrc` には書かない**（誤って共有・公開しないため）
 - 予備キーは 1Password / `pass` 等のシークレットマネージャに保管し、配布時のみ手動で渡す
 - 配布経路は Slack DM など流出しにくい経路を選択
@@ -486,8 +490,8 @@ rm -rf /mnt/c/workspace/.rehearsal/<assignment>-<test-account-id>
 - [ ] テストアカウントで Assignment 参加 → clone → `./mvnw -B -Ph2 verify` 緑のリハーサル成功（[§7 リハーサル](#7-リハーサルテストアカウントでの-assignment-動作確認) で実施）
 
 ### 講師マシン
-- [ ] `setup.ps1` 完走、PC 再起動済
-- [ ] `setup-wsl.sh` 完走
+- [ ] `セットアップ1_Windows準備.bat`（= `setup.ps1`）完走、PC 再起動済
+- [ ] `セットアップ2_Ubuntu準備.bat`（= `setup-wsl.sh`）完走、`セットアップ3_APIキー設定.bat` 完走
 - [ ] WSL Ubuntu 上で `java --version` が `21` を返す（Temurin 21）
 - [ ] `echo "$JAVA_HOME"` が `/usr/lib/jvm/temurin-21-jdk-amd64`
 - [ ] `./mvnw -v` で `Java version: 21.x.x, vendor: Eclipse Adoptium` が表示される
