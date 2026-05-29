@@ -58,3 +58,4 @@ oracle-data/
 
 # Local tooling (PlantUML jar など、各自ローカルで取得する成果物)
 tools/
+tmp/
