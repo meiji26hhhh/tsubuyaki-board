@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TROUBLESHOOTING</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">html {font-size: 12px;}body {font-family: system-ui, sans-serif;line-height: 1.7;margin: 2rem auto;padding: 0 1.5rem;max-width: 900px;}h1 {font-size: 1.9rem;font-weight: 700;border-bottom: 3px solid #444;padding-bottom: 0.3rem;margin-top: 3rem;margin-bottom: 1.5rem;}h2 {font-size: 1.6rem;font-weight: 600;border-left: 5px solid #666;padding-left: 0.6rem;margin-top: 2.5rem;margin-bottom: 1rem;}h3 {font-size: 1.3rem;font-weight: 600;border-left: 3px solid #999;padding-left: 0.5rem;margin-top: 2rem;margin-bottom: 0.8rem;}p {margin: 1rem 0;}ul, ol {padding-left: 1.5rem;margin: 1rem 0;}li {margin: 0.3rem 0;}table {width: 100%;border-collapse: collapse;margin: 1.5rem 0;table-layout: fixed;}th, td {padding: 0.5rem;border: 1px solid #ccc;text-align: left;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;}th {background-color: #f0f0f0;font-weight: 600;}@media print {th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}code {font-family: Consolas, "Courier New", monospace;background: #f5f5f5;padding: 0.1rem 0.3rem;border-radius: 3px;}pre code {display: block;padding: 1rem;overflow-x: auto;}img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#troubleshooting-受講生向け-faq" id="toc-troubleshooting-受講生向け-faq">TROUBLESHOOTING — 受講生向け FAQ</a>
+<ul>
+<li><a href="#セットアップ" id="toc-セットアップ">セットアップ</a></li>
+<li><a href="#codex" id="toc-codex">Codex</a></li>
+<li><a href="#oracle-xe" id="toc-oracle-xe">Oracle XE</a></li>
+<li><a href="#ビルド" id="toc-ビルド">ビルド</a></li>
+<li><a href="#git-github" id="toc-git-github">Git / GitHub</a></li>
+<li><a href="#git-操作の安全ガイド" id="toc-git-操作の安全ガイド">Git 操作の安全ガイド</a></li>
+<li><a href="#最後の手段" id="toc-最後の手段">最後の手段</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="troubleshooting-受講生向け-faq" class="level1">
+<h1>TROUBLESHOOTING — 受講生向け FAQ</h1>
+<p>困ったらまず <code>bash scripts/doctor.sh</code> を実行。それでも分からなければ下記を参照。 緊急ではない Git 操作の安全策は本ページ末尾の<a href="#git-操作の安全ガイド">Git 操作の安全ガイド</a>も参照。</p>
+<section id="セットアップ" class="level2">
+<h2>セットアップ</h2>
+<section id="q1.-wsl---install-が機能が無効ですで失敗する" class="level3">
+<h3>Q1. <code>wsl --install</code> が「機能が無効です」で失敗する</h3>
+<p>🪟 管理者 PowerShell で：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Enable-WindowsOptionalFeature <span class="op">-</span>Online <span class="op">-</span>FeatureName VirtualMachinePlatform <span class="op">-</span>All <span class="op">-</span>NoRestart</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Enable-WindowsOptionalFeature <span class="op">-</span>Online <span class="op">-</span>FeatureName Microsoft-Windows-Subsystem-Linux <span class="op">-</span>All <span class="op">-</span>NoRestart</span></code></pre></div>
+<p>PC 再起動 → 再度 🪟 管理者 PowerShell で：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>wsl <span class="op">--</span>install <span class="op">-</span>d Ubuntu-22<span class="op">.</span><span class="dv">04</span> <span class="op">--</span>no-launch</span></code></pre></div>
+<p>完了後にスタートメニューから「Ubuntu」を起動して初回ユーザ設定。</p>
+</section>
+<section id="q2.-pleiades-の文字化け-ms932-で-.java-が読めない" class="level3">
+<h3>Q2. Pleiades の文字化け (MS932 で <code>.java</code> が読めない)</h3>
+<p><code>C:\Pleiades\eclipse\eclipse.ini</code> の末尾に追加して Eclipse 再起動:</p>
+<pre><code>-Dfile.encoding=UTF-8</code></pre>
+<p>Eclipse 内 Preferences &gt; General &gt; Workspace &gt; Text file encoding = UTF-8 にする。</p>
+</section>
+<section id="q3.-eclipse-と-maven-の二重ビルドで-target-が壊れる" class="level3">
+<h3>Q3. Eclipse と Maven の二重ビルドで <code>target/</code> が壊れる</h3>
+<p>Eclipse の Project &gt; Build Automatically をオフに。Eclipse はあくまでエディタとして使い、ビルドは WSL の <code>./mvnw</code> で。</p>
+</section>
+</section>
+<section id="codex" class="level2">
+<h2>Codex</h2>
+<section id="q4.-codex-shell-で-openai_api_key-未設定エラー" class="level3">
+<h3>Q4. <code>codex-shell</code> で <code>OPENAI_API_KEY</code> 未設定エラー</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">read</span> <span class="at">-rsp</span> <span class="st">&#39;OPENAI_API_KEY: &#39;</span> <span class="va">OPENAI_API_KEY</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">printf</span> <span class="st">&#39;\nexport OPENAI_API_KEY=%q\n&#39;</span> <span class="st">&quot;</span><span class="va">$OPENAI_API_KEY</span><span class="st">&quot;</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bashrc</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span></span></code></pre></div>
+<p>値は画面や履歴に表示しない。<code>~/.bashrc</code> に書いておくと毎回入れずに済む。</p>
+</section>
+<section id="q4-2.-codex-がコマンド実行で-codex-guard-と出して止まる" class="level3">
+<h3>Q4-2. Codex がコマンド実行で <code>[codex-guard]</code> と出して止まる</h3>
+<p>研修ハーネスがブロックした合図。<strong>そのまま再試行しないこと</strong>。ハーネスは「研修中に必要のない破壊的操作」を止める多層防御です。</p>
+<pre><code>[codex-guard] rm は研修ハーネスでブロックされました。
+理由: システム/機密パスの削除は禁止 (rm -rf /, rm -rf ~, rm -rf . など)
+コマンド: rm -rf /workspace</code></pre>
+<p>このような出力が出たら、以下の順で対応：</p>
+<ol type="1">
+<li><p><strong>Codex に「代替案を出して」と返す</strong>。ハーネスは Codex のためのレールで、迂回する必要はない。</p></li>
+<li><p>それでも必要に見える操作（典型例: 大量のテンポラリファイルの一括削除）は <strong>コンテナを抜けて</strong> WSL 側で自分の手で実行する：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span>                                          <span class="co"># 📦 コンテナを抜ける</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 🐧 WSL 側で実行</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /mnt/c/workspace/<span class="op">&lt;</span>repo<span class="op">&gt;</span>/target/</span></code></pre></div></li>
+<li><p>履歴は <code>/tmp/codex-guard.log</code>（コンテナ内）で確認可能。何度も同じ拒否が出るなら、プロンプト設計を見直すサイン。</p></li>
+</ol>
+</section>
+<section id="q4-3.-codex-に-.env-の中身を聞いても答えない" class="level3">
+<h3>Q4-3. Codex に <code>.env</code> の中身を聞いても答えない</h3>
+<p>仕様。<code>/workspace/.env</code> は研修ハーネスで <code>/dev/null</code> 上書きマウントされており、コンテナ内からは「空ファイル」に見える。これは <code>OPENAI_API_KEY</code> や DB パスワードが Codex のコンテキストに渡らないための保護機構。</p>
+<p>API キーや DB パスワードを操作したい場合は、コンテナを抜けて WSL 側で <code>.env</code> を直接編集すること。</p>
+</section>
+<section id="q5.-codex-が大量のファイルを書き換えはじめた" class="level3">
+<h3>Q5. Codex が大量のファイルを書き換えはじめた</h3>
+<p><strong>まず中断、次に状況確認、最後に破棄判断</strong>の順で。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Codex 側で Ctrl+C で中断 (📦 コンテナ内、または codex プロセスを kill)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. シェルに戻ったら、まず何が変わったか把握する</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status                 <span class="co"># 変更ファイル一覧</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> diff                   <span class="co"># 内容を確認（量が多ければ git diff --stat で件数だけ）</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. (オプション) 一部を救いたい場合は退避してから戻す</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;codex-runaway-</span><span class="va">$(</span><span class="fu">date</span> +%H%M%S<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 後で `git stash list` で確認、`git stash pop` で戻せる</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 戻す対象をファイル単位で決める</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> restore src/main/java/com/example/tsubuyaki/controller/PostController.java</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 新規ファイルを消す場合も、git status で確認した上で個別に rm &lt;file&gt;</span></span></code></pre></div>
+<blockquote>
+<p>⚠️ 全変更の一括破棄や untracked の一括削除は、研修中の通常手順では使いません。必要に見える場合は講師に相談し、まず <code>git stash push -u</code> で退避してください。</p>
+</blockquote>
+<p>その後、AGENTS.md の「触ってよいパス」をプロンプトに添えて再依頼。</p>
+</section>
+<section id="q6.-codex-が-thutext-を使ったテンプレートを生成した" class="level3">
+<h3>Q6. Codex が <code>th:utext</code> を使ったテンプレートを生成した</h3>
+<p>AGENTS.md のセキュリティ規約違反。<code>.codex/prompts/review.md</code> をかぶせてセルフ修正させる:</p>
+<pre><code>.codex/prompts/review.md の内容を実行して、現在の diff を XSS / SQLi / ハードコード観点でレビューしてください。</code></pre>
+</section>
+</section>
+<section id="oracle-xe" class="level2">
+<h2>Oracle XE</h2>
+<section id="q7.-bash-scriptsstart-oracle.sh-がタイムアウトする" class="level3">
+<h3>Q7. <code>bash scripts/start-oracle.sh</code> がタイムアウトする</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> logs tsubuyaki-oracle <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-n</span> 50</span></code></pre></div>
+<p><code>DATABASE IS READY TO USE!</code> が出ていれば healthcheck の遅れだけ。1 分待ってから:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> exec tsubuyaki-oracle healthcheck.sh</span></code></pre></div>
+<p>それでもダメなら <strong>H2 に逃がす</strong>:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>h2 <span class="ex">./mvnw</span> spring-boot:run</span></code></pre></div>
+</section>
+<section id="q8.-接続時に-ora-01017-invalid-usernamepassword" class="level3">
+<h3>Q8. 接続時に <code>ORA-01017: invalid username/password</code></h3>
+<p><code>.env</code> の <code>ORACLE_APP_PWD</code> と <code>application-local.yml</code> の参照名が一致しているか確認。 コンテナを作り直すと <code>.env</code> の値が再反映される:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> compose down <span class="at">--volumes</span> <span class="kw">&amp;&amp;</span> <span class="fu">bash</span> scripts/start-oracle.sh</span></code></pre></div>
+</section>
+<section id="q9.-h2-vs-oracle-で--ph2-verify-だけ落ちる" class="level3">
+<h3>Q9. <code>H2 vs Oracle</code> で <code>-Ph2 verify</code> だけ落ちる</h3>
+<ul>
+<li><code>SYSDATE</code> を使っていないか → <code>Instant.now()</code> に置き換える</li>
+<li>ID 採番が <code>IDENTITY</code> になっていないか → <code>@SequenceGenerator</code> に統一</li>
+<li>予約語 (USER, DATE 等) をテーブル名・カラム名に使っていないか</li>
+</ul>
+</section>
+</section>
+<section id="ビルド" class="level2">
+<h2>ビルド</h2>
+<section id="q10.-.mvnw-verify-が-checkstyle-警告で止まる" class="level3">
+<h3>Q10. <code>./mvnw verify</code> が Checkstyle 警告で止まる</h3>
+<p>研修中はデフォルトで <code>failOnViolation=false</code> (警告のみ)。 もし fail で止まっている場合は <code>-Pstrict</code> を付けていないか確認。</p>
+</section>
+<section id="q11.-jacoco-の閾値未達で-fail" class="level3">
+<h3>Q11. JaCoCo の閾値未達で fail</h3>
+<p>序盤 60%、中盤 70%、仕上げ 80% にスライドする（フェーズ「投稿一覧」「リファクタ＋カバレッジ80%到達」「仕上げ」で段階引き上げ）。デフォルトは序盤 (60%) 設定。</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day2</span> verify   <span class="co"># 70% に上げる (プロファイル名は内部識別子)</span></span></code></pre></div>
+</section>
+</section>
+<section id="git-github" class="level2">
+<h2>Git / GitHub</h2>
+<section id="q12.-crlf-lf-の差分が大量に出る" class="level3">
+<h3>Q12. CRLF / LF の差分が大量に出る</h3>
+<p>通常は <code>setup.ps1</code> が <code>core.autocrlf=input</code> を自動設定するので発生しません。別マシンに環境を持ち込んだ場合のみ：</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.autocrlf input   <span class="co"># WSL / Mac でも同じ</span></span></code></pre></div>
+<p>リポ内の <code>.gitattributes</code> で <code>* text=auto eol=lf</code> を強制しているので、新規ファイルは LF になる。</p>
+<p>既存ファイルを LF に揃え直したい場合（破壊操作のため手順厳守）：</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ⚠️ 危険: 以下は「未コミット変更を全消去」する操作。必ず順序を守る。</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 未コミット変更があるか確認</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 未コミット変更があるなら、まず必ず stash で退避</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;before-eol-normalize-</span><span class="va">$(</span><span class="fu">date</span> +%H%M%S<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. .gitattributes に従って再正規化</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add <span class="at">--renormalize</span> .    <span class="co"># 作業ツリーを破壊せず、改行コードの正規化差分を作る</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;chore: normalize line endings to LF&quot;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 退避していた場合は戻す</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop              <span class="co"># コンフリクトしたら手動マージ</span></span></code></pre></div>
+<blockquote>
+<p>⚠️ 改行コードの正規化で一括破棄コマンドは使いません。差分を <code>git diff --staged</code> で確認してから commit してください。</p>
+</blockquote>
+</section>
+<section id="q13.-classroom-assignment-url-でyou-dont-have-accessと出る" class="level3">
+<h3>Q13. Classroom Assignment URL で「You don’t have access」と出る</h3>
+<ul>
+<li>自分の GitHub アカウントが正しく Organization に招待されているか</li>
+<li>メールに届く Organization の招待を Accept したか（GitHub の Notifications で確認可能）</li>
+<li>SAML SSO 必須の Organization なら、ブラウザで Organization トップを開いて SSO 認証を済ませる</li>
+<li>それでもダメなら講師に <strong>自分の GitHub ID</strong> を伝えて、Organization 側で seat 状態を確認してもらう</li>
+</ul>
+<hr />
+</section>
+</section>
+<section id="git-操作の安全ガイド" class="level2">
+<h2>Git 操作の安全ガイド</h2>
+<p>「捨てる」「戻す」「退避する」の使い分けの早見表。<strong>未コミット変更がある時は必ず <code>git status</code> で確認してから</strong>。</p>
+<section id="ケース別フロー" class="level3">
+<h3>ケース別フロー</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>やりたいこと</th>
+<th>推奨コマンド</th>
+<th>注意</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>今の変更を一時退避（後で戻したい）</td>
+<td><code>git stash push -u -m &quot;&lt;理由&gt;&quot;</code></td>
+<td><code>-u</code> で新規ファイルも含む。後で <code>git stash pop</code></td>
+</tr>
+<tr>
+<td>1 ファイルだけ変更を破棄</td>
+<td><code>git restore &lt;file&gt;</code></td>
+<td>tracked ファイルのみ。新規ファイルは消えない</td>
+</tr>
+<tr>
+<td>複数ファイルの変更を退避</td>
+<td><code>git stash push -u -m &quot;&lt;理由&gt;&quot;</code></td>
+<td>戻す可能性がある場合の第一選択</td>
+</tr>
+<tr>
+<td>ステージング（<code>git add</code>）を取り消す</td>
+<td><code>git restore --staged &lt;file&gt;</code></td>
+<td>作業ツリーの変更は残る</td>
+</tr>
+<tr>
+<td>直前のコミットメッセージだけ修正</td>
+<td><code>git commit --amend</code></td>
+<td>push 済みなら force 必要 → 避ける</td>
+</tr>
+<tr>
+<td>直前のコミットを取り消したい（変更は残す）</td>
+<td><code>git reset --soft HEAD^</code></td>
+<td>変更は staging に残る</td>
+</tr>
+<tr>
+<td>直前のコミットを打ち消す</td>
+<td><code>git revert HEAD</code></td>
+<td>push 済みでも安全。履歴を書き換えない</td>
+</tr>
+<tr>
+<td>push 済みのコミットを打ち消す</td>
+<td><code>git revert &lt;commit&gt;</code></td>
+<td>新規の打ち消しコミットを作る安全な方法</td>
+</tr>
+<tr>
+<td>新規ファイル（untracked）を消したい</td>
+<td><code>rm &lt;file&gt;</code></td>
+<td><code>git status</code> で確認したファイルを個別に消す</td>
+</tr>
+<tr>
+<td>ブランチごとなかったことにしたい</td>
+<td><code>git switch main &amp;&amp; git branch -D feature/xxx</code></td>
+<td>ローカルだけ。push 済みは別操作</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="鉄則" class="level3">
+<h3>鉄則</h3>
+<ol type="1">
+<li><strong>変更を捨てる前に必ず <code>git status</code> と <code>git diff</code> で内容を確認</strong></li>
+<li><strong>惜しい変更があれば必ず <code>git stash push -u</code> で退避</strong></li>
+<li><strong><code>git push --force</code>（main 系）は禁止</strong>（<a href="../AGENTS.md">AGENTS.md §7.3</a>）</li>
+<li><strong>完全に詰まったら、リポ自体を Template から再生成</strong>したほうが安全（後述の「最後の手段」参照）</li>
+</ol>
+</section>
+<section id="stash-の使い方クイック" class="level3">
+<h3>stash の使い方クイック</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;実験中-2026-05-24&quot;</span>   <span class="co"># 退避（-u で新規ファイルも含む）</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash list                              <span class="co"># 退避一覧</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash show <span class="at">-p</span> stash@{0}                 <span class="co"># 中身を diff で見る</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop                               <span class="co"># 最新の stash を戻す（同時に削除）</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash apply stash@{1}                   <span class="co"># 戻すだけ（削除しない）</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash drop stash@{0}                    <span class="co"># 退避を削除</span></span></code></pre></div>
+<hr />
+</section>
+</section>
+<section id="最後の手段" class="level2">
+<h2>最後の手段</h2>
+<ul>
+<li>環境を破壊した気がする → <code>bash scripts/setup-wsl.sh --rollback</code> → 再セットアップ</li>
+<li>リポを壊した気がする → 自分のリポを Settings から delete → Classroom Assignment URL を再度踏んで Template から再生成</li>
+<li>何もかも分からない → 講師に「何を試して何が起きたか」を 3 行で報告する</li>
+</ul>
+</section>
+</section>
+</body>
+</html>

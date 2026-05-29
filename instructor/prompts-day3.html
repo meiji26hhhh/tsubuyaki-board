@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>prompts-day3</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">html {font-size: 12px;}body {font-family: system-ui, sans-serif;line-height: 1.7;margin: 2rem auto;padding: 0 1.5rem;max-width: 900px;}h1 {font-size: 1.9rem;font-weight: 700;border-bottom: 3px solid #444;padding-bottom: 0.3rem;margin-top: 3rem;margin-bottom: 1.5rem;}h2 {font-size: 1.6rem;font-weight: 600;border-left: 5px solid #666;padding-left: 0.6rem;margin-top: 2.5rem;margin-bottom: 1rem;}h3 {font-size: 1.3rem;font-weight: 600;border-left: 3px solid #999;padding-left: 0.5rem;margin-top: 2rem;margin-bottom: 0.8rem;}p {margin: 1rem 0;}ul, ol {padding-left: 1.5rem;margin: 1rem 0;}li {margin: 0.3rem 0;}table {width: 100%;border-collapse: collapse;margin: 1.5rem 0;table-layout: fixed;}th, td {padding: 0.5rem;border: 1px solid #ccc;text-align: left;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;}th {background-color: #f0f0f0;font-weight: 600;}@media print {th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}code {font-family: Consolas, "Courier New", monospace;background: #f5f5f5;padding: 0.1rem 0.3rem;border-radius: 3px;}pre code {display: block;padding: 1rem;overflow-x: auto;}img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#codex-プロンプト雛形-フェーズ別" id="toc-codex-プロンプト雛形-フェーズ別">Codex プロンプト雛形 (フェーズ別)</a>
+<ul>
+<li><a href="#セットアップ確認-0-1時間目" id="toc-セットアップ確認-0-1時間目">セットアップ確認 (0-1時間目)</a></li>
+<li><a href="#投稿一覧-m1-2-4時間目" id="toc-投稿一覧-m1-2-4時間目">投稿一覧 (M1) (2-4時間目)</a></li>
+<li><a href="#投稿作成バリデーション-m2m3-4.25-6.5時間目" id="toc-投稿作成バリデーション-m2m3-4.25-6.5時間目">投稿作成＋バリデーション (M2/M3) (4.25-6.5時間目)</a></li>
+<li><a href="#投稿詳細ヘルスチェック-m4m5-6.5-8時間目" id="toc-投稿詳細ヘルスチェック-m4m5-6.5-8時間目">投稿詳細＋ヘルスチェック (M4/M5) (6.5-8時間目)</a></li>
+<li><a href="#いいね機能-s1-9.5-11.5時間目" id="toc-いいね機能-s1-9.5-11.5時間目">いいね機能 (S1) (9.5-11.5時間目)</a></li>
+<li><a href="#仕上げpr整流化プロンプトカタログ作成-17-19時間目" id="toc-仕上げpr整流化プロンプトカタログ作成-17-19時間目">仕上げ＋PR整流化＋プロンプトカタログ作成 (17-19時間目)</a></li>
+<li><a href="#相互レビュー-19-20時間目" id="toc-相互レビュー-19-20時間目">相互レビュー (19-20時間目)</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="codex-プロンプト雛形-フェーズ別" class="level1">
+<h1>Codex プロンプト雛形 (フェーズ別)</h1>
+<p>各フェーズで受講生が Codex に与える指示の雛形。</p>
+<p>「セットアップ確認」「投稿一覧」「投稿作成」までは雛形をそのまま配布、 「投稿詳細」以降は <strong>受講生が自分で書く</strong>ようにすると学習効果が高い。</p>
+<hr />
+<section id="セットアップ確認-0-1時間目" class="level2">
+<h2>セットアップ確認 (0-1時間目)</h2>
+<p>(プロンプトは不要。<code>bash scripts/doctor.sh</code> と <code>bash scripts/start-oracle.sh</code> のみ)</p>
+<hr />
+</section>
+<section id="投稿一覧-m1-2-4時間目" class="level2">
+<h2>投稿一覧 (M1) (2-4時間目)</h2>
+<pre><code>タスク: 投稿一覧画面 (GET /posts) を TDD で実装してください。
+
+要件:
+  - Post エンティティは id:Long(SEQUENCE), author:String(NOT NULL, 1..30 文字),
+    body:String(NOT NULL, 1..280 文字), createdAt:Instant を持つ
+    (既に domain/Post.java にあるのでそのまま使う)。
+  - PostRepository に findTop50ByOrderByCreatedAtDesc() を追加し、
+    DataJpaTest で「createdAt 降順かつ最大 50 件」を検証する失敗テストを書く。
+  - PostService.latest() を実装し、Repository を呼んで結果を返す。
+  - PostController は GET /posts で posts/list.html をレンダリングし、
+    model 属性 &quot;posts&quot; に List&lt;Post&gt; を積む。
+
+順序:
+  1. PostRepositoryTest を DataJpaTest で書き、createdAt 降順を検証する失敗テストを作る
+  2. テストを通す最小実装を書く (Repository → Service)
+  3. PostControllerTest を WebMvcTest で書き、model に &quot;posts&quot; 属性が積まれることを検証する
+  4. Controller を実装 (Thymeleaf テンプレは既存のものを使う)
+  5. ./mvnw -B -Ph2 test で全テストが緑になることを確認
+  6. `feat(post): 投稿一覧 (GET /posts) を追加` でコミット
+
+制約:
+  - AGENTS.md と .codex/instructions.md を必ず参照
+  - sample/ 配下のテストは削除しない
+  - `th:utext` を使わない</code></pre>
+<hr />
+</section>
+<section id="投稿作成バリデーション-m2m3-4.25-6.5時間目" class="level2">
+<h2>投稿作成＋バリデーション (M2/M3) (4.25-6.5時間目)</h2>
+<pre><code>タスク: 投稿登録 (GET/POST /posts) を TDD で追加してください。
+
+要件:
+  - PostForm は既存のものを使う (author 1..30 文字、body 1..280 文字、空白のみ NG)
+  - POST 成功時は 302 で /posts へリダイレクト
+  - POST 失敗時は 200 で posts/form.html を再表示しエラーを出す
+  - サービス層 PostService.create(author, body) を追加し、Controller から呼ぶ
+
+順序:
+  1. PostControllerTest にバリデーション NG ケース (空 body) のテストを追加 (RED)
+  2. ServiceTest で正常系・異常系を追加 (RED)
+  3. 実装 (Service → Controller の順)
+  4. 手動確認: ./mvnw -Plocal spring-boot:run で起動し、ブラウザで /posts/new
+  5. `feat(post): 投稿作成フォームとバリデーションを追加` でコミット
+
+制約:
+  - Bean Validation アノテーションを使う。`if (x == null) throw ...` の手書きチェックは禁止
+  - フォームには `_csrf` トークンを含める (Spring Security 適用後)</code></pre>
+<hr />
+</section>
+<section id="投稿詳細ヘルスチェック-m4m5-6.5-8時間目" class="level2">
+<h2>投稿詳細＋ヘルスチェック (M4/M5) (6.5-8時間目)</h2>
+<p>(受講生が自分で書く。雛形だけ提供)</p>
+<pre><code>タスク: 投稿詳細 (GET /posts/{id}) を TDD で実装し、投稿一覧／投稿作成をリファクタしてください。
+
+受入基準:
+  - &lt;ここに受講生が自分で書く&gt;
+
+順序:
+  1. ControllerTest で「存在する id → 200 + posts/detail ビュー」「存在しない id → 404」
+  2. ...</code></pre>
+<hr />
+</section>
+<section id="いいね機能-s1-9.5-11.5時間目" class="level2">
+<h2>いいね機能 (S1) (9.5-11.5時間目)</h2>
+<pre><code>タスク: 詳細画面で押せるいいねトグルを実装してください。
+
+要件:
+  - POST /posts/{id}/likes は同一 clientHash (= SHA-256(IP + UA + salt) の先頭 8 文字)
+    が再度押したら解除 (冪等トグル)
+  - PostLike テーブルを Flyway V2 で作成 (Oracle / H2(MODE=Oracle) 両対応 SQL)
+  - 詳細画面にいいね数と Like ボタンを表示
+
+TDD:
+  1. PostLikeRepositoryTest (clientHash で existsByPostIdAndClientHash)
+  2. PostLikeServiceTest (冪等性: 同一 clientHash の連続 POST で count が 0→1→0)
+  3. ControllerTest (POST 後 302 で詳細にリダイレクト)
+  4. 実装
+
+セキュリティ:
+  - IP は生で DB に保存しない
+  - salt は @Value(&quot;${app.like.salt}&quot;) で application-*.yml から取る
+  - .codex/prompts/review.md でセルフレビューする</code></pre>
+<hr />
+</section>
+<section id="仕上げpr整流化プロンプトカタログ作成-17-19時間目" class="level2">
+<h2>仕上げ＋PR整流化＋プロンプトカタログ作成 (17-19時間目)</h2>
+<pre><code>タスク: ここまでの実装を本番に出せる品質に整えてください。
+
+観点:
+  1. エラーハンドラ (@ControllerAdvice) で 404 / 500 を整形
+  2. README.md の「使い方」を実装に合わせて更新
+  3. JaCoCo HTML レポートを生成し、カバレッジ 80% 以上か確認 + `docs/prompts-i-used.md` に 3 件以上のプロンプトを記入
+  4. .codex/prompts/review.md で diff 全体を XSS / SQLi / ハードコード観点でセルフレビュー
+  5. PR を作成し、.github/pull_request_template.md の 5 セクションを全部埋める
+
+制約:
+  - 新機能の追加は禁止 (品質向上だけ)
+  - スコープ外のファイルは触らない</code></pre>
+<hr />
+</section>
+<section id="相互レビュー-19-20時間目" class="level2">
+<h2>相互レビュー (19-20時間目)</h2>
+<p>(プロンプトは不要。受講生が PR を画面共有して、口頭で議論)</p>
+<p>レビュー観点: - AGENTS.md のセキュリティ規約を守っているか - テストの DisplayName が意味のある日本語か - コミット粒度が適切か - 「自分で書く部分」と「Codex に任せる部分」のバランス</p>
+</section>
+</section>
+</body>
+</html>

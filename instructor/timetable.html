@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>timetable</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">html {font-size: 12px;}body {font-family: system-ui, sans-serif;line-height: 1.7;margin: 2rem auto;padding: 0 1.5rem;max-width: 900px;}h1 {font-size: 1.9rem;font-weight: 700;border-bottom: 3px solid #444;padding-bottom: 0.3rem;margin-top: 3rem;margin-bottom: 1.5rem;}h2 {font-size: 1.6rem;font-weight: 600;border-left: 5px solid #666;padding-left: 0.6rem;margin-top: 2.5rem;margin-bottom: 1rem;}h3 {font-size: 1.3rem;font-weight: 600;border-left: 3px solid #999;padding-left: 0.5rem;margin-top: 2rem;margin-bottom: 0.8rem;}p {margin: 1rem 0;}ul, ol {padding-left: 1.5rem;margin: 1rem 0;}li {margin: 0.3rem 0;}table {width: 100%;border-collapse: collapse;margin: 1.5rem 0;table-layout: fixed;}th, td {padding: 0.5rem;border: 1px solid #ccc;text-align: left;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;}th {background-color: #f0f0f0;font-weight: 600;}@media print {th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}code {font-family: Consolas, "Courier New", monospace;background: #f5f5f5;padding: 0.1rem 0.3rem;border-radius: 3px;}pre code {display: block;padding: 1rem;overflow-x: auto;}img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#演習タイムテーブル-講師用全21時間目" id="toc-演習タイムテーブル-講師用全21時間目">演習タイムテーブル (講師用・全21時間目)</a>
+<ul>
+<li><a href="#講師の前日チェック-1日目朝ai講座開始前" id="toc-講師の前日チェック-1日目朝ai講座開始前">講師の前日チェック (1日目朝・AI講座開始前)</a></li>
+<li><a href="#講師の当日持ち物" id="toc-講師の当日持ち物">講師の当日持ち物</a></li>
+<li><a href="#日通しでの運営原則" id="toc-日通しでの運営原則">3日通しでの運営原則</a></li>
+<li><a href="#各日終業時のチェックポイント" id="toc-各日終業時のチェックポイント">各日終業時のチェックポイント</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="演習タイムテーブル-講師用全21時間目" class="level1">
+<h1>演習タイムテーブル (講師用・全21時間目)</h1>
+<p>時間表記は「演習開始から N時間目」で統一する。演習は 0-19時間目、成果まとめは 19-21時間目。物理日は副題として併記。</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>時間目</th>
+<th>物理日</th>
+<th>フェーズ名</th>
+<th>受講生の動き</th>
+<th>講師の動き</th>
+<th>想定リスク</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0h-1h</td>
+<td>1日目</td>
+<td>セットアップ確認</td>
+<td>Doctor 実行、Oracle 起動、初回 <code>./mvnw -B -Ph2 verify</code> 緑、Eclipse 自動ビルド OFF</td>
+<td>Doctor の NG を 1 人ずつ確認、Pleiades 文字コードを念押し</td>
+<td>Pleiades の MS932 文字化け、Podman Desktop 未起動</td>
+</tr>
+<tr>
+<td>1h-2h</td>
+<td>1日目</td>
+<td>仕様読解＋プロンプト準備</td>
+<td>EXERCISES.md を読み込み、TDD プロンプト雛形を自分用に整える、M1 受入基準を自分の言葉で再記述</td>
+<td>プロンプト読み合わせ、<code>th:utext</code> 不使用など規約の念押し</td>
+<td>EXERCISES を流し読みして要件を取り違える</td>
+</tr>
+<tr>
+<td>2h-4h</td>
+<td>1日目</td>
+<td>投稿一覧 (M1)</td>
+<td>feature/m1 ブランチ、TDD で Repository → Service → Controller、PR 作成</td>
+<td>プロンプトのレビュー、生成コードを 1 人ずつ目視</td>
+<td>Codex が <code>findAll().subList()</code> で済ませて DataJpaTest が薄い</td>
+</tr>
+<tr>
+<td>4h-4.25h</td>
+<td>2日目</td>
+<td>ウォームアップ</td>
+<td>doctor –quick、前日 PR のスモークテストとセルフレビュー</td>
+<td>前日コミット品質を確認、再現性 NG を早期発見</td>
+<td>前日環境差分で起動失敗</td>
+</tr>
+<tr>
+<td>4.25h-6.5h</td>
+<td>2日目</td>
+<td>投稿作成＋バリデーション (M2/M3)</td>
+<td>フォーム描画、バリデーション込みで POST 実装</td>
+<td>Bean Validation の手書きチェック化を阻止</td>
+<td><code>@NotBlank</code> を <code>if (... == null)</code> にしがち</td>
+</tr>
+<tr>
+<td>6.5h-8h</td>
+<td>2日目</td>
+<td>投稿詳細＋ヘルスチェック (M4/M5)</td>
+<td>404 ハンドリング、<code>/actuator/health</code> 緑、<code>-Pcoverage-day2</code> (70%) 緑</td>
+<td>Controller での <code>Optional.isEmpty()</code> 早期 return を確認、70% gate 未達を早期検出</td>
+<td><code>orElseThrow</code> で 500 系を出してしまう</td>
+</tr>
+<tr>
+<td>8h-9.5h</td>
+<td>2日目</td>
+<td>リファクタ＋カバレッジ80%到達</td>
+<td>JaCoCo 確認、<code>-Pcoverage-day3 -Pstrict</code> 緑、Service の Spring 非依存化</td>
+<td>「Codex が書いたコードを 1 つ選んで日本語で説明する」5 分セッションを挟む</td>
+<td>カバレッジ偽装テストを書きがち</td>
+</tr>
+<tr>
+<td>9.5h-11.5h</td>
+<td>2日目</td>
+<td>いいね機能 (S1)</td>
+<td>Flyway V2、いいねトグルの冪等性、clientHash のハッシュ保存</td>
+<td>IP の生保存を NG として指摘、salt のハードコード阻止</td>
+<td>clientHash の salt をハードコード</td>
+</tr>
+<tr>
+<td>11.5h-13h</td>
+<td>2日目</td>
+<td>キーワード検索 (S2)</td>
+<td><code>?q=</code> 実装、bind 変数、空文字フォールバック</td>
+<td><code>@Query</code> の文字列連結を即時 NG</td>
+<td>文字列連結で SQL を組んで Checkstyle 警告</td>
+</tr>
+<tr>
+<td>13h-13.25h</td>
+<td>3日目</td>
+<td>ウォームアップ</td>
+<td>doctor –quick、前日 PR のセルフレビュー</td>
+<td>前日終端のスモークと差分確認</td>
+<td>朝イチの環境差分</td>
+</tr>
+<tr>
+<td>13.25h-14.5h</td>
+<td>3日目</td>
+<td>投稿者拡張＋UX微調整 (S3)</td>
+<td>アバター色、フォーム改善、エラーハンドラ</td>
+<td>UX 微調整と機能追加のコミット分離を確認</td>
+<td>機能と UI 修正を 1 コミットに混ぜがち</td>
+</tr>
+<tr>
+<td>14.5h-17h</td>
+<td>3日目</td>
+<td>COULD選択枠 (C1/C2/C3から1つ)</td>
+<td>タグ／論理削除／REST API のいずれかを完了</td>
+<td>開始時に 3 課題比較ミニガイダンス 10 分、選択判断を支援</td>
+<td>全部やろうとしてどれも未完で終わる</td>
+</tr>
+<tr>
+<td>17h-19h</td>
+<td>3日目</td>
+<td>仕上げ＋PR整流化＋プロンプトカタログ作成</td>
+<td>PR 説明文整備、<code>docs/prompts-i-used.md</code> 作成、ルーブリック自己採点準備</td>
+<td>PR テンプレ 5 セクションと prompts-i-used.md の3件以上を確認</td>
+<td>PR タイトルが「色々修正」、prompts-i-used.md が空</td>
+</tr>
+<tr>
+<td>19h-20h</td>
+<td>3日目</td>
+<td>相互レビュー</td>
+<td>PR 画面共有、隣の人が 3 観点 (機能・テスト・コミット) でコメント</td>
+<td>1 人 1 つだけ「ここ良い」を全体共有</td>
+<td>レビューコメントが「いいね」だけ</td>
+</tr>
+<tr>
+<td>20h-21h</td>
+<td>3日目</td>
+<td>KPT＋講評＋自己採点</td>
+<td>KPT、15 点ルーブリックで自己採点</td>
+<td>「Codex を信用しすぎた / しなさすぎた」のハンドサインで距離感を言語化</td>
+<td>振り返りが具体的でない</td>
+</tr>
+</tbody>
+</table>
+<section id="講師の前日チェック-1日目朝ai講座開始前" class="level2">
+<h2>講師の前日チェック (1日目朝・AI講座開始前)</h2>
+<p>各受講生 PC で以下を踏ませる。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wsl <span class="op">-</span>l <span class="op">-</span>v                              <span class="co"># WSL2 + Ubuntu が出ること</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WSL</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> ps <span class="at">-a</span>                           <span class="co"># tsubuyaki-oracle が exited でも OK</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> image exists codex-devbox:latest <span class="kw">&amp;&amp;</span> <span class="bu">echo</span> OK</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">test</span> <span class="at">-n</span> <span class="st">&quot;</span><span class="va">${OPENAI_API_KEY</span><span class="op">:-</span><span class="va">}</span><span class="st">&quot;</span> <span class="kw">&amp;&amp;</span> <span class="bu">echo</span> <span class="st">&quot;OPENAI_API_KEY 設定済み&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> /mnt/c/workspace/<span class="op">&lt;</span>repo<span class="op">&gt;</span>/scripts/doctor.sh <span class="at">--quick</span></span></code></pre></div>
+</section>
+<section id="講師の当日持ち物" class="level2">
+<h2>講師の当日持ち物</h2>
+<ul>
+<li>予備 USB に WSL Ubuntu 22.04 イメージ (<code>wsl --export</code> で作っておく)</li>
+<li>予備の OPENAI_API_KEY (1 名分、緊急時に貸し出す)</li>
+<li>ホワイトボード or 画面共有用のラップトップ</li>
+<li>このリポの最新版を <code>git clone</code> した手元コピー (<code>git diff</code> をデモするため)</li>
+<li>COULD 選択枠 (14.5h 開始時) 用の 3 課題比較表</li>
+</ul>
+</section>
+<section id="日通しでの運営原則" class="level2">
+<h2>3日通しでの運営原則</h2>
+<ol type="1">
+<li><strong>0-1h で 30 分以上詰まったら強制的に H2 プロファイルに逃がす</strong>。受講生の DB トラブルで全員を止めない。</li>
+<li><strong>2日目朝・3日目朝の 0.25h はウォームアップ専用</strong>。前日 PR のスモークテストで再現性 NG を早期発見する。</li>
+<li><strong>2日目終業 (13時間目) で MUST 未完走の受講生はフォロー対象</strong>。3日目朝に H2 強制移行を含む救済策を提示する。</li>
+<li><strong>個別質問は時間を切って受ける</strong>。1 件 5 分で打ち切り、長引くものは昼休み or 終業後に。</li>
+<li><strong>Codex の操作画面を全員に 1 度ずつ見せてもらう</strong>。早い人を指名してデモにすると、遅い人が真似できる。</li>
+<li><strong><code>git status</code> → <code>git diff</code> → <code>git stash push -u</code> → <code>git restore &lt;file&gt;</code> の安全手順を必ず 1 回デモする</strong>。全変更破棄は通常手順にしない。</li>
+<li><strong>COULD 選択 (14.5h) の前にミニ全体ガイダンス 10 分</strong>。3 課題の難度比較と選び方を見せる。</li>
+<li><strong>17h-19h の仕上げで <code>docs/prompts-i-used.md</code> の記入状況を巡回確認</strong>。空のまま 20h を迎えさせない。</li>
+</ol>
+</section>
+<section id="各日終業時のチェックポイント" class="level2">
+<h2>各日終業時のチェックポイント</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>物理日</th>
+<th>時間目</th>
+<th>講師が確認すること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1日目終業</td>
+<td>4h</td>
+<td>M1 が PR 化されているか、main へマージ済みか</td>
+</tr>
+<tr>
+<td>2日目終業</td>
+<td>13h</td>
+<td>MUST 5項目 + SHOULD 2項目 (S1/S2) が main に入っているか、カバレッジ 80% 到達済みか</td>
+</tr>
+<tr>
+<td>3日目演習終了</td>
+<td>19h</td>
+<td>SHOULD 3項目 + COULD 1項目選択 + prompts-i-used.md が揃っているか</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</body>
+</html>

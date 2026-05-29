@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>rubric</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">html {font-size: 12px;}body {font-family: system-ui, sans-serif;line-height: 1.7;margin: 2rem auto;padding: 0 1.5rem;max-width: 900px;}h1 {font-size: 1.9rem;font-weight: 700;border-bottom: 3px solid #444;padding-bottom: 0.3rem;margin-top: 3rem;margin-bottom: 1.5rem;}h2 {font-size: 1.6rem;font-weight: 600;border-left: 5px solid #666;padding-left: 0.6rem;margin-top: 2.5rem;margin-bottom: 1rem;}h3 {font-size: 1.3rem;font-weight: 600;border-left: 3px solid #999;padding-left: 0.5rem;margin-top: 2rem;margin-bottom: 0.8rem;}p {margin: 1rem 0;}ul, ol {padding-left: 1.5rem;margin: 1rem 0;}li {margin: 0.3rem 0;}table {width: 100%;border-collapse: collapse;margin: 1.5rem 0;table-layout: fixed;}th, td {padding: 0.5rem;border: 1px solid #ccc;text-align: left;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;}th {background-color: #f0f0f0;font-weight: 600;}@media print {th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}code {font-family: Consolas, "Courier New", monospace;background: #f5f5f5;padding: 0.1rem 0.3rem;border-radius: 3px;}pre code {display: block;padding: 1rem;overflow-x: auto;}img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#完走判定ルーブリック-15-点満点11-点で合格" id="toc-完走判定ルーブリック-15-点満点11-点で合格">完走判定ルーブリック (15 点満点・11 点で合格)</a>
+<ul>
+<li><a href="#a.-機能要件-6-点" id="toc-a.-機能要件-6-点">A. 機能要件 (6 点)</a></li>
+<li><a href="#b.-テスト網羅-5-点" id="toc-b.-テスト網羅-5-点">B. テスト網羅 (5 点)</a></li>
+<li><a href="#c.-コミットの質-3-点" id="toc-c.-コミットの質-3-点">C. コミットの質 (3 点)</a></li>
+<li><a href="#d.-ai-協働の作法-1-点" id="toc-d.-ai-協働の作法-1-点">D. AI 協働の作法 (1 点)</a></li>
+<li><a href="#加点-採点には影響しないが講評で取り上げる" id="toc-加点-採点には影響しないが講評で取り上げる">加点 (採点には影響しないが講評で取り上げる)</a></li>
+<li><a href="#採点フォーマット-講師用" id="toc-採点フォーマット-講師用">採点フォーマット (講師用)</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="完走判定ルーブリック-15-点満点11-点で合格" class="level1">
+<h1>完走判定ルーブリック (15 点満点・11 点で合格)</h1>
+<p>各項目 1 点。受講生が自己採点した上で、講師が PR を見て最終採点する。</p>
+<section id="a.-機能要件-6-点" class="level2">
+<h2>A. 機能要件 (6 点)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>採点ガイド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td><code>GET /posts</code> がブラウザで開ける</td>
+<td>DB に行があるとリストに出る</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>フォームから投稿が登録される</td>
+<td>投稿後に一覧に反映される</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>バリデーションエラーが画面に表示される</td>
+<td>空 body で再表示 + エラー文言</td>
+</tr>
+<tr>
+<td>A4</td>
+<td><code>GET /posts/{id}</code> が動く</td>
+<td>404 ハンドリング含む</td>
+</tr>
+<tr>
+<td>A5</td>
+<td>SHOULD 3 つすべて完了 (S1/S2/S3)</td>
+<td>いいね / 検索 / 投稿者拡張 がそれぞれ動作</td>
+</tr>
+<tr>
+<td>A6</td>
+<td>COULD 選択枠 1 つ完了 (C1/C2/C3 のいずれか)</td>
+<td>タグ / 論理削除 / REST API のいずれかが動作</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="b.-テスト網羅-5-点" class="level2">
+<h2>B. テスト網羅 (5 点)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>採点ガイド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B1</td>
+<td>Repository テスト 1 本以上</td>
+<td><code>@DataJpaTest</code> を使っている</td>
+</tr>
+<tr>
+<td>B2</td>
+<td>Service テスト 1 本以上 (異常系含む)</td>
+<td>Mockito、<code>assertThatThrownBy</code> を使う</td>
+</tr>
+<tr>
+<td>B3</td>
+<td>Controller テスト 1 本以上</td>
+<td><code>@WebMvcTest</code>、<code>view().name()</code> と <code>model().attributeExists()</code></td>
+</tr>
+<tr>
+<td>B4</td>
+<td>main で <code>./mvnw -B -Ph2 verify</code> が緑</td>
+<td>最新 main をローカル clone して基本検証が BUILD SUCCESS</td>
+</tr>
+<tr>
+<td>B5</td>
+<td>仕上げ品質ゲートが緑</td>
+<td><code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code> が BUILD SUCCESS。JaCoCo line coverage 80% 以上、Checkstyle / SpotBugs 警告なし</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="c.-コミットの質-3-点" class="level2">
+<h2>C. コミットの質 (3 点)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>採点ガイド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td>Conventional Commits に従っている</td>
+<td><code>feat(post): ...</code> 形式</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>1 コミット = 1 関心事</td>
+<td>テスト + 実装は同コミットで可、UI 微調整と機能追加は分離</td>
+</tr>
+<tr>
+<td>C3</td>
+<td>PR 説明が pull_request_template.md の 5 セクションを埋めている</td>
+<td>「Codex に出した主要プロンプト」が空でない</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="d.-ai-協働の作法-1-点" class="level2">
+<h2>D. AI 協働の作法 (1 点)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>項目</th>
+<th>採点ガイド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td><code>docs/prompts-i-used.md</code> が提出されている</td>
+<td>少なくとも 3 つのプロンプトと「効いた / 効かなかった」のコメントが書かれている</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="加点-採点には影響しないが講評で取り上げる" class="level2">
+<h2>加点 (採点には影響しないが講評で取り上げる)</h2>
+<ul>
+<li>COULD を 2 つ以上完了</li>
+<li><code>MODE=Oracle</code> の落とし穴に 2 つ以上自力で気付いた</li>
+<li>Codex の生成コードを「ここはこう直しました」と言語化できる</li>
+<li>PR レビューで他者のコードに有意義なコメントを付けた</li>
+</ul>
+</section>
+<section id="採点フォーマット-講師用" class="level2">
+<h2>採点フォーマット (講師用)</h2>
+<pre><code>受講生: &lt;name&gt;
+リポ: https://github.com/&lt;user&gt;/&lt;repo&gt;
+PR: https://github.com/&lt;user&gt;/&lt;repo&gt;/pull/N
+
+A. 機能 [_/6]  A1[ ] A2[ ] A3[ ] A4[ ] A5[ ] A6[ ]
+B. テスト [_/5] B1[ ] B2[ ] B3[ ] B4[ ] B5[ ]
+C. コミット [_/3] C1[ ] C2[ ] C3[ ]
+D. AI 協働 [_/1] D1[ ]
+合計: _/15   結果: ✅ 完走 / 🟡 部分達成 / 🔴 要フォロー
+
+講評 (3 行):
+1. 良かった点:
+2. もう一押し:
+3. 次の研修までに身につけたいこと:</code></pre>
+</section>
+</section>
+</body>
+</html>

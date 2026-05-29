@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>instructor-setup-guide</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">html {font-size: 12px;}body {font-family: system-ui, sans-serif;line-height: 1.7;margin: 2rem auto;padding: 0 1.5rem;max-width: 900px;}h1 {font-size: 1.9rem;font-weight: 700;border-bottom: 3px solid #444;padding-bottom: 0.3rem;margin-top: 3rem;margin-bottom: 1.5rem;}h2 {font-size: 1.6rem;font-weight: 600;border-left: 5px solid #666;padding-left: 0.6rem;margin-top: 2.5rem;margin-bottom: 1rem;}h3 {font-size: 1.3rem;font-weight: 600;border-left: 3px solid #999;padding-left: 0.5rem;margin-top: 2rem;margin-bottom: 0.8rem;}p {margin: 1rem 0;}ul, ol {padding-left: 1.5rem;margin: 1rem 0;}li {margin: 0.3rem 0;}table {width: 100%;border-collapse: collapse;margin: 1.5rem 0;table-layout: fixed;}th, td {padding: 0.5rem;border: 1px solid #ccc;text-align: left;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;}th {background-color: #f0f0f0;font-weight: 600;}@media print {th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}code {font-family: Consolas, "Courier New", monospace;background: #f5f5f5;padding: 0.1rem 0.3rem;border-radius: 3px;}pre code {display: block;padding: 1rem;overflow-x: auto;}img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#講師向けセットアップガイド" id="toc-講師向けセットアップガイド">講師向けセットアップガイド</a>
+<ul>
+<li><a href="#配布アーキテクチャ全体像" id="toc-配布アーキテクチャ全体像">配布アーキテクチャ全体像</a></li>
+<li><a href="#このガイドが扱うこと扱わないこと" id="toc-このガイドが扱うこと扱わないこと">0. このガイドが扱うこと・扱わないこと</a></li>
+<li><a href="#前提アカウント権限" id="toc-前提アカウント権限">1. 前提アカウント・権限</a></li>
+<li><a href="#organization-準備" id="toc-organization-準備">2. Organization 準備</a></li>
+<li><a href="#基幹リポを-organization-に-mirror-複製" id="toc-基幹リポを-organization-に-mirror-複製">3. 基幹リポを Organization に mirror 複製</a></li>
+<li><a href="#main-直-push-禁止の運用方針" id="toc-main-直-push-禁止の運用方針">4. main 直 push 禁止の運用方針</a></li>
+<li><a href="#github-classroom-設定" id="toc-github-classroom-設定">5. GitHub Classroom 設定</a></li>
+<li><a href="#講師自身のキッティング" id="toc-講師自身のキッティング">6. 講師自身のキッティング</a></li>
+<li><a href="#リハーサルテストアカウントでの-assignment-動作確認" id="toc-リハーサルテストアカウントでの-assignment-動作確認">7. リハーサル（テストアカウントでの Assignment 動作確認）</a></li>
+<li><a href="#当日運営フロー" id="toc-当日運営フロー">8. 当日運営フロー</a></li>
+<li><a href="#権限プレイブックトラブル時" id="toc-権限プレイブックトラブル時">9. 権限プレイブック（トラブル時）</a></li>
+<li><a href="#講師完了条件チェックリスト" id="toc-講師完了条件チェックリスト">10. 講師完了条件チェックリスト</a></li>
+<li><a href="#次に読むもの" id="toc-次に読むもの">11. 次に読むもの</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="講師向けセットアップガイド" class="level1">
+<h1>講師向けセットアップガイド</h1>
+<p>AI 駆動開発研修 3 日コースを開催する<strong>講師が、研修開始の 1 週間前までに 1 回だけ実施する</strong>作業手順です。</p>
+<p>受講生向けは <a href="../education/student-setup-guide.md">../education/student-setup-guide.md</a> を参照。</p>
+<hr />
+<section id="配布アーキテクチャ全体像" class="level2">
+<h2>配布アーキテクチャ全体像</h2>
+<pre><code>[基幹リポ (private)]                [講師 Organization]                [受講生]
+TokyoItSchool-dev/                  &lt;org&gt;/tsubuyaki-board               各自の private リポ
+tsubuyaki-board.git                 (template 化)                       &lt;org&gt;/&lt;assignment&gt;-&lt;id&gt;
+     │                                    │                                  │
+     │  git clone --mirror                │                                  │
+     │ ─────────────────────►             │                                  │
+     │                                    │  GitHub Classroom Assignment     │
+     │  git push --mirror                 │ ─────────────────────────────►   │
+     │ ─────────────────────►             │  (受講生が URL を踏むと自動生成) │
+                                          │                                  │
+                                          │ ◄──────────────────────────────  │
+                                          │   feature ブランチで PR / push   │</code></pre>
+<hr />
+</section>
+<section id="このガイドが扱うこと扱わないこと" class="level2">
+<h2>0. このガイドが扱うこと・扱わないこと</h2>
+<p><strong>扱う:</strong> - 基幹リポを Organization 内に複製する手順 - GitHub Classroom Assignment の作成 - 講師自身のローカル環境キッティング - 当日運営のリンク集（個別の運営要綱は <a href="./timetable.md">timetable.md</a> と <a href="./rubric.md">rubric.md</a>）</p>
+<p><strong>扱わない:</strong> - 研修内容そのもの（→ <a href="../EXERCISES.md">../EXERCISES.md</a>） - 21 時間のタイムテーブル詳細（→ <a href="../education/ONBOARDING.md">../education/ONBOARDING.md</a>, <a href="./timetable.md">timetable.md</a>） - Codex への規範（→ <a href="../AGENTS.md">../AGENTS.md</a>）</p>
+<hr />
+</section>
+<section id="前提アカウント権限" class="level2">
+<h2>1. 前提アカウント・権限</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>項目</th>
+<th>用途</th>
+<th>確認方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GitHub アカウント</td>
+<td>全操作</td>
+<td><code>gh auth status</code> で認証済</td>
+</tr>
+<tr>
+<td>GitHub Organization 管理者権限</td>
+<td>Org への push、Classroom 連携、template 化</td>
+<td>Org の Settings にアクセス可</td>
+</tr>
+<tr>
+<td>基幹リポへの read 権限</td>
+<td><code>git clone --mirror</code></td>
+<td>https://github.com/TokyoItSchool-dev/tsubuyaki-board にアクセス可</td>
+</tr>
+<tr>
+<td>OpenAI 課金済アカウント</td>
+<td>自分の Codex CLI 動作確認</td>
+<td><code>OPENAI_API_KEY</code> 発行済、課金残高あり</td>
+</tr>
+<tr>
+<td><code>gh</code> CLI</td>
+<td>スクリプト実行</td>
+<td><code>gh --version</code> で 2.x 系</td>
+</tr>
+<tr>
+<td>ローカルマシン</td>
+<td>環境キッティング検証</td>
+<td>Windows 11 + WSL2 が動く</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</section>
+<section id="organization-準備" class="level2">
+<h2>2. Organization 準備</h2>
+<section id="organization-の新規作成-or-既存利用" class="level3">
+<h3>2-1. Organization の新規作成 or 既存利用</h3>
+<p>新規作成する場合：</p>
+<ol type="1">
+<li>https://github.com/account/organizations/new で「Create a free organization」または有料プラン。</li>
+<li>Organization 名（例: <code>acme-training-2026q2</code>）と請求先メールを設定。</li>
+</ol>
+<blockquote>
+<p>本研修では GitHub Actions による CI を使わない方針（受講生・講師ともローカル <code>./mvnw -B -Ph2 verify</code> で基本検証し、仕上げは <code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code> で合否判定する）。Organization のプランは Free で問題ない。</p>
+</blockquote>
+</section>
+<section id="member-seat-数の確認" class="level3">
+<h3>2-2. Member seat 数の確認</h3>
+<p>Free プランは無制限ですが、Team プランは seat 課金。受講生人数分の seat が確保されているか <strong>Settings &gt; Billing</strong> で確認。</p>
+<hr />
+</section>
+</section>
+<section id="基幹リポを-organization-に-mirror-複製" class="level2">
+<h2>3. 基幹リポを Organization に mirror 複製</h2>
+<section id="基幹リポを-bare-clone" class="level3">
+<h3>3-1. 基幹リポを bare clone</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /tmp   <span class="co"># 作業用ディレクトリ、後で削除可</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--mirror</span> https://github.com/TokyoItSchool-dev/tsubuyaki-board.git</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># → tsubuyaki-board.git/ という bare リポが作成される</span></span></code></pre></div>
+</section>
+<section id="organization-内に空の-private-リポを作成" class="level3">
+<h3>3-2. Organization 内に空の private リポを作成</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> auth status   <span class="co"># 認証済か確認</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo create <span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--private</span> <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--description</span> <span class="st">&quot;AI 駆動開発研修 (Codex × Spring Boot) 演習リポジトリ&quot;</span></span></code></pre></div>
+</section>
+<section id="mirror-push-で全-ref-を複製" class="level3">
+<h3>3-3. mirror push で全 ref を複製</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tsubuyaki-board.git</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">--mirror</span> git@github.com:<span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board.git</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># または HTTPS:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># git push --mirror https://github.com/&lt;org&gt;/tsubuyaki-board.git</span></span></code></pre></div>
+<p><code>--mirror</code> は全ブランチ・全タグ・refs/* を完全複製します。Organization 側に同名 ref があれば<strong>上書き</strong>されます（クリーンな新規リポなので問題なし）。</p>
+</section>
+<section id="template-化" class="level3">
+<h3>3-4. Template 化</h3>
+<p>ブラウザで <code>https://github.com/&lt;org&gt;/tsubuyaki-board/settings</code> を開き、<strong>Template repository</strong> にチェック。</p>
+<p>または CLI で：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> api <span class="at">-X</span> PATCH <span class="st">&quot;repos/&lt;org&gt;/tsubuyaki-board&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">-f</span> is_template=true</span></code></pre></div>
+</section>
+<section id="検証" class="level3">
+<h3>3-5. 検証</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo view <span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board <span class="at">--json</span> visibility,isTemplate,defaultBranchRef</span></code></pre></div>
+<p>期待出力:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;visibility&quot;</span><span class="fu">:</span> <span class="st">&quot;PRIVATE&quot;</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;isTemplate&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;defaultBranchRef&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;main&quot;</span><span class="fu">}</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+</section>
+</section>
+<section id="main-直-push-禁止の運用方針" class="level2">
+<h2>4. main 直 push 禁止の運用方針</h2>
+<p>本研修では CI による物理ブロックは行わず、<strong>規約遵守（AGENTS.md §3.2 / ONBOARDING.md 禁止事項）で main 直 push を禁止</strong>します。受講生は必ず feature ブランチ + PR 経由で開発するよう、初日のキックオフで明示してください。</p>
+<p>事故が起きた場合の対処は §9-3「受講生が main に直 push してしまった」を参照。</p>
+<hr />
+</section>
+<section id="github-classroom-設定" class="level2">
+<h2>5. GitHub Classroom 設定</h2>
+<section id="classroom-作成" class="level3">
+<h3>5-1. Classroom 作成</h3>
+<ol type="1">
+<li>https://classroom.github.com にアクセス（GitHub アカウントでログイン）。</li>
+<li>「New classroom」をクリック。</li>
+<li>Organization として 2 で準備した <code>&lt;org&gt;</code> を選択。</li>
+<li>Classroom 名（例: <code>AI駆動開発研修-2026Q2</code>）を入力。</li>
+<li>TA（補助講師）がいれば追加。</li>
+</ol>
+</section>
+<section id="roster-登録任意" class="level3">
+<h3>5-2. Roster 登録（任意）</h3>
+<p>受講生の本名と GitHub ID を紐付けたい場合は、Classroom 画面の <strong>Students</strong> タブで CSV インポート。匿名運用なら省略可。</p>
+</section>
+<section id="assignment-作成" class="level3">
+<h3>5-3. Assignment 作成</h3>
+<ol type="1">
+<li>Classroom 画面で「New assignment」→「Create an individual assignment」を選択（受講生ごとに別リポを生成）。</li>
+<li><strong>Assignment title</strong>: 例 <code>tsubuyaki-board</code></li>
+<li><strong>Assignment type</strong>: Individual</li>
+<li><strong>Repository visibility</strong>: <strong>Private</strong>（必須）</li>
+<li><strong>Starter code</strong>: 3 で作成した <code>&lt;org&gt;/tsubuyaki-board</code> を選択（<strong>template repository としてマーク済の必要あり</strong>、これが 3-4 をやる理由）</li>
+<li><strong>Repository permission</strong>: Write（本研修では受講生に branch protection を設定させないため）</li>
+<li><strong>Deadline</strong>: 研修最終日の 21 時間目終了時刻</li>
+<li><strong>Feedback pull request</strong>: 任意（自動作成のフィードバック PR を作成する）</li>
+</ol>
+</section>
+<section id="assignment-招待-url-の取得" class="level3">
+<h3>5-4. Assignment 招待 URL の取得</h3>
+<p>Assignment 作成完了画面に表示される <strong>Invitation URL</strong>（<code>https://classroom.github.com/a/xxxxxxxx</code>）をコピー。研修初日に受講生へ配布します。</p>
+</section>
+<section id="リハーサルテストアカウント検証は-7-で実施" class="level3">
+<h3>5-5. リハーサル（テストアカウント検証）は §7 で実施</h3>
+<p>テストアカウントを使った Classroom Assignment の動作確認・<code>./mvnw -B -Ph2 verify</code> の通り確認は <a href="#7-リハーサルテストアカウントでの-assignment-動作確認">§7 リハーサル</a> で行います。<strong>先に §6 で講師マシンを整備</strong>（Temurin JDK 21 / Maven / Podman 導入）してからでないと、<code>./mvnw -B -Ph2 verify</code> が JDK 未導入で失敗します。</p>
+<hr />
+</section>
+</section>
+<section id="講師自身のキッティング" class="level2">
+<h2>6. 講師自身のキッティング</h2>
+<p>受講生と同じ環境を講師マシンに構築します（質問対応・トラブル再現用）。順序は受講生ガイドと同じ「Windows キッティング → 再起動 → WSL → リポ clone」です。</p>
+<section id="講師リポを-clone-管理者-powershell" class="level3">
+<h3>6-1. 講師リポを clone（🪟 管理者 PowerShell）</h3>
+<p>WSL2 機能はまだ有効化されていないので、<strong>Windows 側の PowerShell</strong> で clone する（受講生ガイド §4-3 と同じ流れ）：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">New-Item</span> <span class="op">-</span>ItemType Directory <span class="op">-</span>Force <span class="op">-</span>Path <span class="st">&quot;C:\workspace&quot;</span> <span class="op">|</span> <span class="fu">Out-Null</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> C<span class="op">:</span>\workspace</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>git clone https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/&lt;</span>org<span class="op">&gt;/</span>tsubuyaki-board<span class="op">.</span><span class="fu">git</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> tsubuyaki-board</span></code></pre></div>
+<blockquote>
+<p>💡 Git for Windows が未導入なら <code>winget install Git.Git</code> を先に。<code>setup.ps1</code> でも自動導入されるが、§6-1 で clone するには事前に Git が必要。</p>
+</blockquote>
+</section>
+<section id="windows-キッティング-受講生ガイドと同手順" class="level3">
+<h3>6-2. Windows キッティング → 受講生ガイドと同手順</h3>
+<p><a href="../education/student-setup-guide.md">../education/student-setup-guide.md §4</a> の手順をそのまま実施。要約：</p>
+<ol type="1">
+<li>🪟 管理者 PowerShell を起動</li>
+<li><code>Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1</code></li>
+<li>PC 再起動</li>
+</ol>
+<p><strong>講師固有の差分</strong>: - Pleiades は受講生に配布する媒体と<strong>同じ zip</strong> を <code>C:\Pleiades</code> に解凍してあること（配布媒体そのものの動作検証を兼ねる）。 - <code>setup.ps1</code> 完走後、🪟 PowerShell（管理者でも通常でも可）で Windows 側 Doctor を一度回し、緑揃いを確認:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\scripts\doctor<span class="op">.</span><span class="fu">ps1</span></span></code></pre></div>
+<p>期待: <code>Pleiades</code> / <code>WSL2</code> / <code>Podman Desktop</code> / <code>Git for Windows</code> / <code>C:\workspace</code> の各セクションが <code>[ OK ]</code> または <code>[WARN]</code> で揃う。<code>[ NG ]</code> があれば §6-3 へ進む前に解消する。</p>
+</section>
+<section id="wsl-キッティング-受講生ガイドと同手順-temurin-jdk-21-検証" class="level3">
+<h3>6-3. WSL キッティング → 受講生ガイドと同手順 + Temurin JDK 21 検証</h3>
+<p><a href="../education/student-setup-guide.md">../education/student-setup-guide.md §5</a> の手順をそのまま実施。要約：</p>
+<ol type="1">
+<li>スタートメニュー → Ubuntu 起動 → 初回ユーザ・パスワード設定</li>
+<li><code>cd /mnt/c/workspace/tsubuyaki-board</code></li>
+<li><code>bash scripts/setup-wsl.sh</code></li>
+</ol>
+<p><strong>講師固有の差分</strong>: 無し（同じ）。ただし以降のリハーサル（§7）と Oracle 経路 verify（§6-5）が <strong>Temurin JDK 21 に強く依存する</strong>ため、<code>setup-wsl.sh</code> が何を入れるかを把握し、完了後に必ず検証する。</p>
+<section id="setup-wsl.sh-が自動で入れる-temurin-jdk-21" class="level4">
+<h4>6-3-1. <code>setup-wsl.sh</code> が自動で入れる Temurin JDK 21</h4>
+<p><code>scripts/setup-wsl.sh</code> 内の <code>==&gt; 3. Eclipse Temurin 21</code> ブロックが以下を自動実行する（手動操作不要）:</p>
+<ol type="1">
+<li><p>Adoptium の公開鍵を <code>/etc/apt/keyrings/adoptium.gpg</code> に登録</p></li>
+<li><p><code>/etc/apt/sources.list.d/adoptium.list</code> に <code>deb [signed-by=...] https://packages.adoptium.net/artifactory/deb &lt;codename&gt; main</code> を書き込み</p></li>
+<li><p><code>apt-get install -y temurin-21-jdk</code> で Java 21 を導入</p></li>
+<li><p><code>/etc/profile.d/jdk.sh</code> に以下を書き出し:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">JAVA_HOME</span><span class="op">=</span>/usr/lib/jvm/temurin-21-jdk-amd64</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${JAVA_HOME}</span><span class="st">/bin:</span><span class="va">${PATH}</span><span class="st">&quot;</span></span></code></pre></div></li>
+<li><p><code>~/.bashrc</code> の <code>codex-training</code> ブロックから <code>jdk.sh</code> を <code>source</code> するよう追記</p></li>
+</ol>
+<blockquote>
+<p>受講生・講師ともに <strong>WSL Ubuntu 22.04 (jammy)</strong> が前提（受講生ガイド §0.5 用語ミニ辞書）。他ディストロでは codename が一致せず apt 経路がエラーになる。</p>
+</blockquote>
+</section>
+<section id="temurin-jdk-21-の検証コマンド" class="level4">
+<h4>6-3-2. Temurin JDK 21 の検証コマンド</h4>
+<p><code>setup-wsl.sh</code> 完了後、新しいシェルを開く（または <code>source ~/.bashrc</code>）してから以下を順に実行:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) java コマンドが 21 を返すこと</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">java</span> <span class="at">--version</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># → openjdk 21.0.x 202x-xx-xx</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    OpenJDK Runtime Environment Temurin-21.0.x+yy (build 21.0.x+yy)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    OpenJDK 64-Bit Server VM Temurin-21.0.x+yy (build 21.0.x+yy, mixed mode, sharing)</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) JAVA_HOME が Temurin 21 を指していること</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$JAVA_HOME</span><span class="st">&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># → /usr/lib/jvm/temurin-21-jdk-amd64</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Maven Wrapper がその JDK で動くこと（pom.xml がある場所で実行）</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-v</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># → Apache Maven 3.9.x ...</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#    Java version: 21.0.x, vendor: Eclipse Adoptium, runtime: /usr/lib/jvm/temurin-21-jdk-amd64</span></span></code></pre></div>
+<p>3 つすべて期待出力どおりなら、§7 のリハーサルと §6-5 のフル動作確認に進める。</p>
+</section>
+<section id="jdk-が見えない場合の救済" class="level4">
+<h4>6-3-3. JDK が見えない場合の救済</h4>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因の見当</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>java: command not found</code></td>
+<td>新シェルに <code>/etc/profile.d/jdk.sh</code> が読み込まれていない</td>
+<td><code>source /etc/profile.d/jdk.sh</code> を当該セッションで実行、または新しい Windows Terminal タブで Ubuntu を開き直す</td>
+</tr>
+<tr>
+<td><code>mvnw</code> で <code>JAVA_HOME is not defined correctly</code></td>
+<td><code>JAVA_HOME</code> が空、または実体パスがズレている</td>
+<td><code>ls /usr/lib/jvm/</code> で実体ディレクトリ名を確認（Adoptium のアップデートで末尾が <code>temurin-21-jdk-amd64</code> 以外になる可能性）。ズレていれば <code>/etc/profile.d/jdk.sh</code> を編集</td>
+</tr>
+<tr>
+<td><code>apt-get install temurin-21-jdk</code> が失敗</td>
+<td>apt source 行が壊れている、Adoptium のキー登録に失敗</td>
+<td><code>bash scripts/setup-wsl.sh</code> を再実行（idempotent 設計で 2 回目以降も安全）。それでもダメなら <code>cat /etc/apt/sources.list.d/adoptium.list</code> で source 行を確認</td>
+</tr>
+<tr>
+<td>Ubuntu 22.04 以外で実行してしまった</td>
+<td>codename が <code>jammy</code> でない</td>
+<td>本研修は Ubuntu 22.04 LTS 前提。他バージョンでの動作保証は無いため、受講生環境と揃えて再構築する</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="openai_api_key-設定-受講生ガイドと同手順" class="level3">
+<h3>6-4. <code>OPENAI_API_KEY</code> 設定 → 受講生ガイドと同手順</h3>
+<p>手順本体は <a href="../education/student-setup-guide.md">../education/student-setup-guide.md §7-2</a> を参照（<code>~/.bashrc</code> への追記と <code>source</code>）。</p>
+<p><strong>講師固有の差分</strong>: - <strong>講師自身のキー</strong> は <code>~/.bashrc</code> へ書く（普段使い用） - <strong>受講生へ貸与する予備キー</strong> は <strong><code>~/.bashrc</code> には書かない</strong>（誤って共有・公開しないため） - 予備キーは 1Password / <code>pass</code> 等のシークレットマネージャに保管し、配布時のみ手動で渡す - 配布経路は Slack DM など流出しにくい経路を選択 - 研修終了時に OpenAI ダッシュボードで rotate（発行し直し）</p>
+</section>
+<section id="動作確認フル-受講生より厳しめ" class="level3">
+<h3>6-5. 動作確認（フル — 受講生より厳しめ）</h3>
+<p>受講生ガイド <a href="../education/student-setup-guide.md">§8</a> の 5 点セットに加え、講師は <strong>Oracle 経路と全件 doctor</strong> も確認：</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生は --quick だが、講師は全件</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/doctor.sh           <span class="co"># 全件</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle XE 経路でも verify が通ること（受講生は H2 のみで OK）</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Plocal</span> verify</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じ H2 経路</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 仕上げ合否ゲート</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle 接続でアプリ起動 → /posts まで描画されること</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>local <span class="ex">./mvnw</span> spring-boot:run</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 別タブで:</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/actuator/health   <span class="co"># {&quot;status&quot;:&quot;UP&quot;}</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-I</span> http://localhost:8080/posts          <span class="co"># 200 OK</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex も必ず実機で 1 度動かす</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span></code></pre></div>
+<p><code>doctor.sh</code>（全件）の出力で以下が確実に揃うことを目視確認:</p>
+<ul>
+<li><code>== JDK ==</code> セクション
+<ul>
+<li><code>[ OK ] java — openjdk version &quot;21...&quot;</code></li>
+<li><code>[ OK ] JAVA_HOME — /usr/lib/jvm/temurin-21-jdk-amd64</code></li>
+</ul></li>
+<li><code>== Maven Wrapper ==</code> セクション
+<ul>
+<li><code>[ OK ] mvnw 実行可能</code></li>
+<li><code>[ OK ] mvnw -v 成功</code></li>
+</ul></li>
+<li><code>== Podman ==</code> セクション
+<ul>
+<li><code>[ OK ] podman info 成功 (rootless 含む)</code></li>
+</ul></li>
+<li><code>== Codex devbox image ==</code> セクション
+<ul>
+<li><code>[ OK ] codex-devbox:latest 存在</code></li>
+</ul></li>
+</ul>
+<p>いずれかが <code>[WARN]</code> / <code>[ NG ]</code> であれば §6-3 の救済（JDK 系）または受講生ガイド §8、<a href="../education/TROUBLESHOOTING.md">../education/TROUBLESHOOTING.md</a> を参照して解消する。</p>
+<p>すべて通れば講師キッティング完了。次は §7 のリハーサル。<strong>受講生向けには H2 経路のみで OK</strong>（Oracle はバックアップ）。</p>
+<hr />
+</section>
+</section>
+<section id="リハーサルテストアカウントでの-assignment-動作確認" class="level2">
+<h2>7. リハーサル（テストアカウントでの Assignment 動作確認）</h2>
+<p>§5 で作成した Classroom Assignment が受講生視点でも正しく動くかを、<strong>講師の業務 GitHub とは別のアカウント</strong>で踏破して確認します。詰まったポイントは受講生ガイド / TROUBLESHOOTING への追記材料にします。</p>
+<section id="前提条件" class="level3">
+<h3>7-0. 前提条件</h3>
+<ul>
+<li>§6 講師キッティングが完走し、自分のマシン上で <code>./mvnw -B -Ph2 verify</code> が <strong>BUILD SUCCESS を返している</strong>こと</li>
+<li>§5 で Classroom Assignment 作成・招待 URL の取得が完了していること</li>
+<li>WSL Ubuntu で <code>java --version</code> が <code>21</code>、<code>echo &quot;$JAVA_HOME&quot;</code> が <code>/usr/lib/jvm/temurin-21-jdk-amd64</code> を返すこと（§6-3-2 の検証済）</li>
+</ul>
+<blockquote>
+<p>⚠️ §6 を飛ばして本節を実施すると、<code>./mvnw -B -Ph2 verify</code> が JDK 未導入で<strong>確実に失敗</strong>します。先に §6 を終わらせること。</p>
+</blockquote>
+</section>
+<section id="テストアカウントを用意" class="level3">
+<h3>7-1. テストアカウントを用意</h3>
+<ul>
+<li>講師の業務 GitHub アカウントとは別のアカウント（個人アカウントなど）を準備</li>
+<li>Organization の <strong>seat が 1 つ消費される</strong> 点に注意（Free プランは無制限、Team プランは課金）</li>
+<li>当該アカウントを Organization に招待し、Settings &gt; Members で <strong>Active</strong> になっていること</li>
+</ul>
+</section>
+<section id="assignment-url-を踏んでリポ生成" class="level3">
+<h3>7-2. Assignment URL を踏んでリポ生成</h3>
+<ol type="1">
+<li>🌐 ブラウザで GitHub からサインアウト → <strong>テストアカウントで再サインイン</strong></li>
+<li>§5-4 で取得した Classroom 招待 URL（<code>https://classroom.github.com/a/xxxxxxxx</code>）を開く</li>
+<li><strong>Authorize GitHub Classroom</strong> → <strong>Accept this assignment</strong> をクリック</li>
+<li>30 秒〜 1 分待つと <code>&lt;org&gt;/&lt;assignment&gt;-&lt;test-account-id&gt;</code> という private リポが自動生成される</li>
+<li>受講生ガイド §3-3 と同じ画面遷移であること、ファイル一覧に <code>AGENTS.md</code> / <code>README.md</code> / <code>EXERCISES.md</code> / <code>pom.xml</code> が並ぶことを確認</li>
+</ol>
+</section>
+<section id="別ディレクトリへ-clone既存講師リポと衝突回避" class="level3">
+<h3>7-3. 別ディレクトリへ clone（既存講師リポと衝突回避）</h3>
+<p>🐧 WSL Ubuntu で実施:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># リハーサル用の一時ディレクトリを作って clone する</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /mnt/c/workspace/.rehearsal</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/.rehearsal</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># テストアカウントのリポを clone</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/<span class="op">&lt;</span>org<span class="op">&gt;</span>/<span class="op">&lt;</span>assignment<span class="op">&gt;</span>-<span class="op">&lt;</span>test-account-id<span class="op">&gt;</span>.git</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="op">&lt;</span>assignment<span class="op">&gt;</span>-<span class="op">&lt;</span>test-account-id<span class="op">&gt;</span></span></code></pre></div>
+<blockquote>
+<p>💡 <code>.rehearsal/</code> は講師マシンのローカル作業ディレクトリ。本番の講師リポ（<code>/mnt/c/workspace/tsubuyaki-board</code>）と分離しておくと、後で <code>rm -rf</code> で安全に破棄できる。</p>
+</blockquote>
+</section>
+<section id="受講生と同じ経路で-.mvnw--b--ph2-verify" class="level3">
+<h3>7-4. 受講生と同じ経路で <code>./mvnw -B -Ph2 verify</code></h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 🐧 WSL Ubuntu — clone 直下で実行</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span></code></pre></div>
+<p>期待出力:</p>
+<pre><code>[INFO] BUILD SUCCESS
+[INFO] -----------------------------------
+[INFO] Total time:  XX s</code></pre>
+<p>初回は依存ライブラリの DL で 5〜10 分かかる（受講生も同様）。</p>
+<section id="詰まったときの確認順" class="level4">
+<h4>詰まったときの確認順</h4>
+<ol type="1">
+<li><code>java --version</code> が <code>21</code> を返すか → 違うなら §6-3 の Temurin 21 検証へ戻る</li>
+<li><code>echo &quot;$JAVA_HOME&quot;</code> が <code>/usr/lib/jvm/temurin-21-jdk-amd64</code> か → 違うなら §6-3-3 救済表へ</li>
+<li><code>bash scripts/doctor.sh --quick</code> で <code>[ NG ]</code> が無いか</li>
+<li>ネットワーク（Maven Central 疎通）が <code>doctor.sh</code> の <code>== ネットワーク疎通 ==</code> で <code>[ OK ]</code> か（初回 verify は依存 DL のため Maven Central 必須）</li>
+<li>すべて OK でも <code>BUILD FAILURE</code> になるなら <strong>受講生ガイド／TROUBLESHOOTING に未記載のケース</strong>。詰まったポイントをメモして <a href="../education/student-setup-guide.md">../education/student-setup-guide.md</a> または <a href="../education/TROUBLESHOOTING.md">../education/TROUBLESHOOTING.md</a> に追記する</li>
+</ol>
+</section>
+</section>
+<section id="後片付け" class="level3">
+<h3>7-5. 後片付け</h3>
+<p>リハーサル完了後:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 元の講師リポへ戻る</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># リハーサル用 clone は破棄して構わない</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /mnt/c/workspace/.rehearsal/<span class="op">&lt;</span>assignment<span class="op">&gt;</span>-<span class="op">&lt;</span>test-account-id<span class="op">&gt;</span></span></code></pre></div>
+<ul>
+<li>テストアカウントの GitHub リポ自体は研修期間後に削除（または <code>&lt;org&gt;</code> のリポ管理画面から手動 delete）</li>
+<li>テストアカウントの Organization seat は研修終了後に Settings &gt; Members から外す</li>
+<li>予備 <code>OPENAI_API_KEY</code> を Codex でも使ったなら、研修終了時に rotate（§6-4 参照）</li>
+</ul>
+<hr />
+</section>
+</section>
+<section id="当日運営フロー" class="level2">
+<h2>8. 当日運営フロー</h2>
+<p>詳細は <a href="./timetable.md">timetable.md</a> と <a href="./rubric.md">rubric.md</a> を参照。本ガイドではセットアップ観点のみ記述。</p>
+<section id="時間目受講生到着セットアップ開始" class="level3">
+<h3>8-1. 0 時間目（受講生到着〜セットアップ開始）</h3>
+<ul>
+<li>受講生に <a href="../education/student-setup-guide.md">../education/student-setup-guide.md</a> を案内（事前送付推奨）</li>
+<li>Classroom Assignment URL を配布（Slack / メール / ホワイトボード）</li>
+<li>Pleiades 配布媒体を回覧</li>
+<li><code>OPENAI_API_KEY</code> 未発行の受講生がいれば即座に発行サポート</li>
+</ul>
+</section>
+<section id="時間目セットアップ確認" class="level3">
+<h3>8-2. 0-1 時間目（セットアップ確認）</h3>
+<p>受講生ガイドの <a href="../education/student-setup-guide.md">§8 動作確認 5 点セット</a> を全員クリアさせる。 講師は「詰まっている受講生」を回って <a href="../education/TROUBLESHOOTING.md">../education/TROUBLESHOOTING.md</a> を一緒に追う。</p>
+</section>
+<section id="pr-レビューフロー演習中" class="level3">
+<h3>8-3. PR レビューフロー（演習中）</h3>
+<p>受講生は自分の Classroom リポ内で： 1. <code>feature/...</code> ブランチで開発 2. 自分のリポに push 3. 自分のリポで PR 作成 4. self-merge</p>
+<p>講師は各受講生のリポを Watch し、PR ごとに 1〜2 行のレビューコメントを残します。レビューポイントは <a href="./rubric.md">rubric.md</a> の 15 点ルーブリックに沿って。</p>
+</section>
+<section id="相互レビュー19-20-時間目" class="level3">
+<h3>8-4. 相互レビュー（19-20 時間目）</h3>
+<p><a href="../education/ONBOARDING.md#相互レビュー-19-20時間目">ONBOARDING.md</a> を参照。</p>
+</section>
+<section id="kpt自己採点20-21-時間目" class="level3">
+<h3>8-5. KPT＋自己採点（20-21 時間目）</h3>
+<p><a href="./rubric.md">rubric.md</a> を配布。</p>
+<hr />
+</section>
+</section>
+<section id="権限プレイブックトラブル時" class="level2">
+<h2>9. 権限プレイブック（トラブル時）</h2>
+<section id="受講生が-assignment-を踏めない" class="level3">
+<h3>9-1. 受講生が Assignment を踏めない</h3>
+<ul>
+<li>症状: Classroom 画面で「You don’t have access to this assignment」</li>
+<li>原因: Organization の seat 不足、または受講生が SAML SSO 未認証</li>
+<li>対処: Settings &gt; Members で受講生を Pending invitation から Active に。SAML 必須 Org の場合は受講生に再認証を依頼</li>
+</ul>
+</section>
+<section id="受講生の-openai_api_key-が当日発行不能" class="level3">
+<h3>9-2. 受講生の <code>OPENAI_API_KEY</code> が当日発行不能</h3>
+<ul>
+<li>症状: 個人カード未登録 / 残高不足 / 発行制限</li>
+<li>対処: 講師が予備キー 1 本を保持しておき、当日のみ貸与（研修終了時に rotate）</li>
+<li>予備キーの管理・配布経路は <a href="#6-4-openai_api_key-設定--受講生ガイドと同手順">§6-4</a> を参照</li>
+</ul>
+</section>
+<section id="受講生が-main-に直-push-してしまった" class="level3">
+<h3>9-3. 受講生が main に直 push してしまった</h3>
+<ul>
+<li>症状: 受講生個人リポの main に feature を介さず push される</li>
+<li>原因: 規約違反（branch protection は本研修では設定しない方針）</li>
+<li>対処: push 済の不正コミットは <code>git revert</code> で打ち消しコミットを作って戻す（force push は禁止）。再発防止として feature ブランチ + PR 経由の徹底を再度周知</li>
+</ul>
+<hr />
+</section>
+</section>
+<section id="講師完了条件チェックリスト" class="level2">
+<h2>10. 講師完了条件チェックリスト</h2>
+<p>研修開始前日までに以下が全て ✓ なら準備完了。</p>
+<section id="organization-リポ" class="level3">
+<h3>Organization / リポ</h3>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Organization 作成済</label></li>
+<li><label><input type="checkbox"></input><code>&lt;org&gt;/tsubuyaki-board</code> が <strong>private</strong> かつ <strong>isTemplate=true</strong></label></li>
+<li><label><input type="checkbox"></input>main 直 push 禁止規約を受講生に周知する用意ができている（CI による物理ブロックは行わない）</label></li>
+</ul>
+</section>
+<section id="classroom" class="level3">
+<h3>Classroom</h3>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Classroom 作成、Organization 紐付け済</label></li>
+<li><label><input type="checkbox"></input>Assignment 作成（individual, private, template = <code>&lt;org&gt;/tsubuyaki-board</code>）</label></li>
+<li><label><input type="checkbox"></input>Assignment 招待 URL を取得・共有準備完了</label></li>
+<li><label><input type="checkbox"></input>テストアカウントで Assignment 参加 → clone → <code>./mvnw -B -Ph2 verify</code> 緑のリハーサル成功（<a href="#7-リハーサルテストアカウントでの-assignment-動作確認">§7 リハーサル</a> で実施）</label></li>
+</ul>
+</section>
+<section id="講師マシン" class="level3">
+<h3>講師マシン</h3>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>setup.ps1</code> 完走、PC 再起動済</label></li>
+<li><label><input type="checkbox"></input><code>setup-wsl.sh</code> 完走</label></li>
+<li><label><input type="checkbox"></input>WSL Ubuntu 上で <code>java --version</code> が <code>21</code> を返す（Temurin 21）</label></li>
+<li><label><input type="checkbox"></input><code>echo &quot;$JAVA_HOME&quot;</code> が <code>/usr/lib/jvm/temurin-21-jdk-amd64</code></label></li>
+<li><label><input type="checkbox"></input><code>./mvnw -v</code> で <code>Java version: 21.x.x, vendor: Eclipse Adoptium</code> が表示される</label></li>
+<li><label><input type="checkbox"></input><code>OPENAI_API_KEY</code> 設定済（<code>~/.bashrc</code>）</label></li>
+<li><label><input type="checkbox"></input><code>bash scripts/doctor.sh</code>（<strong>全件</strong>）緑</label></li>
+<li><label><input type="checkbox"></input><code>./mvnw -B -Plocal verify</code>（Oracle XE）緑</label></li>
+<li><label><input type="checkbox"></input><code>./mvnw -B -Ph2 verify</code>（H2 基本検証）緑</label></li>
+<li><label><input type="checkbox"></input><code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code>（仕上げ合否ゲート）緑</label></li>
+<li><label><input type="checkbox"></input><code>codex-shell</code> → <code>codex --help</code> 表示</label></li>
+</ul>
+</section>
+<section id="配布物" class="level3">
+<h3>配布物</h3>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Pleiades 配布媒体準備（USB / 共有ドライブ）</label></li>
+<li><label><input type="checkbox"></input>Classroom Assignment URL を受講生案内に記載</label></li>
+<li><label><input type="checkbox"></input>予備 OPENAI_API_KEY を 1 本保持</label></li>
+</ul>
+<p>すべて ✓ なら、研修当日は受講生対応に集中できます。</p>
+<hr />
+</section>
+</section>
+<section id="次に読むもの" class="level2">
+<h2>11. 次に読むもの</h2>
+<ul>
+<li><a href="./timetable.md">timetable.md</a> — 当日のタイムテーブル</li>
+<li><a href="./rubric.md">rubric.md</a> — 15 点ルーブリック（自己採点・相互レビュー用）</li>
+<li><a href="./prompts-day3.md">prompts-day3.md</a> — Day 3 用プロンプト集</li>
+<li><a href="./faq.md">faq.md</a> — 講師 FAQ</li>
+<li><a href="../education/ONBOARDING.md">../education/ONBOARDING.md</a> — 受講生視点での 21 時間</li>
+<li><a href="../education/TROUBLESHOOTING.md">../education/TROUBLESHOOTING.md</a> — トラブル対処集</li>
+</ul>
+</section>
+</section>
+</body>
+</html>
