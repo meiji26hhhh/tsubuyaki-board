@@ -18,6 +18,7 @@ param(
 )
 
 $ErrorActionPreference = "Continue"
+$env:WSL_UTF8 = "1"  # wsl.exe 出力を UTF-8 化し文字化け/誤判定を防ぐ
 
 # --- 管理者チェック ----------------------------------------------------
 $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -90,13 +91,13 @@ try {
     Write-Host ""
     Write-Host "==> Ubuntu 22.04 ディストリ" -ForegroundColor Cyan
     $wslList = wsl --list 2>$null | Out-String
-    if ($wslList -notmatch "Ubuntu") {
+    if ($wslList -notmatch "Ubuntu-22\.04") {
         Write-Host "  Ubuntu-22.04 をインストール中..."
         if (-not $DryRun) {
             wsl --install -d Ubuntu-22.04 --no-launch
         }
     } else {
-        Write-Host "  Ubuntu は既にインストール済み" -ForegroundColor Green
+        Write-Host "  Ubuntu-22.04 は既にインストール済み" -ForegroundColor Green
     }
 
     # --- 3. winget パッケージ --------------------------------------

@@ -150,6 +150,14 @@ if section "jdk" "JDK"; then
         else
             warn "java は見つかったが Java 21 でない可能性" "${JAVA_VERSION_LINE}"
         fi
+        # doctor は環境チェック.bat 等から非対話シェル (bash -c) 経由で起動される
+        # ことがあり、その場合 /etc/profile.d/jdk.sh が読まれず JAVA_HOME が未設定に
+        # 見える。受講生の対話シェル (~/.bashrc 経由) では設定済みなので、判定前に
+        # 正本ファイルからフォールバック読込して実態に合わせる。
+        if [[ -z "${JAVA_HOME:-}" && -f /etc/profile.d/jdk.sh ]]; then
+            # shellcheck disable=SC1091
+            source /etc/profile.d/jdk.sh 2>/dev/null || true
+        fi
         if [[ -n "${JAVA_HOME:-}" && -d "${JAVA_HOME}" ]]; then
             ok "JAVA_HOME" "${JAVA_HOME}"
         else
@@ -299,6 +307,11 @@ fi
 
 # --- 10. OPENAI_API_KEY --------------------------------------------------
 if section "openai" "OPENAI_API_KEY"; then
+    # 非対話シェル (wsl -- bash -c) では ~/.bashrc が読まれず OPENAI_API_KEY が
+    # 環境に無いため、setup-secrets.sh が ~/.bashrc に保存した値を拾う。
+    if [[ -z "${OPENAI_API_KEY:-}" && -r "${HOME}/.bashrc" ]]; then
+        OPENAI_API_KEY="$(sed -n "s/^export OPENAI_API_KEY='\(.*\)'\$/\1/p" "${HOME}/.bashrc" | tail -n1)"
+    fi
     if [[ -n "${OPENAI_API_KEY:-}" ]]; then
         KEY_LEN=${#OPENAI_API_KEY}
         if [[ "${OPENAI_API_KEY}" == sk-* && ${KEY_LEN} -ge 20 ]]; then
