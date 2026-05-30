@@ -98,6 +98,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><a href="#接続情報" id="toc-接続情報">4. 接続情報</a></li>
 <li><a href="#codex-cli-を使う研修の本題" id="toc-codex-cli-を使う研修の本題">5. Codex CLI を使う（研修の本題）</a></li>
 <li><a href="#うまくいかないとき" id="toc-うまくいかないとき">6. うまくいかないとき</a></li>
+<li><a href="#研修が終わったらあと片付け" id="toc-研修が終わったらあと片付け">7. 研修が終わったら（あと片付け）</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -221,6 +222,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><strong>Oracle起動.bat が成功しない</strong> → <code>Oracle削除.bat</code> → <code>Oracle起動.bat</code> の順でリセットしてください。</li>
 <li>それでも直らないときは <code>環境チェック.bat</code> を実行し、表示された案内に従ってください。</li>
 </ul>
+<hr />
+</section>
+<section id="研修が終わったらあと片付け" class="level2">
+<h2>7. 研修が終わったら（あと片付け）</h2>
+<p>研修の最終日に PC をきれいに戻したいときだけ使います。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>やること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>研修終了_環境削除.bat</code></td>
+<td>開発環境（WSL の Ubuntu-22.04）を<strong>丸ごと削除</strong>します。Oracle のデータ・書いたコード・開発ツール・API キーがすべて一緒に消えます</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>元に戻せません。</strong> 実行すると確認のため半角で <code>delete</code> と入力を求められます。Windows 側のアプリや <code>C:\workspace</code> などのフォルダは残ります。もう一度使うには手順①からやり直してください。</p>
+</blockquote>
 </section>
 </section>
 </body>
