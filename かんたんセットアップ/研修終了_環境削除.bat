@@ -1,5 +1,6 @@
 ﻿@echo off
 chcp 65001 >nul
+set "WSL_UTF8=1"
 rem ============================================================
 rem  研修終了後のあと片付け : 開発環境(Ubuntu-22.04)を丸ごと削除します。
 rem  研修の最終日に、PC をきれいに戻したいときだけ使います。
@@ -33,18 +34,27 @@ pause
 exit /b
 )
 
+rem --- ログの保存先を用意（削除を実行すると決まってから作成） ---
+set "LOGDIR=%~dp0logs"
+if not exist "%LOGDIR%" mkdir "%LOGDIR%"
+for /f "usebackq delims=" %%t in (`powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"`) do set "TS=%%t"
+if not defined TS set "TS=latest"
+set "LOGFILE=%LOGDIR%\uninstall_%TS%.log"
+
 echo.
 echo Ubuntu-22.04 を削除しています。少しお待ちください...
 echo.
 
-wsl --unregister Ubuntu-22.04
+wsl --unregister Ubuntu-22.04 > "%LOGFILE%" 2>&1
 
 if errorlevel 1 (
 echo.
 echo ============================================================
-echo  [失敗] 削除できませんでした。上のメッセージをご確認ください。
+echo  [失敗] 削除できませんでした。
 echo  ※ すでに削除済みの場合も、このエラー表示になります。
-echo  解決しない場合は、この画面をそのまま講師にお見せください。
+echo  詳しい記録は次のファイルに保存されています:
+echo    %LOGFILE%
+echo  解決しない場合は、このファイルを講師にお見せください。
 echo ============================================================
 echo.
 pause
