@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 rem ============================================================
 rem  社内つぶやきボード セットアップ 手順2 : Ubuntu の準備
@@ -21,7 +21,10 @@ echo    打ち終わったら Enter キーを押してください。
 echo ============================================================
 echo.
 
-wsl -d Ubuntu-22.04 --cd "%REPO%" -- bash scripts/setup-wsl.sh
+rem --- リポジトリのルートを WSL パスへ変換（--cd 非依存で確実に cd する） ---
+for /f "usebackq delims=" %%i in (`wsl -d Ubuntu-22.04 wslpath "%REPO%"`) do set "WREPO=%%i"
+
+wsl -d Ubuntu-22.04 -- bash -c "cd '%WREPO%' && bash scripts/setup-wsl.sh"
 
 if errorlevel 1 (
 echo.

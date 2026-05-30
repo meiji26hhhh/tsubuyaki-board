@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 rem ============================================================
 rem  Oracle を停止します。
@@ -12,7 +12,10 @@ echo.
 echo Oracle を停止しています...
 echo.
 
-wsl -d Ubuntu-22.04 --cd "%REPO%" -- bash scripts/stop-oracle.sh
+rem --- リポジトリのルートを WSL パスへ変換（--cd 非依存で確実に cd する） ---
+for /f "usebackq delims=" %%i in (`wsl -d Ubuntu-22.04 wslpath "%REPO%"`) do set "WREPO=%%i"
+
+wsl -d Ubuntu-22.04 -- bash -c "cd '%WREPO%' && bash scripts/stop-oracle.sh"
 
 if errorlevel 1 (
 echo.

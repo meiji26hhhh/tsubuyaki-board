@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 rem ============================================================
 rem  社内つぶやきボード 環境チェック
@@ -12,7 +12,10 @@ echo.
 echo 環境をチェックしています。しばらくお待ちください...
 echo.
 
-wsl -d Ubuntu-22.04 --cd "%REPO%" -- bash scripts/doctor.sh --quick
+rem --- リポジトリのルートを WSL パスへ変換（--cd 非依存で確実に cd する） ---
+for /f "usebackq delims=" %%i in (`wsl -d Ubuntu-22.04 wslpath "%REPO%"`) do set "WREPO=%%i"
+
+wsl -d Ubuntu-22.04 -- bash -c "cd '%WREPO%' && bash scripts/doctor.sh --quick"
 
 if errorlevel 1 (
 echo.
