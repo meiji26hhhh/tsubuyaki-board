@@ -1,6 +1,6 @@
 flowchart TB
     C["コマンド実行<br/>例: rm -rf /workspace"] --> P["PATH 先頭 /opt/codex-guard/bin で名前解決"]
     P --> G["guard wrapper<br/>rm-guard.sh"]
-    G --> D{"危険パス /<br/>破壊オプション?"}
+    G --> D{"危険パス /<br/>破壊オプション /<br/>共有 main への push?"}
     D -->|該当| REJ["reject<br/>exit 126・log 記録・代替案を促す"]
     D -->|安全| EX["実体 /bin/rm を exec<br/>（通常どおり実行）"]

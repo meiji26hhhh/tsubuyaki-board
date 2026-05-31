@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>EXERCISES</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">:root {--fg: #1a1a1a;--muted: #555;--accent: #1565c0;--bg: #ffffff;--surface: #f5f7fa;--border: #d8dee6;--warn-bg: #fff8e1;--warn-border: #f0c000;--code-bg: #f3f3f3; --code-fg: #222; }* {font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;box-sizing: border-box;font-size: 12px;}body {color: var(--fg);background: var(--bg);line-height: 1.8;max-width: 1280px;margin: 0 auto;padding: 2.5rem 1.5rem 6rem;}h1 {font-size: 1.9rem;border-bottom: 4px solid var(--accent);padding-bottom: 0.4rem;line-height: 1.4;}h2 {font-size: 1.4rem;margin-top: 2.6rem;padding: 0.3rem 0.7rem;background: var(--surface);border-left: 6px solid var(--accent);}h3 {font-size: 1.15rem;margin-top: 1.8rem;color: var(--accent);}p, li { font-size: 1rem; }a { color: var(--accent); }code {background: var(--surface);border: 1px solid var(--border);border-radius: 4px;padding: 0.1em 0.4em;font-family: "Consolas", "Courier New", monospace;font-size: 0.92em;}pre {background: var(--code-bg);color: var(--code-fg);padding: 1rem 1.2rem;border-radius: 8px;overflow-x: auto;}pre code { background: none; border: none; color: inherit; padding: 0; }table {border-collapse: collapse;width: 100%;margin: 1rem 0;}th, td {border: 1px solid var(--border);padding: 0.55rem 0.8rem;text-align: left;vertical-align: top;}th { background: var(--surface); }.note {background: var(--warn-bg);border: 1px solid var(--warn-border);border-radius: 8px;padding: 0.9rem 1.1rem;margin: 1.2rem 0;}.file { font-weight: 700; color: #0d47a1; }hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }ol li, ul li { margin: 0.35rem 0; }.appendix { color: var(--muted); }.appendix h2 { border-left-color: #999; }.appendix h3 { color: #444; }img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#exercises-社内つぶやきボード-機能要件と受入基準" id="toc-exercises-社内つぶやきボード-機能要件と受入基準">EXERCISES — 社内つぶやきボード 機能要件と受入基準</a>
+<ul>
+<li><a href="#must-0-8時間目で必達" id="toc-must-0-8時間目で必達">MUST (0-8時間目で必達)</a></li>
+<li><a href="#should-9.5-13時間目で3つすべて必達" id="toc-should-9.5-13時間目で3つすべて必達">SHOULD (9.5-13時間目で3つすべて必達)</a></li>
+<li><a href="#could-14.5-17時間目で1つ選択して必達" id="toc-could-14.5-17時間目で1つ選択して必達">COULD (14.5-17時間目で1つ選択して必達)</a></li>
+<li><a href="#意図的に外す機能" id="toc-意図的に外す機能">意図的に外す機能</a></li>
+<li><a href="#完走判定-15-点ルーブリック11-点で合格" id="toc-完走判定-15-点ルーブリック11-点で合格">完走判定 (15 点ルーブリック、11 点で合格)</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="exercises-社内つぶやきボード-機能要件と受入基準" class="level1">
+<h1>EXERCISES — 社内つぶやきボード 機能要件と受入基準</h1>
+<p>演習 19 時間で実装する機能のリスト（成果まとめ 2 時間は別途）。 <strong>MUST → SHOULD → COULD選択枠 の順で完走する</strong>。 時間目はフェーズ開始から積み上げた相対時間。物理日との対応は education/ONBOARDING.md の表を参照。</p>
+<section id="must-0-8時間目で必達" class="level2">
+<h2>MUST (0-8時間目で必達)</h2>
+<section id="m1-投稿一覧-get-posts" class="level3">
+<h3>M1: 投稿一覧 <code>GET /posts</code></h3>
+<blockquote>
+<p>前提アセット: <code>Post</code> entity (<code>src/main/java/com/example/tsubuyaki/domain/Post.java</code>) と V1 Flyway マイグレーション (<code>src/main/resources/db/migration/V1__init.sql</code>) は既に提供済。M1 ではこの上に Repository / Service / Controller を実装する。</p>
+</blockquote>
+<ul>
+<li>新着順 (created_at DESC) で最大 50 件を返す</li>
+<li>ビュー: <code>posts/list.html</code></li>
+<li>0 件なら「まだ投稿はありません」を表示</li>
+<li><code>model.posts</code> 属性に List<Post> を積む</li>
+</ul>
+<p>受入基準: - [ ] <code>PostRepository.findTop50ByOrderByCreatedAtDesc()</code> が定義され DataJpaTest で検証される - [ ] <code>PostService.latest()</code> が Repository を呼んで結果を返す - [ ] <code>PostController</code> が <code>GET /posts</code> で <code>posts/list</code> ビューを返す - [ ] WebMvcTest で <code>model().attributeExists(&quot;posts&quot;)</code> を確認</p>
+</section>
+<section id="m2-投稿作成フォーム-get-postsnew" class="level3">
+<h3>M2: 投稿作成フォーム <code>GET /posts/new</code></h3>
+<ul>
+<li><code>posts/form.html</code> を表示</li>
+<li>フォームバインド用に <code>postForm</code> (PostForm) を model に積む</li>
+</ul>
+<p>受入基準: - [ ] フォームが描画される - [ ] <code>_csrf</code> トークンを含む (Spring Security 適用後)</p>
+</section>
+<section id="m3-投稿登録-post-posts" class="level3">
+<h3>M3: 投稿登録 <code>POST /posts</code></h3>
+<ul>
+<li>バリデーション: author 1..30 文字、body 1..280 文字、空白のみ NG</li>
+<li>成功: 302 で <code>/posts</code> にリダイレクト</li>
+<li>失敗: 200 で <code>posts/form</code> を再表示しエラー表示</li>
+</ul>
+<p>受入基準: - [ ] <code>PostService.create(author, body)</code> が <code>Post</code> を保存する - [ ] WebMvcTest で異常系 (空 body) が 200 + エラー文字列で再表示されることを確認 - [ ] 正常系で DB に行が増える (DataJpaTest)</p>
+</section>
+<section id="m4-投稿詳細-get-postsid" class="level3">
+<h3>M4: 投稿詳細 <code>GET /posts/{id}</code></h3>
+<ul>
+<li><code>posts/detail.html</code> を表示</li>
+<li>存在しない id は 404</li>
+</ul>
+<p>受入基準: - [ ] <code>PostService.findById(id)</code> が <code>Optional&lt;Post&gt;</code> を返す - [ ] Controller で <code>Optional.isEmpty()</code> → 404</p>
+</section>
+<section id="m5-ヘルスチェック回帰確認" class="level3">
+<h3>M5: ヘルスチェック（回帰確認）</h3>
+<ul>
+<li><code>/actuator/health</code> が UP を返す（0-1h セットアップ確認時に既に通る想定。M4 までの実装で UP が壊れていないことを再確認する位置づけ）</li>
+</ul>
+<p>受入基準: - [ ] <code>./mvnw -B -Ph2 spring-boot:run</code> で起動した状態で <code>curl http://localhost:8080/actuator/health</code> が 200 を返す - [ ] M4 完了時点で <code>{&quot;status&quot;:&quot;UP&quot;}</code> が変わっていないこと（DataSource 等の破壊回帰が無い）</p>
+</section>
+</section>
+<section id="should-9.5-13時間目で3つすべて必達" class="level2">
+<h2>SHOULD (9.5-13時間目で3つすべて必達)</h2>
+<blockquote>
+<p>8h-9.5h は「リファクタ＋カバレッジ80%到達」フェーズ（<a href="./education/ONBOARDING.md">ONBOARDING.md タイムテーブル</a>参照）。SHOULD はその後の 9.5h から開始する。</p>
+</blockquote>
+<p>3 つすべて (S1/S2/S3) を完走対象とする。順序は任意。</p>
+<section id="s1-いいね" class="level3">
+<h3>S1: いいね</h3>
+<ul>
+<li><code>POST /posts/{id}/likes</code> で いいねトグル</li>
+<li>同一 <code>clientHash</code> (= ハッシュ化された IP + UA、SHA-256 の先頭 8 文字) が再度押したら解除</li>
+<li>詳細画面でいいね数と Like ボタン表示</li>
+</ul>
+<p>受入基準: - [ ] Flyway V2__likes.sql で <code>post_likes</code> テーブルを作る - [ ] サービス層で「冪等性」をテスト (連続 POST で count が 0 → 1 → 0 と変わる) - [ ] IP は <strong>生で保存しない</strong>。SHA-256 + アプリ内 salt でハッシュ化</p>
+</section>
+<section id="s2-キーワード検索" class="level3">
+<h3>S2: キーワード検索</h3>
+<ul>
+<li><code>GET /posts?q=xxx</code> で本文 LIKE 検索</li>
+<li>一覧画面を再利用 (検索ボックスを上部に追加)</li>
+</ul>
+<p>受入基準: - [ ] <code>@Query</code> の bind 変数を使う (文字列連結禁止) - [ ] 空文字なら通常の最新 50 件にフォールバック</p>
+</section>
+<section id="s3-投稿者名フィールド拡張" class="level3">
+<h3>S3: 投稿者名フィールド拡張</h3>
+<ul>
+<li>投稿者名を必須にし、フォームに任意のアバター色を選択させる (簡易)</li>
+</ul>
+<p>受入基準: - [ ] <code>posts</code> テーブルに <code>avatar_color</code> 相当の列を追加する Flyway migration がある - [ ] <code>PostForm</code> で投稿者名 1..30 文字、アバター色は許可リスト内だけを受け付ける - [ ] 一覧 / 詳細 / フォームで投稿者名とアバター色が表示・保持される - [ ] Service または Controller テストで不正なアバター色が保存されないことを確認する</p>
+</section>
+</section>
+<section id="could-14.5-17時間目で1つ選択して必達" class="level2">
+<h2>COULD (14.5-17時間目で1つ選択して必達)</h2>
+<p>C1/C2/C3 から <strong>1 つを選んで完了</strong>。選択ガイドはフェーズ開始時に講師から提示。</p>
+<section id="c1-タグ機能" class="level3">
+<h3>C1: タグ機能</h3>
+<p>本文中の <code>#tag</code> をパースして Tag テーブルに保存、<code>GET /tags/{name}</code> で関連投稿一覧。</p>
+<p>受入基準: - [ ] Flyway migration で <code>tags</code> と関連テーブルを追加する - [ ] 投稿作成時に本文中の <code>#tag</code> を抽出し、重複タグを 1 つに正規化する - [ ] <code>GET /tags/{name}</code> で対象タグの投稿だけを新着順に表示する - [ ] Repository / Service のいずれかでタグ抽出と検索のテストがある</p>
+</section>
+<section id="c2-投稿削除" class="level3">
+<h3>C2: 投稿削除</h3>
+<p>論理削除 (<code>deleted_at</code> カラム)、論理削除済みは一覧で非表示。</p>
+<p>受入基準: - [ ] Flyway migration で <code>deleted_at</code> を追加し、既存投稿は未削除として扱う - [ ] <code>POST /posts/{id}/delete</code> で論理削除し、成功時は <code>/posts</code> にリダイレクトする - [ ] 一覧 / 検索 / 詳細で論理削除済み投稿を表示しない - [ ] Service テストで削除済み投稿が検索結果に出ないことを確認する</p>
+</section>
+<section id="c3-rest-api" class="level3">
+<h3>C3: REST API</h3>
+<p><code>GET /api/posts</code> で JSON 返却、簡易 OpenAPI ドキュメント。</p>
+<p>受入基準: - [ ] <code>GET /api/posts</code> が最新 50 件を JSON 配列で返す - [ ] JSON には <code>id</code>, <code>author</code>, <code>body</code>, <code>createdAt</code> を含め、内部 Entity を直接返さない - [ ] MockMvc テストで status 200、JSON フィールド、件数上限を確認する - [ ] <code>docs/api.md</code> にエンドポイント、レスポンス例、エラー時の扱いを記載する</p>
+</section>
+</section>
+<section id="意図的に外す機能" class="level2">
+<h2>意図的に外す機能</h2>
+<ul>
+<li>ログイン / アカウント管理 (Spring Security の OAuth まで入れると 1 日では完走できない)</li>
+<li>画像添付</li>
+<li>リプライツリー</li>
+<li>リアルタイム更新 (WebSocket / SSE)</li>
+</ul>
+<p>これらを「やってみたい」と思った時点で <strong>MUST が完了してから</strong>。</p>
+</section>
+<section id="完走判定-15-点ルーブリック11-点で合格" class="level2">
+<h2>完走判定 (15 点ルーブリック、11 点で合格)</h2>
+<p>詳細は <code>instructor/rubric.md</code>。要約:</p>
+<ul>
+<li>機能要件 6 点 (各 MUST 1 点 + SHOULD 3 つ完了 1 点 + COULD 選択枠 1 つ完了 1 点)</li>
+<li>テスト網羅 5 点 (Repository / Service / Controller / <code>./mvnw -B -Ph2 verify</code> 緑 / <code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code> 緑)</li>
+<li>コミットの質 3 点 (Conventional Commits / 1 関心事 1 コミット / コミットメッセージとセルフチェックの質)</li>
+<li>AI 協働の作法 1 点 (<code>docs/prompts-i-used.md</code> に 3 件以上のプロンプトと「効いた / 効かなかった」コメント)</li>
+</ul>
+</section>
+</section>
+</body>
+</html>

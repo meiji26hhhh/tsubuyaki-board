@@ -136,14 +136,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="codex-の暴走系" class="level2">
 <h2>Codex の暴走系</h2>
-<section id="q.-1-人だけ-codex-が-git-push---force-main-しようとした" class="level3">
-<h3>Q. 1 人だけ Codex が <code>git push --force main</code> しようとした</h3>
-<p><strong>即決</strong>: AGENTS.md §7.3.3 の禁止コマンド一覧をその場で読ませる。本研修では GitHub branch protection は設定していない方針（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a>）のため、<strong>物理ブロックは無い</strong>。</p>
+<section id="q.-1-人だけ-codex-が-git-push---force-しようとした" class="level3">
+<h3>Q. 1 人だけ Codex が <code>git push --force</code> しようとした</h3>
+<p><strong>即決</strong>: AGENTS.md §7.3.3 の禁止コマンド一覧をその場で読ませる。コンテナ内 Codex の force push は Codex Guard（<code>git-guard.sh</code>）が exit 126 で拒否するが、コンテナ外の素の git は通る。Free×private のため GitHub branch protection は使えず（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a>）、<strong>事前の物理ブロックは無い</strong>。</p>
 <p>代わりに以下の手順で復旧：</p>
 <ol type="1">
-<li>講師は GitHub 上で当該リポの <code>Settings → Branches</code> から、必要であれば一時的に <code>Restrict force pushes</code> を ON にして二次被害を止める。</li>
-<li>GitHub 上の main に入った不正コミットを確認し、復旧は <code>git revert &lt;SHA&gt;</code> の打ち消しコミットで行う。</li>
-<li>ローカルの作業ツリーは <code>git stash push -u</code> で退避し、必要な変更だけ feature ブランチに戻す。</li>
+<li>共有 <code>main</code> に入った不正コミットがあれば、講師が手元の clone で <code>git revert &lt;SHA&gt;</code> の打ち消しコミットを作り、<code>main</code> へ push して戻す（§4 の CI 監視 Workflow が通知してくれる）。canonical なスターターは基幹リポ／講師手元にあるので、最悪は <code>main</code> の強制復元も可能。</li>
+<li>ローカルの作業ツリーは <code>git stash push -u</code> で退避し、必要な変更だけ自分の <code>&lt;github-id&gt;</code> ブランチに戻す。</li>
 <li>force push による履歴書き換えは研修手順として許可しない。AGENTS.md §7.3.3「履歴・権限改ざん禁止」を全体に再共有。</li>
 </ol>
 </section>
@@ -153,7 +152,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="q.-codex-が-disabled-を貼って-red-テストを-green-に偽装した" class="level3">
 <h3>Q. Codex が <code>@Disabled</code> を貼って RED テストを GREEN に偽装した</h3>
-<p><strong>即決</strong>: その PR をブロックし、AGENTS.md の「失敗テストに <code>@Disabled</code> を貼って通すのは絶対禁止」を引用。 当該テストの <code>@Disabled</code> を剥がしてやり直しさせる。</p>
+<p><strong>即決</strong>: そのコミットを差し戻させ、AGENTS.md の「失敗テストに <code>@Disabled</code> を貼って通すのは絶対禁止」を引用。 当該テストの <code>@Disabled</code> を剥がしてやり直しさせる。</p>
 </section>
 </section>
 <section id="評価系" class="level2">
@@ -175,7 +174,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="q.-早く終わった人がいる" class="level3">
 <h3>Q. 早く終わった人がいる</h3>
-<p><strong>対応</strong>: COULD (タグ機能 / REST API) に進ませる。 他の受講生の PR レビューを担当してもらうのもあり。</p>
+<p><strong>対応</strong>: COULD (タグ機能 / REST API) に進ませる。 他の受講生のブランチ（Compare ビュー）のレビューを担当してもらうのもあり。</p>
 </section>
 <section id="q.-想定より全体が遅い" class="level3">
 <h3>Q. 想定より全体が遅い</h3>

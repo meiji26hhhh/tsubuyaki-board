@@ -38,7 +38,7 @@ vertical-align: middle;
 </nav>
 <section id="完走判定ルーブリック-15-点満点11-点で合格" class="level1">
 <h1>完走判定ルーブリック (15 点満点・11 点で合格)</h1>
-<p>各項目 1 点。受講生が自己採点した上で、講師が PR を見て最終採点する。</p>
+<p>各項目 1 点。受講生が自己採点した上で、講師が受講生の作業ブランチ（<code>&lt;github-id&gt;</code>）を見て最終採点する。</p>
 <section id="a.-機能要件-6-点" class="level2">
 <h2>A. 機能要件 (6 点)</h2>
 <table>
@@ -121,8 +121,8 @@ vertical-align: middle;
 </tr>
 <tr>
 <td>B4</td>
-<td>main で <code>./mvnw -B -Ph2 verify</code> が緑</td>
-<td>最新 main をローカル clone して基本検証が BUILD SUCCESS</td>
+<td>受講生ブランチで <code>./mvnw -B -Ph2 verify</code> が緑</td>
+<td>受講生の <code>&lt;github-id&gt;</code> ブランチを <code>git fetch</code> → <code>git switch &lt;github-id&gt;</code> して基本検証が BUILD SUCCESS</td>
 </tr>
 <tr>
 <td>B5</td>
@@ -160,8 +160,8 @@ vertical-align: middle;
 </tr>
 <tr>
 <td>C3</td>
-<td>PR 説明が pull_request_template.md の 5 セクションを埋めている</td>
-<td>「Codex に出した主要プロンプト」が空でない</td>
+<td>コミットメッセージと記録が整備されている</td>
+<td>コミットが ONBOARDING の「コミット前セルフチェック」観点を押さえ、<code>docs/prompts-i-used.md</code> の「Codex に出した主要プロンプト」が空でない</td>
 </tr>
 </tbody>
 </table>
@@ -196,14 +196,14 @@ vertical-align: middle;
 <li>COULD を 2 つ以上完了</li>
 <li><code>MODE=Oracle</code> の落とし穴に 2 つ以上自力で気付いた</li>
 <li>Codex の生成コードを「ここはこう直しました」と言語化できる</li>
-<li>PR レビューで他者のコードに有意義なコメントを付けた</li>
+<li>相互レビューで他者のブランチ（Compare ビュー）に有意義なコメントを付けた</li>
 </ul>
 </section>
 <section id="採点フォーマット-講師用" class="level2">
 <h2>採点フォーマット (講師用)</h2>
-<pre><code>受講生: &lt;name&gt;
-リポ: https://github.com/&lt;user&gt;/&lt;repo&gt;
-PR: https://github.com/&lt;user&gt;/&lt;repo&gt;/pull/N
+<pre><code>受講生: &lt;name&gt; (GitHub: &lt;github-id&gt;)
+ブランチ: &lt;github-id&gt;
+Compare: https://github.com/&lt;org&gt;/tsubuyaki-board/compare/main...&lt;github-id&gt;
 
 A. 機能 [_/6]  A1[ ] A2[ ] A3[ ] A4[ ] A5[ ] A6[ ]
 B. テスト [_/5] B1[ ] B2[ ] B3[ ] B4[ ] B5[ ]

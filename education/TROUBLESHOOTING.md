@@ -191,12 +191,12 @@ git stash pop              # コンフリクトしたら手動マージ
 
 > ⚠️ 改行コードの正規化で一括破棄コマンドは使いません。差分を `git diff --staged` で確認してから commit してください。
 
-### Q13. Classroom Assignment URL で「You don't have access」と出る
+### Q13. 共有リポにアクセスできない（404 / clone できない）
 
-- 自分の GitHub アカウントが正しく Organization に招待されているか
-- メールに届く Organization の招待を Accept したか（GitHub の Notifications で確認可能）
+- 共有リポへの招待メール（または `https://github.com/<org>` の通知）から参加を **Accept** したか（GitHub の Notifications で確認可能）
+- 講師に伝えた **自分の GitHub ユーザ名（小文字）** の綴りが正しいか
 - SAML SSO 必須の Organization なら、ブラウザで Organization トップを開いて SSO 認証を済ませる
-- それでもダメなら講師に **自分の GitHub ID** を伝えて、Organization 側で seat 状態を確認してもらう
+- それでもダメなら講師に **自分の GitHub ID** を伝えて、共有リポの collaborator 招待状態を確認してもらう
 
 ---
 
@@ -217,14 +217,14 @@ git stash pop              # コンフリクトしたら手動マージ
 | 直前のコミットを打ち消す | `git revert HEAD` | push 済みでも安全。履歴を書き換えない |
 | push 済みのコミットを打ち消す | `git revert <commit>` | 新規の打ち消しコミットを作る安全な方法 |
 | 新規ファイル（untracked）を消したい | `rm <file>` | `git status` で確認したファイルを個別に消す |
-| ブランチごとなかったことにしたい | `git switch main && git branch -D feature/xxx` | ローカルだけ。push 済みは別操作 |
+| 実験用サブブランチを捨てたい | `git switch <github-id> && git branch -D <github-id>/実験` | ローカルだけ。自分の名前空間のブランチに対してのみ。push 済みは別操作 |
 
 ### 鉄則
 
 1. **変更を捨てる前に必ず `git status` と `git diff` で内容を確認**
 2. **惜しい変更があれば必ず `git stash push -u` で退避**
-3. **`git push --force`（main 系）は禁止**（[AGENTS.md §7.3](../AGENTS.md)）
-4. **完全に詰まったら、リポ自体を Template から再生成**したほうが安全（後述の「最後の手段」参照）
+3. **`git push --force` は禁止**（自分のブランチを含め一律。[AGENTS.md §7.3](../AGENTS.md)）。**共有 `main` への push も禁止**（push 先は常に自分の `<github-id>` ブランチ）
+4. **完全に詰まったら、自分のブランチを `main` から切り直す**のが安全（後述の「最後の手段」参照）
 
 ### stash の使い方クイック
 
@@ -242,5 +242,5 @@ git stash drop stash@{0}                    # 退避を削除
 ## 最後の手段
 
 - 環境を破壊した気がする → `bash scripts/setup-wsl.sh --rollback` → 再セットアップ
-- リポを壊した気がする → 自分のリポを Settings から delete → Classroom Assignment URL を再度踏んで Template から再生成
+- 自分のブランチを壊した気がする → `git switch main` → `git switch -c <github-id>-retry origin/main` で `main` から作業ブランチを切り直す（共有リポや `main` は消さない）。ローカル clone ごと作り直したい場合は、フォルダを消して student-setup-guide §4-2 から共有リポを clone し直す
 - 何もかも分からない → 講師に「何を試して何が起きたか」を 3 行で報告する

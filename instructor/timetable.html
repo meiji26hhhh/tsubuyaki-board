@@ -142,7 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <td>2h-4h</td>
 <td>1日目</td>
 <td>投稿一覧 (M1)</td>
-<td>feature/m1 ブランチ、TDD で Repository → Service → Controller、PR 作成</td>
+<td>自分のブランチ <code>&lt;github-id&gt;</code>、TDD で Repository → Service → Controller、commit &amp; push</td>
 <td>プロンプトのレビュー、生成コードを 1 人ずつ目視</td>
 <td>Codex が <code>findAll().subList()</code> で済ませて DataJpaTest が薄い</td>
 </tr>
@@ -150,7 +150,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <td>4h-4.25h</td>
 <td>2日目</td>
 <td>ウォームアップ</td>
-<td>doctor –quick、前日 PR のスモークテストとセルフレビュー</td>
+<td>doctor –quick、前日コミットのスモークテストとセルフレビュー</td>
 <td>前日コミット品質を確認、再現性 NG を早期発見</td>
 <td>前日環境差分で起動失敗</td>
 </tr>
@@ -198,7 +198,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <td>13h-13.25h</td>
 <td>3日目</td>
 <td>ウォームアップ</td>
-<td>doctor –quick、前日 PR のセルフレビュー</td>
+<td>doctor –quick、前日コミットのセルフレビュー</td>
 <td>前日終端のスモークと差分確認</td>
 <td>朝イチの環境差分</td>
 </tr>
@@ -221,16 +221,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <tr>
 <td>17h-19h</td>
 <td>3日目</td>
-<td>仕上げ＋PR整流化＋プロンプトカタログ作成</td>
-<td>PR 説明文整備、<code>docs/prompts-i-used.md</code> 作成、ルーブリック自己採点準備</td>
-<td>PR テンプレ 5 セクションと prompts-i-used.md の3件以上を確認</td>
-<td>PR タイトルが「色々修正」、prompts-i-used.md が空</td>
+<td>仕上げ＋ブランチ整流化＋プロンプトカタログ作成</td>
+<td>コミット整備、<code>docs/prompts-i-used.md</code> 作成、ルーブリック自己採点準備</td>
+<td>コミット前セルフチェック観点と prompts-i-used.md の3件以上を確認</td>
+<td>コミットメッセージが「色々修正」、prompts-i-used.md が空</td>
 </tr>
 <tr>
 <td>19h-20h</td>
 <td>3日目</td>
 <td>相互レビュー</td>
-<td>PR 画面共有、隣の人が 3 観点 (機能・テスト・コミット) でコメント</td>
+<td>Compare ビュー（<code>compare/main...&lt;github-id&gt;</code>）画面共有、隣の人が 3 観点 (機能・テスト・コミット) でコメント</td>
 <td>1 人 1 つだけ「ここ良い」を全体共有</td>
 <td>レビューコメントが「いいね」だけ</td>
 </tr>
@@ -269,7 +269,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <h2>3日通しでの運営原則</h2>
 <ol type="1">
 <li><strong>0-1h で 30 分以上詰まったら強制的に H2 プロファイルに逃がす</strong>。受講生の DB トラブルで全員を止めない。</li>
-<li><strong>2日目朝・3日目朝の 0.25h はウォームアップ専用</strong>。前日 PR のスモークテストで再現性 NG を早期発見する。</li>
+<li><strong>2日目朝・3日目朝の 0.25h はウォームアップ専用</strong>。前日コミットのスモークテストで再現性 NG を早期発見する。</li>
 <li><strong>2日目終業 (13時間目) で MUST 未完走の受講生はフォロー対象</strong>。3日目朝に H2 強制移行を含む救済策を提示する。</li>
 <li><strong>個別質問は時間を切って受ける</strong>。1 件 5 分で打ち切り、長引くものは昼休み or 終業後に。</li>
 <li><strong>Codex の操作画面を全員に 1 度ずつ見せてもらう</strong>。早い人を指名してデモにすると、遅い人が真似できる。</li>
@@ -297,12 +297,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <tr>
 <td>1日目終業</td>
 <td>4h</td>
-<td>M1 が PR 化されているか、main へマージ済みか</td>
+<td>M1 が自分の <code>&lt;github-id&gt;</code> ブランチに commit &amp; push 済みか</td>
 </tr>
 <tr>
 <td>2日目終業</td>
 <td>13h</td>
-<td>MUST 5項目 + SHOULD 2項目 (S1/S2) が main に入っているか、カバレッジ 80% 到達済みか</td>
+<td>MUST 5項目 + SHOULD 2項目 (S1/S2) が自分のブランチに入っているか、カバレッジ 80% 到達済みか</td>
 </tr>
 <tr>
 <td>3日目演習終了</td>

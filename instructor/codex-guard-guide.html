@@ -193,11 +193,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <h2>1. ハーネスの目的と設計思想</h2>
 <section id="何を守るのか" class="level3">
 <h3>1-1. 何を守るのか</h3>
-<p>研修では受講生が Codex CLI を <strong>自走（<code>approval_policy = &quot;on-failure&quot;</code>）</strong> させて開発する。守りたいものは 3 つ。</p>
+<p>研修では受講生が Codex CLI を <strong>自走（<code>approval_policy = &quot;on-failure&quot;</code>）</strong> させて開発する。守りたいものは 4 つ。</p>
 <ol type="1">
 <li><strong>学習の場</strong> — Codex が暴走して環境を壊すと、受講生は本題（TDD と設計）ではなく復旧に時間を奪われる。</li>
 <li><strong>受講生の機密</strong> — <code>OPENAI_API_KEY</code> や DB パスワード（<code>.env</code>）が Codex のコンテキストやログに漏れない。</li>
 <li><strong>研修の進行</strong> — 1 人のトラブルが全体を止めない。物理的に「起き得ない」状態にしておく。</li>
+<li><strong>共有 main</strong> — 本研修は全受講生が同じ共有リポを使うため、誰かが共有 <code>main</code> を汚すと全員に波及する。Codex が <code>main</code> へ push しようとするのを止める（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a> の共有 main 保護 4 層の一翼。Codex Guard はそのうちコンテナ内 Codex の経路を担う）。</li>
 </ol>
 </section>
 <section id="想定リスク" class="level3">
@@ -347,7 +348,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <pre class="mermaid"><code>flowchart TB
     C[&quot;コマンド実行&lt;br/&gt;例: rm -rf /workspace&quot;] --&gt; P[&quot;PATH 先頭 /opt/codex-guard/bin で名前解決&quot;]
     P --&gt; G[&quot;guard wrapper&lt;br/&gt;rm-guard.sh&quot;]
-    G --&gt; D{&quot;危険パス /&lt;br/&gt;破壊オプション?&quot;}
+    G --&gt; D{&quot;危険パス /&lt;br/&gt;破壊オプション /&lt;br/&gt;共有 main への push?&quot;}
     D --&gt;|該当| REJ[&quot;reject&lt;br/&gt;exit 126・log 記録・代替案を促す&quot;]
     D --&gt;|安全| EX[&quot;実体 /bin/rm を exec&lt;br/&gt;（通常どおり実行）&quot;]</code></pre>
 <blockquote>
@@ -374,8 +375,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 <tr>
 <td><code>git-guard.sh</code></td>
-<td><code>push --force/-f/--force-with-lease</code>・<code>rm -r</code>・<code>clean -f系</code>・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
-<td><code>add</code> <code>commit</code> <code>通常 push</code> <code>rm &lt;file&gt;</code>（単発）<code>restore &lt;file&gt;</code>（単発）<code>stash</code> <code>status</code> <code>log</code> <code>diff</code></td>
+<td><code>push --force/-f/--force-with-lease</code>・<strong><code>push</code> の宛先が <code>main</code>（共有 main 保護）</strong>・<code>rm -r</code>・<code>clean -f系</code>・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
+<td><code>add</code> <code>commit</code> <code>自分のブランチへの通常 push</code> <code>rm &lt;file&gt;</code>（単発）<code>restore &lt;file&gt;</code>（単発）<code>stash</code> <code>status</code> <code>log</code> <code>diff</code></td>
 </tr>
 <tr>
 <td><code>chmod-guard.sh</code></td>
@@ -598,7 +599,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="切替ポイント運用判断" class="level3">
 <h3>3-4. 切替ポイント（運用判断）</h3>
-<p>研修の回や受講生のレベルに応じて、講師が調整できる箇所。いずれも <code>.codex/config.toml</code> を編集して PR で共有する運用。</p>
+<p>研修の回や受講生のレベルに応じて、講師が調整できる箇所。いずれも <code>.codex/config.toml</code> を編集し、講師が共有リポの <code>main</code> に反映する運用（受講生のブランチには影響しない）。</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
