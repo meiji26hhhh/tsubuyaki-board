@@ -87,6 +87,8 @@ flowchart TB
     L3 --> R["破壊・漏洩に到達できない"]
 ```
 
+> 🖼️ **画像版（Mermaid 非対応ビューアで図が出ない場合はこちら）**: [多層防御の全体像 PNG](images/codex-guard/01-defense-in-depth.png)
+
 | 層 | 実装ファイル | この層が単独で防ぐ代表例 |
 |---|---|---|
 | L5 規範 | `AGENTS.md` / `.codex/instructions.md` | Codex が禁止コマンドを「そもそも出力しない」 |
@@ -150,6 +152,8 @@ flowchart TB
     D -->|該当| REJ["reject<br/>exit 126・log 記録・代替案を促す"]
     D -->|安全| EX["実体 /bin/rm を exec<br/>（通常どおり実行）"]
 ```
+
+> 🖼️ **画像版（Mermaid 非対応ビューアで図が出ない場合はこちら）**: [guard wrapper の判定フロー PNG](images/codex-guard/02-guard-flow.png)
 
 | guard | 拒否する操作 | 通す操作（研修で正常に使う） |
 |---|---|---|
@@ -226,6 +230,8 @@ sequenceDiagram
     E->>U: 起動バナー（ハーネス有効・.env 上書き済）
     E->>S: exec bash -l（受講生が操作開始）
 ```
+
+> 🖼️ **画像版（Mermaid 非対応ビューアで図が出ない場合はこちら）**: [起動シーケンス PNG](images/codex-guard/03-startup-sequence.png)
 
 ビルド時・起動時には guard を**意図的にバイパスする正規操作**が 2 か所ある。いずれも「Codex が走り出す前」のセットアップで、絶対パスを使う。
 

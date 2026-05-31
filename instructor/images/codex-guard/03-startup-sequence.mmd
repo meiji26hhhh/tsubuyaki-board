@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant U as 受講生 🐧WSL
+    participant R as run-codex.sh
+    participant P as podman
+    participant E as entrypoint.sh
+    participant S as bash 📦コンテナ
+
+    Note over U,S: 事前に build-codex-image.sh でイメージ作成<br/>（guard を /opt/codex-guard/bin に install）
+
+    U->>R: bash scripts/run-codex.sh
+    R->>R: 起動ガード（広すぎるパス / marker 検査）
+    R->>R: マスク算出（.env を /dev/null・規範を ro）
+    R->>U: 1行告知「研修ハーネス有効」
+    R->>P: podman run（--cap-drop=ALL ほか）
+    P->>E: ENTRYPOINT 実行
+    E->>E: OPENAI_API_KEY 検査（未設定なら起動中止）
+    E->>E: git safe.directory 登録（実体 /usr/bin/git を直呼び）
+    E->>U: 起動バナー（ハーネス有効・.env 上書き済）
+    E->>S: exec bash -l（受講生が操作開始）

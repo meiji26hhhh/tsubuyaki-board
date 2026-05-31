@@ -1,0 +1,15 @@
+{
+  "theme": "default",
+  "themeVariables": {
+    "fontFamily": "Yu Gothic, Meiryo, Segoe UI, Segoe UI Emoji, sans-serif"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "useMaxWidth": false,
+    "curve": "basis"
+  },
+  "sequence": {
+    "useMaxWidth": false,
+    "showSequenceNumbers": false
+  }
+}

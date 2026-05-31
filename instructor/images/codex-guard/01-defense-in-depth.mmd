@@ -1,0 +1,15 @@
+flowchart TB
+    A["Codex CLI が破壊的 / 機密操作を出力"]
+
+    subgraph G["研修ハーネス（多層防御 Defense in Depth）"]
+      direction TB
+      L5["L5 規範ドキュメント層<br/>AGENTS.md §7・.codex/instructions.md<br/>「やらない」をプロンプトで明示"]
+      L4["L4 Codex config 層<br/>.codex/config.toml<br/>sandbox / env whitelist / 承認モード"]
+      L1["L1 マウント物理層<br/>scripts/run-codex.sh<br/>.env を /dev/null・規範ファイルを ro"]
+      L2["L2 シェル wrapper 層<br/>containers/codex-devbox/bin/*-guard.sh<br/>危険コマンドを exit 126 で reject"]
+      L3["L3 コンテナランタイム層<br/>podman --cap-drop=ALL / no-new-privileges / 非 root"]
+      L5 --> L4 --> L1 --> L2 --> L3
+    end
+
+    A --> G
+    L3 --> R["破壊・漏洩に到達できない"]

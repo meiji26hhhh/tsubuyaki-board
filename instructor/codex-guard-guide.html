@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>codex-guard-guide</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">:root {--fg: #1a1a1a;--muted: #555;--accent: #1565c0;--bg: #ffffff;--surface: #f5f7fa;--border: #d8dee6;--warn-bg: #fff8e1;--warn-border: #f0c000;--code-bg: #f3f3f3; --code-fg: #222; }* {font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;box-sizing: border-box;font-size: 12px;}body {color: var(--fg);background: var(--bg);line-height: 1.8;max-width: 1280px;margin: 0 auto;padding: 2.5rem 1.5rem 6rem;}h1 {font-size: 1.9rem;border-bottom: 4px solid var(--accent);padding-bottom: 0.4rem;line-height: 1.4;}h2 {font-size: 1.4rem;margin-top: 2.6rem;padding: 0.3rem 0.7rem;background: var(--surface);border-left: 6px solid var(--accent);}h3 {font-size: 1.15rem;margin-top: 1.8rem;color: var(--accent);}p, li { font-size: 1rem; }a { color: var(--accent); }code {background: var(--surface);border: 1px solid var(--border);border-radius: 4px;padding: 0.1em 0.4em;font-family: "Consolas", "Courier New", monospace;font-size: 0.92em;}pre {background: var(--code-bg);color: var(--code-fg);padding: 1rem 1.2rem;border-radius: 8px;overflow-x: auto;}pre code { background: none; border: none; color: inherit; padding: 0; }table {border-collapse: collapse;width: 100%;margin: 1rem 0;}th, td {border: 1px solid var(--border);padding: 0.55rem 0.8rem;text-align: left;vertical-align: top;}th { background: var(--surface); }.note {background: var(--warn-bg);border: 1px solid var(--warn-border);border-radius: 8px;padding: 0.9rem 1.1rem;margin: 1.2rem 0;}.file { font-weight: 700; color: #0d47a1; }hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }ol li, ul li { margin: 0.35rem 0; }.appendix { color: var(--muted); }.appendix h2 { border-left-color: #999; }.appendix h3 { color: #444; }img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#エージェントハーネスcodex-guard解説-講師用" id="toc-エージェントハーネスcodex-guard解説-講師用">エージェントハーネス（Codex Guard）解説 — 講師用</a>
+<ul>
+<li><a href="#このドキュメントについて" id="toc-このドキュメントについて">0. このドキュメントについて</a></li>
+<li><a href="#ハーネスの目的と設計思想" id="toc-ハーネスの目的と設計思想">1. ハーネスの目的と設計思想</a></li>
+<li><a href="#実装解説層ごと" id="toc-実装解説層ごと">2. 実装解説（層ごと）</a></li>
+<li><a href="#運用ガイド講師向け" id="toc-運用ガイド講師向け">3. 運用ガイド（講師向け）</a></li>
+<li><a href="#まとめ-講師が押さえる-3-点" id="toc-まとめ-講師が押さえる-3-点">4. まとめ — 講師が押さえる 3 点</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="エージェントハーネスcodex-guard解説-講師用" class="level1">
+<h1>エージェントハーネス（Codex Guard）解説 — 講師用</h1>
+<blockquote>
+<p>本書は <strong>講師向け</strong>。受講生が Codex CLI と協働する研修環境に組み込まれた「研修ハーネス（Codex Guard）」について、<strong>なぜ必要か（目的・設計思想）</strong> と <strong>どう動くか（実装）</strong>、そして <strong>どう確認しトラブルにどう対応するか（運用ガイド）</strong> を一望できるようにまとめたもの。</p>
+<p>受講生向けの操作手順は <a href="../education/TROUBLESHOOTING.md">education/TROUBLESHOOTING.md</a>、Codex 自身が従う規範は <a href="../AGENTS.md">AGENTS.md §7</a> を参照。本書はその「裏側の仕組み」を講師が説明できるようにする副読本。</p>
+</blockquote>
+<section id="このドキュメントについて" class="level2">
+<h2>0. このドキュメントについて</h2>
+<section id="対象読者と前提知識" class="level3">
+<h3>0-1. 対象読者と前提知識</h3>
+<ul>
+<li><strong>対象</strong>: 研修を運営する講師。受講生からの「なぜ止まったのか」に答えられるようにする。</li>
+<li><strong>前提</strong>: Git / コンテナ（Podman）/ Linux シェルの存在を知っていれば十分。シェルスクリプトの細部は読めなくてよい（「どの層が何を止めるか」を説明できれば足りる）。</li>
+<li><strong>実装の詳細</strong>を追いたい場合は、本書が示すファイルパスと行番号から実ファイルを直接読むこと。<strong>実ファイルが唯一の正</strong>。</li>
+</ul>
+</section>
+<section id="扱う範囲-扱わないこと" class="level3">
+<h3>0-2. 扱う範囲 / 扱わないこと</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>扱う</th>
+<th>扱わない</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ハーネスの目的・設計思想</td>
+<td>Codex CLI 本体の動作仕様（公式ドキュメント参照）</td>
+</tr>
+<tr>
+<td>5 層それぞれの実装と守備範囲</td>
+<td>Spring Boot 演習の中身（<a href="../EXERCISES.md">EXERCISES.md</a> 参照）</td>
+</tr>
+<tr>
+<td>有効性の確認・トラブル対応・切替ポイント</td>
+<td>guard スクリプトの 1 行ずつの解説（実ファイル参照）</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="凡例本書および研修共通" class="level3">
+<h3>0-3. 凡例（本書および研修共通）</h3>
+<ul>
+<li>🪟 Windows PowerShell</li>
+<li>🐧 WSL Ubuntu ターミナル（プロンプト末尾 <code>~$</code>）</li>
+<li>📦 Codex devbox コンテナ内（<code>codex-shell</code> で入った状態、プロンプト末尾 <code>:/workspace$</code>）</li>
+<li>🌐 ブラウザ</li>
+</ul>
+</section>
+<section id="関連ドキュメント" class="level3">
+<h3>0-4. 関連ドキュメント</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>目的</th>
+<th>ドキュメント</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex が従う禁止コマンド規範</td>
+<td><a href="../AGENTS.md">AGENTS.md §7</a></td>
+</tr>
+<tr>
+<td>Codex 補足（触ってよいパス表）</td>
+<td><a href="../.codex/instructions.md">.codex/instructions.md</a></td>
+</tr>
+<tr>
+<td>受講生: ブロックされた時の対処</td>
+<td><a href="../education/TROUBLESHOOTING.md">education/TROUBLESHOOTING.md Q4-2 / Q4-3</a></td>
+</tr>
+<tr>
+<td>講師: 当日の即応判断</td>
+<td><a href="./faq.md">instructor/faq.md</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+</section>
+</section>
+<section id="ハーネスの目的と設計思想" class="level2">
+<h2>1. ハーネスの目的と設計思想</h2>
+<section id="何を守るのか" class="level3">
+<h3>1-1. 何を守るのか</h3>
+<p>研修では受講生が Codex CLI を <strong>自走（<code>approval_policy = &quot;on-failure&quot;</code>）</strong> させて開発する。守りたいものは 3 つ。</p>
+<ol type="1">
+<li><strong>学習の場</strong> — Codex が暴走して環境を壊すと、受講生は本題（TDD と設計）ではなく復旧に時間を奪われる。</li>
+<li><strong>受講生の機密</strong> — <code>OPENAI_API_KEY</code> や DB パスワード（<code>.env</code>）が Codex のコンテキストやログに漏れない。</li>
+<li><strong>研修の進行</strong> — 1 人のトラブルが全体を止めない。物理的に「起き得ない」状態にしておく。</li>
+</ol>
+</section>
+<section id="想定リスク" class="level3">
+<h3>1-2. 想定リスク</h3>
+<p>Codex は確率モデルである以上、次のいずれでも破壊的操作を出力しうる。</p>
+<ul>
+<li><strong>プロンプトインジェクション</strong> — 受講生やファイル内の文言に誘導される</li>
+<li><strong>モデルの誤動作</strong> — 文脈を誤読して <code>rm -rf</code> や <code>git reset --hard</code> を提案する</li>
+<li><strong>教材ミス</strong> — 曖昧な指示が危険操作を誘発する</li>
+</ul>
+</section>
+<section id="設計原則-指示を守らせるではなく物理的に走らせない" class="level3">
+<h3>1-3. 設計原則 — 「指示を守らせる」ではなく「物理的に走らせない」</h3>
+<p>ハーネスの中核思想は次の 2 点。</p>
+<ul>
+<li><strong>指示（プロンプト）だけに頼らない</strong>。「やらないで」と書くのは最終層であって第一防衛線ではない。上記リスクのどれでも突破されうるため、<strong>コンテナとシェルの層で破壊操作そのものが走らない</strong>状態を作る。</li>
+<li><strong>blocklist 方式</strong>（明らかな破壊だけ拒否）を採る。allowlist（許可コマンドの列挙）にすると通常の開発（<code>./mvnw verify</code>、<code>git commit</code>、<code>rm -r target/</code>）まで止まり、サポートコストが爆発する。<strong>「<code>rm file</code> は通し、<code>rm -rf /</code> だけ止める」</strong> 粒度設計が肝。</li>
+</ul>
+<blockquote>
+<p>💡 だからこそ「ハーネスを外せばラク」ではない。ハーネスは受講生の自由を奪うのではなく、<strong>通常の開発フローはそのまま通し、研修に不要な破壊操作だけを止める</strong>。標準的な開発で困ることはまず無い（→ §3-3）。</p>
+</blockquote>
+</section>
+<section id="多層防御の全体像" class="level3">
+<h3>1-4. 多層防御の全体像</h3>
+<p>5 つの層が<strong>それぞれ独立して</strong>効く。どれか 1 層が破られても、別の層が受け止める。</p>
+<pre class="mermaid"><code>flowchart TB
+    A[&quot;Codex CLI が破壊的 / 機密操作を出力&quot;]
+
+    subgraph G[&quot;研修ハーネス（多層防御 Defense in Depth）&quot;]
+      direction TB
+      L5[&quot;L5 規範ドキュメント層&lt;br/&gt;AGENTS.md §7・.codex/instructions.md&lt;br/&gt;「やらない」をプロンプトで明示&quot;]
+      L4[&quot;L4 Codex config 層&lt;br/&gt;.codex/config.toml&lt;br/&gt;sandbox / env whitelist / 承認モード&quot;]
+      L1[&quot;L1 マウント物理層&lt;br/&gt;scripts/run-codex.sh&lt;br/&gt;.env を /dev/null・規範ファイルを ro&quot;]
+      L2[&quot;L2 シェル wrapper 層&lt;br/&gt;containers/codex-devbox/bin/*-guard.sh&lt;br/&gt;危険コマンドを exit 126 で reject&quot;]
+      L3[&quot;L3 コンテナランタイム層&lt;br/&gt;podman --cap-drop=ALL / no-new-privileges / 非 root&quot;]
+      L5 --&gt; L4 --&gt; L1 --&gt; L2 --&gt; L3
+    end
+
+    A --&gt; G
+    L3 --&gt; R[&quot;破壊・漏洩に到達できない&quot;]</code></pre>
+<blockquote>
+<p>🖼️ <strong>画像版（Mermaid 非対応ビューアで図が出ない場合はこちら）</strong>: <a href="images/codex-guard/01-defense-in-depth.png">多層防御の全体像 PNG</a></p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>層</th>
+<th>実装ファイル</th>
+<th>この層が単独で防ぐ代表例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L5 規範</td>
+<td><code>AGENTS.md</code> / <code>.codex/instructions.md</code></td>
+<td>Codex が禁止コマンドを「そもそも出力しない」</td>
+</tr>
+<tr>
+<td>L4 config</td>
+<td><code>.codex/config.toml</code></td>
+<td>機密 env を Codex に渡さない / 書き込み範囲を制限</td>
+</tr>
+<tr>
+<td>L1 マウント</td>
+<td><code>scripts/run-codex.sh</code></td>
+<td><code>.env</code> を読まれても空・規範ファイルを書き換えられない</td>
+</tr>
+<tr>
+<td>L2 wrapper</td>
+<td><code>containers/codex-devbox/bin/*-guard.sh</code></td>
+<td><code>rm -rf /</code> 等を実行直前に拒否</td>
+</tr>
+<tr>
+<td>L3 ランタイム</td>
+<td><code>scripts/run-codex.sh</code> の podman オプション</td>
+<td>権限昇格・capability 悪用・コンテナ外（システム / ホーム / ホスト権限）への波及を断つ</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</section>
+</section>
+<section id="実装解説層ごと" class="level2">
+<h2>2. 実装解説（層ごと）</h2>
+<section id="l1-マウント物理層-scriptsrun-codex.sh" class="level3">
+<h3>2-1. L1 マウント物理層 — <code>scripts/run-codex.sh</code></h3>
+<p>受講生は 🐧 WSL で <code>bash scripts/run-codex.sh</code>（別名 <code>codex-shell</code>）を実行してコンテナに入る。このラッパが<strong>起動時に物理的なガードを組み立てる</strong>。</p>
+<p><strong>(a) 起動ガード</strong>（<code>run-codex.sh:43-60</code>） <code>/</code>・<code>~</code>・<code>/home</code>・<code>/mnt/c</code>・<code>/workspace</code> など「広すぎるパス」を <code>/workspace</code> にマウントしようとすると起動拒否。さらに <code>REQUIRED_MARKERS</code>（<code>pom.xml</code> / <code>AGENTS.md</code> / <code>.codex/config.toml</code>）が無いディレクトリも拒否し、<strong>tsubuyaki-board のリポルート以外では起動しない</strong>。</p>
+<p><strong>(b) 機密ファイルの <code>/dev/null</code> 上書きマウント</strong></p>
+<ul>
+<li>常時マスク（<code>:101-110</code>）: コンテナ内の <code>/home/codex/.bashrc</code> / <code>.bash_history</code> / <code>.profile</code> / <code>.gitconfig</code> を <code>/dev/null</code> に bind（<code>ro=true</code>）。</li>
+<li>条件付きマスク（<code>:113-125</code>）: ホスト側 <code>/workspace</code> 配下を <code>find</code> し、<code>.env</code> / <code>.env.*</code> / <code>*secret*</code>・<code>*Secret*</code> / <code>*credentials*</code>・<code>*Credentials*</code> / <code>*.pem</code> / <code>*id_rsa*</code> / <code>*id_ed25519*</code>（大文字小文字の両バリアントを個別に列挙）に<strong>一致したファイルだけ</strong> <code>/dev/null</code> で上書き（<code>.git</code> / <code>target</code> / <code>.codex/sessions</code> は探索除外）。</li>
+</ul>
+<blockquote>
+<p>💡 効果: Codex が <code>cat .env</code> しても<strong>空が返る</strong>。<code>OPENAI_API_KEY</code> や DB パスワードがコンテキストに載らない。ホストに <code>.env</code> が無い初期状態では「漏れる値が無い」ので、マスクしないこと自体が安全（だから条件付き）。</p>
+</blockquote>
+<p><strong>(c) 規範ファイルの読み取り専用化</strong>（<code>:130-140</code>） <code>AGENTS.md</code> / <code>.codex</code> / <code>instructor</code> / <code>.github</code> を <code>:ro</code> で再マウント。<strong>Codex はこれらを読めても書き換えられない</strong>（規範そのものの改ざんを防ぐ）。</p>
+</section>
+<section id="l2-シェル-wrapper-層-containerscodex-devboxbin-guard.sh" class="level3">
+<h3>2-2. L2 シェル wrapper 層 — <code>containers/codex-devbox/bin/*-guard.sh</code></h3>
+<section id="仕組み-path-先頭挿入" class="level4">
+<h4>仕組み: PATH 先頭挿入</h4>
+<p>guard 本体は <code>/opt/codex-guard/bin/</code> に置かれ、<code>rm</code> / <code>git</code> / <code>chmod</code> / <code>chown</code> / <code>dd</code> / <code>sudo</code> という<strong>コマンド名の symlink</strong> が張られる（<code>install-guards.sh:29-34</code>）。この <code>/opt/codex-guard/bin</code> を <strong>PATH の先頭</strong>に入れることで、<code>rm</code> と打つと実体 <code>/bin/rm</code> ではなく <code>rm-guard.sh</code> が先に呼ばれる。</p>
+<p>PATH 先頭挿入は <strong>3 系統</strong>で固める（<code>install-guards.sh:37-68</code>）。シェルの起動経路を取りこぼさないため。</p>
+<table>
+<thead>
+<tr>
+<th>仕込み先</th>
+<th>カバーする経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/profile.d/codex-guard.sh</code></td>
+<td>ログインシェル（<code>bash -l</code>）</td>
+</tr>
+<tr>
+<td><code>/etc/bash.bashrc</code></td>
+<td>非ログインの <code>bash -c &quot;...&quot;</code> 経由</td>
+</tr>
+<tr>
+<td><code>/etc/environment</code></td>
+<td>bash 以外（<code>sh</code> / <code>dash</code>）や exec 系</td>
+</tr>
+</tbody>
+</table>
+<p>加えて <code>Containerfile:87</code> で <code>ENV PATH=/opt/codex-guard/bin:...</code> を設定し、イメージ既定の PATH 自体も guard 先頭にしてある。</p>
+<blockquote>
+<p>💡 <strong>実装の正確な注意点</strong>: guard は実体バイナリ（<code>/bin/rm</code> 等）を<strong>無効化していない</strong>（パーミッションは <code>0755</code> のまま）。当初は実体を実行不能にする案だったが、それでは guard wrapper 自身が実体を <code>exec</code> できなくなる（<code>install-guards.sh:70-77</code> にこの判断が記録されている）。したがって防御は <strong>「PATH 先頭で素のコマンド名解決を必ず guard 経由にする」</strong> 戦略で成り立つ。この帰結が §2-7 の「絶対パス直呼びは wrapper を通らない」という既知の制約につながる。</p>
+</blockquote>
+</section>
+<section id="guard-の共通動作-guard-common.sh" class="level4">
+<h4>guard の共通動作 — <code>guard-common.sh</code></h4>
+<ul>
+<li>拒否時は <strong>exit code 126</strong>（<code>:11</code>）で、<code>[codex-guard]</code> 始まりのメッセージを stderr に出す。</li>
+<li>拒否は <code>/tmp/codex-guard.log</code> に <code>日時 REJECTED &lt;cmd&gt; :: &lt;理由&gt; :: argv=...</code> の形式で記録（<code>:19-21</code>）。</li>
+<li><code>guard_contains_dangerous_path</code>（<code>:51-72</code>）が「危険パス」を判定: <code>/</code> 系システムパス、<code>~</code> / <code>~/.codex</code> / <code>~/.m2</code>、<code>.</code> / <code>..</code>、<code>/workspace/.codex</code> / <code>/workspace/.github</code> / <code>/workspace/AGENTS.md</code> / <code>/workspace/.git</code>。</li>
+</ul>
+</section>
+<section id="各-guard-の守備範囲" class="level4">
+<h4>各 guard の守備範囲</h4>
+<pre class="mermaid"><code>flowchart TB
+    C[&quot;コマンド実行&lt;br/&gt;例: rm -rf /workspace&quot;] --&gt; P[&quot;PATH 先頭 /opt/codex-guard/bin で名前解決&quot;]
+    P --&gt; G[&quot;guard wrapper&lt;br/&gt;rm-guard.sh&quot;]
+    G --&gt; D{&quot;危険パス /&lt;br/&gt;破壊オプション?&quot;}
+    D --&gt;|該当| REJ[&quot;reject&lt;br/&gt;exit 126・log 記録・代替案を促す&quot;]
+    D --&gt;|安全| EX[&quot;実体 /bin/rm を exec&lt;br/&gt;（通常どおり実行）&quot;]</code></pre>
+<blockquote>
+<p>🖼️ <strong>画像版（Mermaid 非対応ビューアで図が出ない場合はこちら）</strong>: <a href="images/codex-guard/02-guard-flow.png">guard wrapper の判定フロー PNG</a></p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>guard</th>
+<th>拒否する操作</th>
+<th>通す操作（研修で正常に使う）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rm-guard.sh</code></td>
+<td><code>rm -rf /</code> <code>~</code> <code>.</code> <code>..</code> / システム・機密・規範パス削除 / 許可外ディレクトリの再帰削除</td>
+<td><code>rm &lt;file&gt;</code>、<code>rm -r</code> は <code>target/</code> <code>build/</code> <code>node_modules/</code> <code>.cache/</code> <code>tmp/</code> <code>out/</code> <code>logs/</code> のみ許可</td>
+</tr>
+<tr>
+<td><code>git-guard.sh</code></td>
+<td><code>push --force/-f/--force-with-lease</code>・<code>rm -r</code>・<code>clean -f系</code>・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
+<td><code>add</code> <code>commit</code> <code>通常 push</code> <code>rm &lt;file&gt;</code>（単発）<code>restore &lt;file&gt;</code>（単発）<code>stash</code> <code>status</code> <code>log</code> <code>diff</code></td>
+</tr>
+<tr>
+<td><code>chmod-guard.sh</code></td>
+<td><code>chmod -R 777</code>、システム・機密・規範パスへの適用</td>
+<td><code>chmod +x script.sh</code>、通常の <code>644</code> など</td>
+</tr>
+<tr>
+<td><code>chown-guard.sh</code></td>
+<td>システム・機密パスへの所有者変更</td>
+<td>ローカルファイルの通常変更</td>
+</tr>
+<tr>
+<td><code>dd-guard.sh</code></td>
+<td><strong>一律拒否</strong>（研修に正当用途なし）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>sudo-guard.sh</code></td>
+<td><strong>一律拒否</strong>（昇格による全 guard 迂回を断つ）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <code>git-guard</code> は <code>-C /workspace</code> のような前置オプションを読み飛ばしてから本当のサブコマンドを特定する（<code>git-guard.sh:31-65</code>）。<code>git -C ... reset --hard</code> のような迂回も捕捉する作り。</p>
+</blockquote>
+</section>
+</section>
+<section id="l3-コンテナランタイム層-run-codex.sh73-88" class="level3">
+<h3>2-3. L3 コンテナランタイム層 — <code>run-codex.sh:73-88</code></h3>
+<p>podman 起動オプションでホストへの波及と権限昇格を断つ。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>オプション</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--cap-drop=ALL</code></td>
+<td>Linux capability を全削除。root 相当の特権操作（マウント等）を封じる</td>
+</tr>
+<tr>
+<td><code>--security-opt no-new-privileges</code></td>
+<td>sudo を持ち込んでも setuid 系で権限昇格できない</td>
+</tr>
+<tr>
+<td><code>--userns=keep-id</code></td>
+<td>ホスト uid=1000 とコンテナ uid=1000 を一致させ、bind マウントの権限事故を防ぐ</td>
+</tr>
+<tr>
+<td><code>--security-opt label=disable</code></td>
+<td>WSL / SELinux 環境での起動阻害を回避</td>
+</tr>
+<tr>
+<td><code>--rm</code></td>
+<td>終了時にコンテナを破棄（汚染を残さない）</td>
+</tr>
+</tbody>
+</table>
+<p>環境変数は <code>OPENAI_API_KEY</code> / <code>TZ</code> / <code>LANG</code>（＋設定時のみ <code>SPRING_PROFILES_ACTIVE</code>）だけを透過。<strong>ホスト側の他の env はコンテナに渡らない</strong>。</p>
+</section>
+<section id="l4-codex-config-層-.codexconfig.toml" class="level3">
+<h3>2-4. L4 Codex config 層 — <code>.codex/config.toml</code></h3>
+<p>Codex CLI に渡す設定で「Codex 自身に課す約束事」と「渡す情報の最小化」を担う。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>設定</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>approval_policy</code></td>
+<td><code>on-failure</code></td>
+<td>通常自走、失敗時のみ受講生に確認（§3-4 で <code>on-request</code> に切替可）</td>
+</tr>
+<tr>
+<td><code>sandbox_mode</code></td>
+<td><code>workspace-write</code></td>
+<td><code>/workspace</code> と Maven キャッシュのみ書き込み可、他は read-only</td>
+</tr>
+<tr>
+<td><code>disable_response_storage</code></td>
+<td><code>true</code></td>
+<td>研修初期は応答保存を抑制</td>
+</tr>
+<tr>
+<td><code>[shell_environment_policy].include_only</code></td>
+<td><code>JAVA_HOME</code> / <code>MAVEN_OPTS</code> / <code>TZ</code> / <code>LANG</code> / <code>SPRING_PROFILES_ACTIVE</code></td>
+<td><strong>これ以外の env は Codex に渡さない</strong>。<code>ORACLE_PWD</code> / <code>AWS_*</code> / <code>GH_TOKEN</code> 等は意図的に除外</td>
+</tr>
+<tr>
+<td><code>[sandbox_workspace_write].writable_roots</code></td>
+<td><code>/workspace</code>、<code>/home/codex/.m2</code></td>
+<td>書き込み可能ルートを限定</td>
+</tr>
+<tr>
+<td><code>[network].allow</code></td>
+<td>Maven / GitHub / <code>api.openai.com</code> のみ</td>
+<td>想定外の通信先を絞る</td>
+</tr>
+<tr>
+<td><code>[tools].web_search</code></td>
+<td><code>false</code></td>
+<td>研修中の脱線防止（応用課題で <code>true</code> に切替可）</td>
+</tr>
+</tbody>
+</table>
+<p>加えて <code>instructions</code>（<code>config.toml:33-73</code>）に研修ハーネスの禁止リストを記載し、<strong>プロンプト層からも</strong>同じ禁止を Codex に伝える。</p>
+<blockquote>
+<p>💡 <code>config.toml:10-12</code> 自身が「これはプロンプト層であり、最終的な物理ブロックはコンテナの研修ハーネスで別途行われる。多層防御の最内殻」と明記している。config は約束事、物理ブロックは L1/L2/L3 という役割分担。</p>
+</blockquote>
+</section>
+<section id="l5-規範ドキュメント層-agents.md-7-.codexinstructions.md" class="level3">
+<h3>2-5. L5 規範ドキュメント層 — <code>AGENTS.md §7</code> / <code>.codex/instructions.md</code></h3>
+<p>人間にも Codex にも読める形で禁止と許可を明文化する最終層。</p>
+<ul>
+<li><strong><code>AGENTS.md §7.3</code></strong> が禁止コマンドを 5 系統に分けて列挙: §7.3.1 機密読み取り / §7.3.2 破壊的ファイル操作 / §7.3.3 履歴・権限改ざん＋<strong>guard 迂回禁止</strong>（絶対パス直呼び・<code>bash -c</code>・<code>eval</code>）/ §7.3.4 権限昇格・任意コード実行 / §7.3.5 DB 破壊。</li>
+<li><strong><code>AGENTS.md §7.4</code></strong> が許可粒度を明示: <code>git rm &lt;file&gt;</code> は<strong>単発のみ</strong>（再帰不可）、<code>git restore &lt;file&gt;</code> も<strong>単発のみ</strong>。</li>
+<li><strong><code>AGENTS.md §7.5</code></strong> が「ブロックされた時の Codex の振る舞い」を規定: ①再試行しない ②代替手段を提案する ③受講生に確認する ④強行突破しない。</li>
+<li><strong><code>.codex/instructions.md</code></strong> が「触ってよいパス」を <strong>読み取り / 書き込み / 削除の 3 列</strong>＋凡例（✅ 自由 / 🟡 受講生確認 / 🛑 物理ブロック）で一覧化。</li>
+</ul>
+</section>
+<section id="起動の流れビルド-起動-バナー" class="level3">
+<h3>2-6. 起動の流れ（ビルド → 起動 → バナー）</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as 受講生 🐧WSL
+    participant R as run-codex.sh
+    participant P as podman
+    participant E as entrypoint.sh
+    participant S as bash 📦コンテナ
+
+    Note over U,S: 事前に build-codex-image.sh でイメージ作成&lt;br/&gt;（guard を /opt/codex-guard/bin に install）
+
+    U-&gt;&gt;R: bash scripts/run-codex.sh
+    R-&gt;&gt;R: 起動ガード（広すぎるパス / marker 検査）
+    R-&gt;&gt;R: マスク算出（.env を /dev/null・規範を ro）
+    R-&gt;&gt;U: 1行告知「研修ハーネス有効」
+    R-&gt;&gt;P: podman run（--cap-drop=ALL ほか）
+    P-&gt;&gt;E: ENTRYPOINT 実行
+    E-&gt;&gt;E: OPENAI_API_KEY 検査（未設定なら起動中止）
+    E-&gt;&gt;E: git safe.directory 登録（実体 /usr/bin/git を直呼び）
+    E-&gt;&gt;U: 起動バナー（ハーネス有効・.env 上書き済）
+    E-&gt;&gt;S: exec bash -l（受講生が操作開始）</code></pre>
+<blockquote>
+<p>🖼️ <strong>画像版（Mermaid 非対応ビューアで図が出ない場合はこちら）</strong>: <a href="images/codex-guard/03-startup-sequence.png">起動シーケンス PNG</a></p>
+</blockquote>
+<p>ビルド時・起動時には guard を<strong>意図的にバイパスする正規操作</strong>が 2 か所ある。いずれも「Codex が走り出す前」のセットアップで、絶対パスを使う。</p>
+<ul>
+<li><code>Containerfile:89-95</code>: <code>/bin/chmod +x entrypoint.sh</code>（PATH 先頭の guard を避けるため絶対パス）。</li>
+<li><code>entrypoint.sh:27-32</code>: <code>/usr/bin/git config --global safe.directory</code>（guard が <code>config --global</code> を拒否するため実体直呼び）。</li>
+</ul>
+<blockquote>
+<p>💡 これは「ハーネスを仕込む過程でハーネス自身に引っかからない」ための回避であり、<strong>Codex に許された穴ではない</strong>。Codex が同じ絶対パス迂回をすることは <code>AGENTS.md §7.3.3</code> で明示的に禁止されている。</p>
+</blockquote>
+</section>
+<section id="既知の制約と最終防衛線" class="level3">
+<h3>2-7. 既知の制約と最終防衛線</h3>
+<p>正直に共有すべき限界。<strong>どの層も単独では完璧ではなく、層の重なりで担保している</strong>。</p>
+<ul>
+<li><strong>絶対パス直呼び</strong>（<code>/bin/rm -rf /workspace</code>）と <strong><code>bash -c &quot;rm -rf /&quot;</code></strong> は、コマンド名解決を経ないため <strong>L2 wrapper を通らない</strong>（理屈上は素通りしうる）。</li>
+<li>これらは <strong>L5（規範で明示禁止）</strong> と <strong>L4（プロンプトでも禁止）</strong> で抑止する。万一すり抜けても被害は L1/L3 で限定される: <code>.env</code> 等の機密は既に空（L1）、システム全体・ホスト権限・ホーム配下への波及は capability 剥奪・非 root・<code>/dev/null</code> マスクで阻まれ（L1/L3）、コンテナ自体の汚染は <code>--rm</code> で残らない（L3）。</li>
+<li>ただし <strong><code>/workspace</code> 配下のデータ消失は防げない</strong>。<code>/workspace</code> はホスト（WSL）の作業ディレクトリの bind マウント（<code>run-codex.sh:84</code> の <code>-v ...:/workspace:rw</code>）であり、絶対パス直呼びの <code>/bin/rm -rf /workspace</code> が wrapper を抜けて実行されれば<strong>ホスト側の実ファイルが消える</strong>（コンテナを作り直しても戻らない）。だからこそ L5/L4 のプロンプト層での禁止と、受講生のこまめな commit / push が最後の保険になる。</li>
+</ul>
+<hr />
+</section>
+</section>
+<section id="運用ガイド講師向け" class="level2">
+<h2>3. 運用ガイド（講師向け）</h2>
+<section id="ハーネス有効性の確認" class="level3">
+<h3>3-1. ハーネス有効性の確認</h3>
+<p><strong>(a) 起動バナーを見る</strong>（最も簡単） 受講生が <code>codex-shell</code> でコンテナに入ると、<code>entrypoint.sh:39-63</code> のバナーが出る。次の 2 行を確認する。</p>
+<pre><code>  研修ハーネス : 有効 (rm / git / chmod / chown / dd / sudo を wrapper で監査)
+  .env         : /dev/null 上書きマウント済 (機密値は到達不能)</code></pre>
+<p>「研修ハーネス: 無効」と出る場合はイメージが guard 入りでない（古い）。<code>bash scripts/build-codex-image.sh</code> でビルドし直す。</p>
+<p><strong>(b) 実際に弾かれることを確認</strong>（📦 コンテナ内）</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /etc              <span class="co"># → [codex-guard] ... exit 126 で止まれば正常（万一通ってもコンテナ内のみ・--rm で破棄）</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> .env                 <span class="co"># → 何も出ない（空）なら正常</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify    <span class="co"># → 通常どおり完走すれば「誤検知なし」も確認できる</span></span></code></pre></div>
+<blockquote>
+<p>⚠️ 確認用の実弾に <code>rm -rf /workspace</code> は使わないこと。<code>/workspace</code> はホストの bind 実体なので、万一ハーネスが無効なイメージだと受講生のプロジェクトごと消える。システムパス（<code>/etc</code> 等）なら guard が止め、万一すり抜けてもコンテナ内に閉じて <code>--rm</code> で破棄される。</p>
+</blockquote>
+<blockquote>
+<p>💡 3 つ目が重要。「危険操作は止まる」だけでなく「<strong>通常の開発は止まらない</strong>」ことまで確認して初めて、ハーネスが正しく機能していると言える。</p>
+</blockquote>
+</section>
+<section id="codex-guard-で止まった時のトラブル対応フロー" class="level3">
+<h3>3-2. <code>[codex-guard]</code> で止まった時のトラブル対応フロー</h3>
+<p>受講生から「Codex が止まった」と相談されたら、次の順で対応する。受講生向けの同内容は <a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md Q4-2</a> にある。</p>
+<ol type="1">
+<li><strong>再試行させない</strong>。同じコマンドは何度やっても同じ結果（これは異常ではなく設計どおり）。</li>
+<li><strong>Codex に「代替案を出して」と返させる</strong>。<code>git reset --hard</code> → <code>git stash push -u</code>、<code>git clean -fd</code> → 個別 <code>rm &lt;file&gt;</code> など、<code>AGENTS.md §7.5</code> の代替が返るはず。</li>
+<li><strong>本当に必要なら受講生本人が 📦 を抜けて 🐧 WSL 側で実行</strong>する（例: <code>target/</code> の一括削除）。Codex に強行させない。</li>
+<li><strong>ログを見る</strong>: 📦 コンテナ内 <code>/tmp/codex-guard.log</code> に <code>REJECTED &lt;cmd&gt; :: &lt;理由&gt; :: argv=...</code> が残る。同じ拒否が頻発するなら、プロンプト設計を見直すサイン。</li>
+</ol>
+<blockquote>
+<p>💡 <code>.env</code> の中身を Codex が答えない、というのは故障ではなく仕様（§2-1(b)・<a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md Q4-3</a>）。API キー / DB パスワードの操作は受講生が 🐧 WSL 側で <code>.env</code> を直接編集する。</p>
+</blockquote>
+</section>
+<section id="受講生への説明のコツ" class="level3">
+<h3>3-3. 受講生への説明のコツ</h3>
+<ul>
+<li><strong>「制限」ではなく「レール」と言い換える</strong>。ハーネスは自由を奪うのではなく、研修に不要な事故だけを止める。通常の TDD・コミット・ビルドはそのまま通る。</li>
+<li><strong>「なぜ止まったか」を一言で</strong>: 「それは研修中に使わない破壊操作で、Codex のためのガードレールが働いた」。</li>
+<li><strong>代替を一緒に考える</strong>: 止まったコマンドの 9 割は「そもそも不要」か「受講生が手で安全にやるべき」もの。<a href="../education/TROUBLESHOOTING.md#git-操作の安全ガイド">TROUBLESHOOTING.md の Git 操作の安全ガイド</a>に早見表がある。</li>
+</ul>
+</section>
+<section id="切替ポイント運用判断" class="level3">
+<h3>3-4. 切替ポイント（運用判断）</h3>
+<p>研修の回や受講生のレベルに応じて、講師が調整できる箇所。いずれも <code>.codex/config.toml</code> を編集して PR で共有する運用。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>設定</th>
+<th>既定</th>
+<th>切替の意図</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>approval_policy</code></td>
+<td><code>on-failure</code></td>
+<td>安全最優先の回は <code>on-request</code>（毎コマンド確認）にする</td>
+</tr>
+<tr>
+<td><code>[tools].web_search</code></td>
+<td><code>false</code></td>
+<td>仕上げ・応用課題で外部調査を許す場合のみ <code>true</code></td>
+</tr>
+<tr>
+<td><code>disable_response_storage</code></td>
+<td><code>true</code></td>
+<td>評価・再現性のため保存したい場合のみ <code>false</code>（受講生に説明の上で）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>L1/L2/L3 の物理ガード（マウント・wrapper・capability）は研修中に外さない</strong>。切替えてよいのは L4 の運用パラメータまで。物理層を外すと多層防御の前提が崩れる。</p>
+</blockquote>
+<hr />
+</section>
+</section>
+<section id="まとめ-講師が押さえる-3-点" class="level2">
+<h2>4. まとめ — 講師が押さえる 3 点</h2>
+<ol type="1">
+<li><strong>目的</strong>: Codex の自走を活かしつつ、破壊・機密漏洩・進行停止を「指示」ではなく「物理」で防ぐ。</li>
+<li><strong>仕組み</strong>: L5 規範 → L4 config → L1 マウント → L2 wrapper → L3 ランタイムの 5 層。どれか 1 層が破られても他で止まる。</li>
+<li><strong>運用</strong>: 起動バナーで有効性を確認し、<code>[codex-guard]</code> で止まったら「再試行させず代替へ」。物理層は外さず、調整は L4 パラメータまで。</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>本書の検証について</strong>: 本書のファイル参照・行番号・コマンド例は実装ファイル（<code>scripts/run-codex.sh</code> / <code>containers/codex-devbox/bin/*-guard.sh</code> / <code>containers/codex-devbox/Containerfile</code> / <code>containers/codex-devbox/entrypoint.sh</code> / <code>.codex/config.toml</code> / <code>AGENTS.md</code> / <code>.codex/instructions.md</code>）を直接読んで記述した。実装が更新された場合は実ファイルを正とし、本書を追従させること。Mermaid 図は GitHub 上でレンダリングされる。</p>
+</blockquote>
+</section>
+</section>
+</body>
+</html>
