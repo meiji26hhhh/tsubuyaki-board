@@ -43,7 +43,8 @@ logs/
 .env.*.local
 *.pid
 
-# Codex / AI
+# Codex / Claude / AI
+.claude/
 .codex/sessions/
 .codex/history.jsonl
 .codex/log/
