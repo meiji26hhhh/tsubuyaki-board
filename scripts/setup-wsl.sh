@@ -60,8 +60,8 @@ fi
 
 echo ""
 echo "==> 1. apt update / 基本ツール"
-${SUDO} apt-get update
-${SUDO} apt-get install -y --no-install-recommends \
+${SUDO} apt-get -q update
+${SUDO} apt-get -q install -y --no-install-recommends \
     git curl wget ca-certificates gnupg locales tzdata software-properties-common \
     jq unzip less vim-tiny sudo build-essential netcat-openbsd ripgrep fd-find file
 
@@ -81,8 +81,8 @@ if ! dpkg -s temurin-21-jdk >/dev/null 2>&1; then
     CODENAME="$(awk -F= '/VERSION_CODENAME/ {print $2}' /etc/os-release)"
     echo "deb [signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb ${CODENAME} main" \
         | ${SUDO} tee /etc/apt/sources.list.d/adoptium.list > /dev/null
-    ${SUDO} apt-get update
-    ${SUDO} apt-get install -y --no-install-recommends temurin-21-jdk
+    ${SUDO} apt-get -q update
+    ${SUDO} apt-get -q install -y --no-install-recommends temurin-21-jdk
 fi
 ${SUDO} tee /etc/profile.d/jdk.sh > /dev/null <<'EOF'
 export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-amd64
@@ -92,7 +92,7 @@ EOF
 echo ""
 echo "==> 4. Maven"
 if ! dpkg -s maven >/dev/null 2>&1; then
-    ${SUDO} apt-get install -y --no-install-recommends maven
+    ${SUDO} apt-get -q install -y --no-install-recommends maven
 fi
 
 echo ""
@@ -102,12 +102,12 @@ echo "==> 5. Podman / podman-compose"
 #   - uidmap: newuidmap/newgidmap (rootless 必須)
 #   - slirp4netns: rootless ネットワーク
 #   - fuse-overlayfs: rootless ストレージドライバ
-${SUDO} apt-get install -y --no-install-recommends \
+${SUDO} apt-get -q install -y --no-install-recommends \
     podman uidmap slirp4netns fuse-overlayfs
 # podman-compose は Ubuntu 22.04 jammy/universe には存在しないため pip 経由で導入
 if ! command -v podman-compose >/dev/null 2>&1; then
     if ! command -v pip3 >/dev/null 2>&1; then
-        ${SUDO} apt-get install -y --no-install-recommends python3-pip
+        ${SUDO} apt-get -q install -y --no-install-recommends python3-pip
     fi
     ${SUDO} pip3 install --break-system-packages podman-compose 2>/dev/null \
         || ${SUDO} pip3 install podman-compose
@@ -129,6 +129,19 @@ driver = "overlay"
 
 [storage.options.overlay]
 mount_program = "/usr/bin/fuse-overlayfs"
+EOF
+fi
+
+# rootless podman の cgroup マネージャを cgroupfs に固定する。
+# WSL2 は既定で systemd ユーザセッションが無く、crun 既定の systemd マネージャだと
+# コンテナ生成時の sd-bus 呼び出しが "Permission denied" で失敗する
+# (== ステップ7 の podman build / codex-shell の podman run が両方コケる)。
+# events_logger も journald(systemd 依存)を避けて file にする。
+if [[ ! -f "${USER_CONTAINERS_DIR}/containers.conf" ]]; then
+    cat > "${USER_CONTAINERS_DIR}/containers.conf" <<'EOF'
+[engine]
+cgroup_manager = "cgroupfs"
+events_logger = "file"
 EOF
 fi
 # 既に vfs で初期化されていて、ローカルイメージがまだ無ければ
@@ -163,7 +176,7 @@ else
     echo "  --install-codex-host: Node + Codex CLI を WSL ホストに直接導入"
     if ! command -v node >/dev/null 2>&1; then
         curl -fsSL https://deb.nodesource.com/setup_20.x | ${SUDO} bash -
-        ${SUDO} apt-get install -y --no-install-recommends nodejs
+        ${SUDO} apt-get -q install -y --no-install-recommends nodejs
     fi
     ${SUDO} npm install -g @openai/codex@latest
 fi
@@ -208,11 +221,11 @@ bash "${REPO_ROOT}/scripts/doctor.sh" --quick || true
 echo ""
 echo "==> WSL セットアップ完了"
 echo "次のステップ ('かんたんセットアップ' フォルダのバッチをダブルクリック):"
-echo "  1. セットアップ3_APIキー設定.bat   # OPENAI_API_KEY と .env を設定"
+echo "  1. セットアップ3_APIキー設定.bat   # OPENAI_API_KEY / .env / Git ユーザー情報を設定"
 echo "  2. 環境チェック.bat                # 準備ができているか診断"
 echo "  3. Oracle起動.bat                  # データベースを起動"
 echo ""
 echo "（上級者向け）手動で行う場合:"
-echo "  bash scripts/setup-secrets.sh      # OPENAI_API_KEY と .env を設定"
+echo "  bash scripts/setup-secrets.sh      # OPENAI_API_KEY / .env / Git ユーザー情報を設定"
 echo "  bash scripts/start-oracle.sh"
 echo "  codex-shell                        # コンテナに入って codex を起動"

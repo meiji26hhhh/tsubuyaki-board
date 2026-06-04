@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">:root {--fg: #1a1a1a;--muted: #555;--accent: #1565c0;--bg: #ffffff;--surface: #f5f7fa;--border: #d8dee6;--warn-bg: #fff8e1;--warn-border: #f0c000;--code-bg: #f3f3f3; --code-fg: #222; }* {font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;box-sizing: border-box;font-size: 12px;}body {color: var(--fg);background: var(--bg);line-height: 1.8;max-width: 1280px;margin: 0 auto;padding: 2.5rem 1.5rem 6rem;}h1 {font-size: 1.9rem;border-bottom: 4px solid var(--accent);padding-bottom: 0.4rem;line-height: 1.4;}h2 {font-size: 1.4rem;margin-top: 2.6rem;padding: 0.3rem 0.7rem;background: var(--surface);border-left: 6px solid var(--accent);}h3 {font-size: 1.15rem;margin-top: 1.8rem;color: var(--accent);}p, li { font-size: 1rem; }a { color: var(--accent); }code {background: var(--surface);border: 1px solid var(--border);border-radius: 4px;padding: 0.1em 0.4em;font-family: "Consolas", "Courier New", monospace;font-size: 0.92em;}pre {background: var(--code-bg);color: var(--code-fg);padding: 1rem 1.2rem;border-radius: 8px;overflow-x: auto;}pre code { background: none; border: none; color: inherit; padding: 0; }table {border-collapse: collapse;width: 100%;margin: 1rem 0;}th, td {border: 1px solid var(--border);padding: 0.55rem 0.8rem;text-align: left;vertical-align: top;}th { background: var(--surface); }.note {background: var(--warn-bg);border: 1px solid var(--warn-border);border-radius: 8px;padding: 0.9rem 1.1rem;margin: 1.2rem 0;}.file { font-weight: 700; color: #0d47a1; }hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }ol li, ul li { margin: 0.35rem 0; }.appendix { color: var(--muted); }.appendix h2 { border-left-color: #999; }.appendix h3 { color: #444; }img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#社内つぶやきボード" id="toc-社内つぶやきボード">社内つぶやきボード</a>
+<ul>
+<li><a href="#tldr" id="toc-tldr">TL;DR</a></li>
+<li><a href="#全体像" id="toc-全体像">全体像</a></li>
+<li><a href="#主要ファイル" id="toc-主要ファイル">主要ファイル</a></li>
+<li><a href="#ディレクトリ" id="toc-ディレクトリ">ディレクトリ</a></li>
+<li><a href="#よく使うコマンド" id="toc-よく使うコマンド">よく使うコマンド</a></li>
+<li><a href="#openai-api-キーの渡し方" id="toc-openai-api-キーの渡し方">OpenAI API キーの渡し方</a></li>
+<li><a href="#次に読むもの" id="toc-次に読むもの">次に読むもの</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="社内つぶやきボード" class="level1">
+<h1>社内つぶやきボード</h1>
+<p>AI 駆動開発研修 (3 日) の演習パート (19h + 成果まとめ 2h) で使う、Codex CLI と協働して 「社内つぶやきボード」を完走させる Spring Boot 演習リポジトリです。</p>
+<section id="tldr" class="level2">
+<h2>TL;DR</h2>
+<p>セットアップの<strong>正本は <a href="./education/student-setup-guide.md">education/student-setup-guide.md</a></strong>（受講生・講師ともこれを読む）。本 README には超圧縮版のみ置く。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Organization の招待を承認し、共有リポ &lt;org&gt;/tsubuyaki-board を clone (C:\workspace 配下)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 🪟 管理者 PowerShell:  Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. PC 再起動 → スタートメニューで Ubuntu 初回ログイン</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 🐧 Ubuntu:  cd /mnt/c/workspace/tsubuyaki-board &amp;&amp; bash scripts/setup-wsl.sh</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 🐧 Ubuntu:  git switch -c &lt;github-id&gt; origin/main  # 自分の作業ブランチ（共有 main には push しない）</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. 🐧 Ubuntu:  OPENAI_API_KEY を ~/.bashrc に設定（値は画面表示しない）</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. 🐧 Ubuntu:  bash scripts/start-oracle.sh &amp;&amp; ./mvnw -B -Ph2 verify</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. 🐧 Ubuntu:  codex-shell    # Codex devbox コンテナへ</span></span></code></pre></div>
+<p>詳細手順、つまずきポイント、用語ミニ辞書は <a href="./education/student-setup-guide.md">education/student-setup-guide.md</a> を参照。</p>
+</section>
+<section id="全体像" class="level2">
+<h2>全体像</h2>
+<ul>
+<li><strong>題材</strong>: 「社内つぶやきボード」 (X風ミニ SNS) — <code>EXERCISES.md</code> を参照</li>
+<li><strong>スタック</strong>: Spring Boot 3.4.x + Thymeleaf + Spring Data JPA + Maven, JDK 21</li>
+<li><strong>DB (ローカル)</strong>: Oracle DB XE 21c (Podman / <code>gvenzl/oracle-xe</code>)</li>
+<li><strong>DB (軽量・テスト用)</strong>: H2 メモリ (<code>MODE=Oracle</code>)</li>
+<li><strong>AI エージェント</strong>: Codex CLI (<code>@openai/codex</code>) を WSL + Podman 上で起動</li>
+</ul>
+</section>
+<section id="主要ファイル" class="level2">
+<h2>主要ファイル</h2>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AGENTS.md</code></td>
+<td>Codex への規範書 (最優先で読まれる)</td>
+</tr>
+<tr>
+<td><code>.codex/config.toml</code></td>
+<td>Codex CLI の動作既定</td>
+</tr>
+<tr>
+<td><code>.codex/prompts/</code></td>
+<td>共通プロンプト (TDD サイクル等)</td>
+</tr>
+<tr>
+<td><code>EXERCISES.md</code></td>
+<td>機能要件と受入基準 (MUST / SHOULD / COULD)</td>
+</tr>
+<tr>
+<td><code>education/student-setup-guide.md</code></td>
+<td>受講生向けセットアップガイド</td>
+</tr>
+<tr>
+<td><code>education/ONBOARDING.md</code></td>
+<td>演習 3 日間の動き方（N 時間目表記）</td>
+</tr>
+<tr>
+<td><code>education/TROUBLESHOOTING.md</code></td>
+<td>よくあるエラーと対処</td>
+</tr>
+<tr>
+<td><code>instructor/instructor-setup-guide.md</code></td>
+<td>講師向けセットアップガイド</td>
+</tr>
+<tr>
+<td><code>pom.xml</code></td>
+<td>Spring Boot + 静的解析 + JaCoCo</td>
+</tr>
+<tr>
+<td><code>compose.yaml</code></td>
+<td>Oracle XE 起動定義</td>
+</tr>
+<tr>
+<td><code>containers/codex-devbox/</code></td>
+<td>Codex 用 Podman コンテナ定義</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>キッティング / Doctor / 起動ラッパ</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ディレクトリ" class="level2">
+<h2>ディレクトリ</h2>
+<pre><code>src/
+├── main/
+│   ├── java/com/example/tsubuyaki/
+│   │   ├── TsubuyakiApplication.java      エントリポイント
+│   │   ├── controller/PostController.java 投稿 Controller (TODO 多め)
+│   │   ├── domain/Post.java               JPA Entity
+│   │   ├── repository/PostRepository.java
+│   │   ├── service/PostService.java
+│   │   └── web/dto/PostForm.java
+│   └── resources/
+│       ├── application.yml
+│       ├── application-local.yml          Oracle XE 接続
+│       ├── application-h2.yml             軽量・テスト用
+│       ├── templates/posts/*.html         Thymeleaf
+│       ├── static/css/app.css
+│       └── db/migration/V1__init.sql      Flyway
+└── test/
+    └── java/com/example/tsubuyaki/sample/
+        SamplePostRepositoryTest.java      (削除禁止)
+        SamplePostServiceTest.java         (削除禁止)
+        SamplePostControllerTest.java      (削除禁止)</code></pre>
+</section>
+<section id="よく使うコマンド" class="level2">
+<h2>よく使うコマンド</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 検査</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/doctor.sh                   <span class="co"># 全件</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/doctor.sh <span class="at">--quick</span>           <span class="co"># 軽量</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># DB</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/stop-oracle.sh</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ビルド・テスト</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify                    <span class="co"># 基本検証 (H2)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Plocal</span> verify                 <span class="co"># ローカル Oracle XE</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 本だけテストを動かす</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Dtest</span><span class="op">=</span><span class="st">&#39;SamplePostControllerTest&#39;</span> test</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span>                              <span class="co"># devbox に入る</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># カバレッジ閾値の切替</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify  <span class="co"># 仕上げ合否判定 (80% + 警告→エラー)</span></span></code></pre></div>
+</section>
+<section id="openai-api-キーの渡し方" class="level2">
+<h2>OpenAI API キーの渡し方</h2>
+<p>正本は <a href="./education/student-setup-guide.md">education/student-setup-guide.md §7</a>。要点のみ：</p>
+<ul>
+<li><code>OPENAI_API_KEY</code> は <strong>WSL 側 <code>~/.bashrc</code> に書く</strong>（Windows 環境変数は WSL に伝搬しない）</li>
+<li><code>.env</code> は Oracle 接続用（<code>ORACLE_PWD</code> / <code>ORACLE_APP_PWD</code>）として使う — API キーは入れない</li>
+<li>Doctor や起動バナーはキーの先頭文字も表示しない。「設定済み」だけ確認する</li>
+</ul>
+</section>
+<section id="次に読むもの" class="level2">
+<h2>次に読むもの</h2>
+<ol type="1">
+<li><strong>受講生</strong> → <code>education/student-setup-guide.md</code> で初日のセットアップを完了</li>
+<li><strong>講師</strong> → <code>instructor/instructor-setup-guide.md</code> で研修開始前の準備を完了</li>
+<li><code>AGENTS.md</code> — Codex に何をさせるか・させないか</li>
+<li><code>education/ONBOARDING.md</code> — 当日の流れ</li>
+<li><code>EXERCISES.md</code> — 何を作るか</li>
+<li>困ったら <code>education/TROUBLESHOOTING.md</code> → <code>bash scripts/doctor.sh</code></li>
+</ol>
+</section>
+</section>
+</body>
+</html>

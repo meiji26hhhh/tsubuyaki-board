@@ -255,6 +255,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li>SAML SSO 必須の Organization なら、ブラウザで Organization トップを開いて SSO 認証を済ませる</li>
 <li>それでもダメなら講師に <strong>自分の GitHub ID</strong> を伝えて、共有リポの collaborator 招待状態を確認してもらう</li>
 </ul>
+</section>
+<section id="q14.-環境チェックで-git-config---global-user.name-が未設定-の-ng-が出る" class="level3">
+<h3>Q14. 環境チェックで <code>git config --global user.name が未設定</code> の NG が出る</h3>
+<p>コミットの作者情報（<code>user.name</code> / <code>user.email</code>）が WSL 側に未設定の状態。<code>セットアップ3_APIキー設定.bat</code> をもう一度ダブルクリックすれば対話形式で設定できます（設定済みの API キーは空 Enter でそのまま維持されます）。</p>
+<p>手動で設定する場合は 🐧 Ubuntu で：</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">&quot;&lt;github-id&gt;&quot;</span>          <span class="co"># GitHub ユーザ名を推奨</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">&quot;&lt;メールアドレス&gt;&quot;</span>     <span class="co"># GitHub に登録したものを推奨</span></span></code></pre></div>
 <hr />
 </section>
 </section>
@@ -341,12 +348,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="stash-の使い方クイック" class="level3">
 <h3>stash の使い方クイック</h3>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;実験中-2026-05-24&quot;</span>   <span class="co"># 退避（-u で新規ファイルも含む）</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash list                              <span class="co"># 退避一覧</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash show <span class="at">-p</span> stash@{0}                 <span class="co"># 中身を diff で見る</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop                               <span class="co"># 最新の stash を戻す（同時に削除）</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash apply stash@{1}                   <span class="co"># 戻すだけ（削除しない）</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash drop stash@{0}                    <span class="co"># 退避を削除</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;実験中-2026-05-24&quot;</span>   <span class="co"># 退避（-u で新規ファイルも含む）</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash list                              <span class="co"># 退避一覧</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash show <span class="at">-p</span> stash@{0}                 <span class="co"># 中身を diff で見る</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop                               <span class="co"># 最新の stash を戻す（同時に削除）</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash apply stash@{1}                   <span class="co"># 戻すだけ（削除しない）</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash drop stash@{0}                    <span class="co"># 退避を削除</span></span></code></pre></div>
 <hr />
 </section>
 </section>

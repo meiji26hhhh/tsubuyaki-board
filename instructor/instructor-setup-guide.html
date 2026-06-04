@@ -351,7 +351,7 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <ol type="1">
 <li>スタートメニュー → Ubuntu 起動 → 初回ユーザ・パスワード設定</li>
 <li><code>かんたんセットアップ</code> フォルダの <strong><code>セットアップ2_Ubuntu準備.bat</code></strong> をダブルクリック（<code>sudo</code> パスワードを 1 回入力）</li>
-<li>続けて <strong><code>セットアップ3_APIキー設定.bat</code></strong> で <code>OPENAI_API_KEY</code> と <code>.env</code> を登録（§6-4 参照）</li>
+<li>続けて <strong><code>セットアップ3_APIキー設定.bat</code></strong> で <code>OPENAI_API_KEY</code> / <code>.env</code> / Git ユーザー情報（<code>user.name</code> / <code>user.email</code>）を登録（§6-4 参照）</li>
 </ol>
 <blockquote>
 <p>バッチは内部で <code>scripts/setup-wsl.sh</code> を呼ぶだけです。講師が手動で確認したい場合は <code>cd /mnt/c/workspace/tsubuyaki-board &amp;&amp; bash scripts/setup-wsl.sh</code>。</p>
@@ -433,9 +433,9 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 </table>
 </section>
 </section>
-<section id="openai_api_key-設定-受講生ガイドと同手順" class="level3">
-<h3>6-4. <code>OPENAI_API_KEY</code> 設定 → 受講生ガイドと同手順</h3>
-<p>手順本体は <a href="../education/student-setup-guide.md">../education/student-setup-guide.md §7</a> を参照。受講生は <strong><code>セットアップ3_APIキー設定.bat</code></strong>（内部で <code>scripts/setup-secrets.sh</code>）で <code>OPENAI_API_KEY</code> を <code>~/.bashrc</code> に、<code>.env</code> をリポジトリ直下に登録します。</p>
+<section id="openai_api_keygit-設定-受講生ガイドと同手順" class="level3">
+<h3>6-4. <code>OPENAI_API_KEY</code>・Git 設定 → 受講生ガイドと同手順</h3>
+<p>手順本体は <a href="../education/student-setup-guide.md">../education/student-setup-guide.md §7</a> を参照。受講生は <strong><code>セットアップ3_APIキー設定.bat</code></strong>（内部で <code>scripts/setup-secrets.sh</code>）で <code>OPENAI_API_KEY</code> を <code>~/.bashrc</code> に、<code>.env</code> をリポジトリ直下に登録し、続けて Git のユーザー情報（<code>user.name</code> / <code>user.email</code>）を <code>~/.gitconfig</code> に設定します（コミットの作者情報。環境チェックの Git 項目で確認される）。</p>
 <p><strong>講師固有の差分</strong>: - <strong>講師自身のキー</strong> は <code>セットアップ3_APIキー設定.bat</code>（または手動の <code>~/.bashrc</code> 追記）で設定（普段使い用） - <strong>受講生へ貸与する予備キー</strong> は <strong><code>~/.bashrc</code> には書かない</strong>（誤って共有・公開しないため） - 予備キーは 1Password / <code>pass</code> 等のシークレットマネージャに保管し、配布時のみ手動で渡す - 配布経路は Slack DM など流出しにくい経路を選択 - 研修終了時に OpenAI ダッシュボードで rotate（発行し直し）</p>
 </section>
 <section id="動作確認フル-受講生より厳しめ" class="level3">

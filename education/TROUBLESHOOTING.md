@@ -198,6 +198,17 @@ git stash pop              # コンフリクトしたら手動マージ
 - SAML SSO 必須の Organization なら、ブラウザで Organization トップを開いて SSO 認証を済ませる
 - それでもダメなら講師に **自分の GitHub ID** を伝えて、共有リポの collaborator 招待状態を確認してもらう
 
+### Q14. 環境チェックで `git config --global user.name が未設定` の NG が出る
+
+コミットの作者情報（`user.name` / `user.email`）が WSL 側に未設定の状態。`セットアップ3_APIキー設定.bat` をもう一度ダブルクリックすれば対話形式で設定できます（設定済みの API キーは空 Enter でそのまま維持されます）。
+
+手動で設定する場合は 🐧 Ubuntu で：
+
+```bash
+git config --global user.name "<github-id>"          # GitHub ユーザ名を推奨
+git config --global user.email "<メールアドレス>"     # GitHub に登録したものを推奨
+```
+
 ---
 
 ## Git 操作の安全ガイド

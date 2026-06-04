@@ -250,7 +250,7 @@ cd tsubuyaki-board
 
 1. スタートメニュー → Ubuntu 起動 → 初回ユーザ・パスワード設定
 2. `かんたんセットアップ` フォルダの **`セットアップ2_Ubuntu準備.bat`** をダブルクリック（`sudo` パスワードを 1 回入力）
-3. 続けて **`セットアップ3_APIキー設定.bat`** で `OPENAI_API_KEY` と `.env` を登録（§6-4 参照）
+3. 続けて **`セットアップ3_APIキー設定.bat`** で `OPENAI_API_KEY` / `.env` / Git ユーザー情報（`user.name` / `user.email`）を登録（§6-4 参照）
 
 > バッチは内部で `scripts/setup-wsl.sh` を呼ぶだけです。講師が手動で確認したい場合は `cd /mnt/c/workspace/tsubuyaki-board && bash scripts/setup-wsl.sh`。
 
@@ -305,9 +305,9 @@ cd /mnt/c/workspace/tsubuyaki-board
 | `apt-get install temurin-21-jdk` が失敗 | apt source 行が壊れている、Adoptium のキー登録に失敗 | `bash scripts/setup-wsl.sh` を再実行（idempotent 設計で 2 回目以降も安全）。それでもダメなら `cat /etc/apt/sources.list.d/adoptium.list` で source 行を確認 |
 | Ubuntu 22.04 以外で実行してしまった | codename が `jammy` でない | 本研修は Ubuntu 22.04 LTS 前提。他バージョンでの動作保証は無いため、受講生環境と揃えて再構築する |
 
-### 6-4. `OPENAI_API_KEY` 設定 → 受講生ガイドと同手順
+### 6-4. `OPENAI_API_KEY`・Git 設定 → 受講生ガイドと同手順
 
-手順本体は [../education/student-setup-guide.md §7](../education/student-setup-guide.md) を参照。受講生は **`セットアップ3_APIキー設定.bat`**（内部で `scripts/setup-secrets.sh`）で `OPENAI_API_KEY` を `~/.bashrc` に、`.env` をリポジトリ直下に登録します。
+手順本体は [../education/student-setup-guide.md §7](../education/student-setup-guide.md) を参照。受講生は **`セットアップ3_APIキー設定.bat`**（内部で `scripts/setup-secrets.sh`）で `OPENAI_API_KEY` を `~/.bashrc` に、`.env` をリポジトリ直下に登録し、続けて Git のユーザー情報（`user.name` / `user.email`）を `~/.gitconfig` に設定します（コミットの作者情報。環境チェックの Git 項目で確認される）。
 
 **講師固有の差分**:
 - **講師自身のキー** は `セットアップ3_APIキー設定.bat`（または手動の `~/.bashrc` 追記）で設定（普段使い用）
