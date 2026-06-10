@@ -65,7 +65,8 @@ ${MARKER_BEGIN}
 export OPENAI_API_KEY='${KEY}'
 ${MARKER_END}
 EOF
-if grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null; then
+if grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null \
+    && grep -qF "${MARKER_END}" "${BASHRC}" 2>/dev/null; then
     awk -v begin="${MARKER_BEGIN}" -v end="${MARKER_END}" -v block_file="${TMP_BLOCK}" '
         BEGIN { in_block = 0 }
         $0 ~ begin { in_block = 1
@@ -74,12 +75,16 @@ if grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null; then
         $0 ~ end   { in_block = 0; next }
         in_block == 0 { print }
     ' "${BASHRC}" > "${BASHRC}.tmp" && mv "${BASHRC}.tmp" "${BASHRC}"
+elif grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null; then
+    # END マーカーだけ消えた壊れブロック: 上の awk だと BEGIN 以降の全行が
+    # 消えてしまうため、BEGIN 行のみ除去して新ブロックを末尾に追記する。
+    # (残骸の export 行は、あとに追記される新ブロックの export が後勝ちで上書きする)
+    grep -vF "${MARKER_BEGIN}" "${BASHRC}" > "${BASHRC}.tmp" && mv "${BASHRC}.tmp" "${BASHRC}"
+    cat "${TMP_BLOCK}" >> "${BASHRC}"
 else
     cat "${TMP_BLOCK}" >> "${BASHRC}"
 fi
 rm -f "${TMP_BLOCK}"
-# このプロセス以降でも使えるようにエクスポート
-export OPENAI_API_KEY="${KEY}"
 echo "  ~/.bashrc に OPENAI_API_KEY を保存しました。"
 
 echo ""
@@ -96,7 +101,6 @@ else
 # 自動生成された .env (dotenv.example が見つからなかったためデフォルト値で生成)
 ORACLE_PWD=Training#2026
 ORACLE_APP_PWD=tsubuyaki_pw
-SPRING_PROFILES_ACTIVE=local
 EOF
     echo "  デフォルト値で .env を作成しました。"
 fi

@@ -11,6 +11,7 @@
 # 拒否:
 #   git push --force / -f / --force-with-lease / +<refspec> (※force は一律拒否)
 #   git push (宛先が main) / --all / --mirror   共有 main 保護 (push 先は自分の <github-id> ブランチのみ)
+#   git push (refspec なし / HEAD) で main を checkout 中   暗黙 push も同上
 #   git rm -rf / git rm -r <dir>     再帰削除
 #   git clean -fd / -fdx              untracked 削除
 #   git reset --hard                  作業ツリー破壊
@@ -80,6 +81,33 @@ case "${SUBCMD}" in
                     ;;
             esac
         done
+        # refspec を伴わない「暗黙 push」(git push / git push origin) は現在ブランチへ
+        # 送られるため、main を checkout したままだと上の文字列一致では捕捉できずに
+        # 共有 main へ届いてしまう。現在ブランチを解決して main なら拒否する。
+        # `git push origin HEAD` (HEAD = 現在ブランチ) も同様に扱う。
+        REFSPEC_COUNT=0
+        SAW_PUSH=0
+        BARE_HEAD=0
+        for arg in "$@"; do
+            if (( SAW_PUSH == 0 )); then
+                [[ "${arg}" == "push" ]] && SAW_PUSH=1
+                continue
+            fi
+            case "${arg}" in
+                -*) ;;
+                *)
+                    REFSPEC_COUNT=$((REFSPEC_COUNT + 1))
+                    [[ "${arg}" == "HEAD" ]] && BARE_HEAD=1
+                    ;;
+            esac
+        done
+        # 非オプション引数の 1 個目は remote 名。2 個目以降が refspec
+        if (( REFSPEC_COUNT <= 1 || BARE_HEAD == 1 )); then
+            CURRENT_BRANCH="$("${REAL_GIT}" symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+            if [[ "${CURRENT_BRANCH}" == "main" ]]; then
+                guard_reject "git push" "main を checkout した状態の暗黙 push (refspec なし / HEAD) は共有 main に届くため禁止。自分の <github-id> ブランチへ switch してから push すること" "$@"
+            fi
+        fi
         ;;
     rm)
         for arg in "$@"; do
@@ -97,21 +125,25 @@ case "${SUBCMD}" in
     clean)
         for arg in "$@"; do
             case "${arg}" in
-                -f*|--force|-d|-dx|-fd|-fdx|-x|-X)
+                --force)
+                    guard_reject "git clean" "untracked ファイルの破壊的削除 (git clean -fd 系) は禁止" "$@"
+                    ;;
+                --*)
+                    # その他の長形式 (--dry-run / --exclude= 等) は破壊しないので通す
+                    ;;
+                -*[fdxX]*)
+                    # 短オプションは結合順を問わず f/d/x/X を含めば拒否 (-fd, -df, -dfx, -xdf 等)
                     guard_reject "git clean" "untracked ファイルの破壊的削除 (git clean -fd 系) は禁止" "$@"
                     ;;
             esac
         done
         ;;
     reset)
+        # --hard のみ禁止。--merge / --keep は失われる変更があると git 自身が中断する
         for arg in "$@"; do
-            case "${arg}" in
-                --hard|--merge|--keep)
-                    if [[ "${arg}" == "--hard" ]]; then
-                        guard_reject "git reset" "git reset --hard は禁止 (作業ツリーを破壊する)" "$@"
-                    fi
-                    ;;
-            esac
+            if [[ "${arg}" == "--hard" ]]; then
+                guard_reject "git reset" "git reset --hard は禁止 (作業ツリーを破壊する)" "$@"
+            fi
         done
         ;;
     checkout)
@@ -155,21 +187,17 @@ case "${SUBCMD}" in
             esac
         done
         ;;
-    update-ref|gc|filter-branch|reflog)
-        # 履歴改ざんになりうる強力コマンドは一律ブロック
-        case "${SUBCMD}" in
-            filter-branch)
-                guard_reject "git filter-branch" "履歴改ざんは禁止" "$@"
-                ;;
-            update-ref)
-                # delete だけ阻止
-                for arg in "$@"; do
-                    if [[ "${arg}" == "-d" || "${arg}" == "--delete" ]]; then
-                        guard_reject "git update-ref" "ref の削除は禁止" "$@"
-                    fi
-                done
-                ;;
-        esac
+    filter-branch)
+        # 履歴改ざんは一律ブロック
+        guard_reject "git filter-branch" "履歴改ざんは禁止" "$@"
+        ;;
+    update-ref)
+        # delete だけ阻止 (gc / reflog 閲覧などの読み取り系は許可)
+        for arg in "$@"; do
+            if [[ "${arg}" == "-d" || "${arg}" == "--delete" ]]; then
+                guard_reject "git update-ref" "ref の削除は禁止" "$@"
+            fi
+        done
         ;;
 esac
 

@@ -39,6 +39,14 @@ if ${MODE_PURGE}; then
     exit 0
 fi
 
+# コンテナ未作成の状態 (一度も起動していない / 削除済み) で compose stop を呼ぶと
+# set -e により生エラーで終了してしまうため、先に存在を確認して冪等にする
+if ! podman ps -a --format '{{.Names}}' 2>/dev/null | grep -qx 'tsubuyaki-oracle'; then
+    echo "Oracle XE コンテナは存在しません (停止済み、または未起動)。"
+    echo "  - 起動するには: start-oracle.sh"
+    exit 0
+fi
+
 echo "Stopping Oracle XE..."
 "${COMPOSE_CMD[@]}" stop oracle
 

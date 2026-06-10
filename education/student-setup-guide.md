@@ -646,8 +646,6 @@ git push -u origin <github-id>
 
 §4-2 の clone で token 認証済みなら、Git Credential Manager に保存されているため push でも再入力は不要です。改めてユーザ名・パスワードを聞かれた場合は、**ユーザー名は GitHub ユーザー名**、**パスワードは §3-3 で取得した token (`ghp_...`)** を入力します（GitHub ログインパスワードではない）。
 
-> 💡 `gh` CLI で先に `gh auth login` を済ませてあるとスムーズです。
-
 ### 9-3. ローカル verify を緑化
 
 ```bash

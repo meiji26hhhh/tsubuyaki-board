@@ -13,7 +13,6 @@ ORACLE_PWD=Training#2026
 # アプリ用ユーザのパスワード
 ORACLE_APP_PWD=tsubuyaki_pw
 
-# --- Spring Boot プロファイル ----------------------------------------------
-# local: Oracle XE (Podman) に接続
-# h2:    H2 メモリ DB (Oracle 起動なしで動かしたい時)
-SPRING_PROFILES_ACTIVE=local
+# 注: Spring Boot は .env を読まないため、プロファイル切替はこのファイルでは
+# 行えない。`./mvnw -Ph2 spring-boot:run` または
+# `SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run` のようにコマンド側で指定する。

@@ -34,11 +34,14 @@ ln -sf dd-guard.sh    "${GUARD_DIR}/dd"
 ln -sf sudo-guard.sh  "${GUARD_DIR}/sudo"
 
 # --- PATH 先頭差し込みファイルを配置 ----------------------------------------
+# profile.d は sh (dash) からも source されるため、bash 専用の [[ ]] は使わず
+# POSIX 構文 (case) で書く
 cat >/etc/profile.d/codex-guard.sh <<'EOF'
 # Codex devbox 研修ハーネス: guard を PATH 先頭に差し込む
-if [[ ":${PATH}:" != *":/opt/codex-guard/bin:"* ]]; then
-    export PATH="/opt/codex-guard/bin:${PATH}"
-fi
+case ":${PATH}:" in
+    *":/opt/codex-guard/bin:"*) ;;
+    *) PATH="/opt/codex-guard/bin:${PATH}"; export PATH ;;
+esac
 EOF
 chmod 0644 /etc/profile.d/codex-guard.sh
 
@@ -58,9 +61,11 @@ fi
 # bash 以外のシェル (sh, dash) や exec 系直接呼び出し対策
 if [[ -w /etc/environment ]]; then
     if ! grep -q 'codex-guard' /etc/environment 2>/dev/null; then
-        # 既存 PATH 行があれば置換、無ければ追記
+        # 既存 PATH 行があれば置換、無ければ追記。
+        # クォート付き/なしの両形式に対応する (片方の sed だけだと
+        # PATH=/usr/bin 形式の行で閉じクォートが欠けた行を生成してしまう)
         if grep -q '^PATH=' /etc/environment; then
-            sed -i 's|^PATH="\?|PATH="/opt/codex-guard/bin:|' /etc/environment
+            sed -i -E 's|^PATH="(.*)"$|PATH="/opt/codex-guard/bin:\1"|; t; s|^PATH=(.*)$|PATH="/opt/codex-guard/bin:\1"|' /etc/environment
         else
             echo 'PATH="/opt/codex-guard/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"' >>/etc/environment
         fi

@@ -134,7 +134,8 @@ SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run
 コンテナを作り直すと `.env` の値が再反映される:
 
 ```bash
-podman compose down --volumes && bash scripts/start-oracle.sh
+# ⚠️ Oracle のデータボリューム (作成した表とデータ) も削除されます
+bash scripts/stop-oracle.sh --purge && bash scripts/start-oracle.sh
 ```
 
 ### Q9. `H2 vs Oracle` で `-Ph2 verify` だけ落ちる
@@ -252,6 +253,6 @@ git stash drop stash@{0}                    # 退避を削除
 
 ## 最後の手段
 
-- 環境を破壊した気がする → `bash scripts/setup-wsl.sh --rollback` → 再セットアップ
+- 環境を破壊した気がする → `bash scripts/setup-wsl.sh --rollback`（JDK / Maven / Podman / codex-devbox イメージを削除する。git リポジトリと自分のコードには影響しない）→ `セットアップ2_Ubuntu準備.bat` から再セットアップ
 - 自分のブランチを壊した気がする → `git switch main` → `git switch -c <github-id>-retry origin/main` で `main` から作業ブランチを切り直す（共有リポや `main` は消さない）。ローカル clone ごと作り直したい場合は、フォルダを消して student-setup-guide §4-2 から共有リポを clone し直す
 - 何もかも分からない → 講師に「何を試して何が起きたか」を 3 行で報告する

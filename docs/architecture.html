@@ -164,7 +164,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 <tr>
 <td>AI コーディング</td>
-<td>Codex CLI (<code>gpt-5-codex</code>, MIT / OpenAI 製)</td>
+<td>Codex CLI (<code>gpt-5-codex</code>, Apache-2.0 / OpenAI 製)</td>
 </tr>
 <tr>
 <td>コンテナ</td>
@@ -254,7 +254,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <td>受講生ホームから隔離した研修専用 <code>CODEX_HOME</code></td>
 </tr>
 <tr>
-<td><code>oracle-data</code>（named volume）</td>
+<td><code>tsubuyaki-oracle-data</code>（named volume、<code>compose.yaml</code> 内のキー名は <code>oracle-data</code>）</td>
 <td>Oracle のデータファイル永続化</td>
 </tr>
 </tbody>
@@ -265,7 +265,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <ul>
 <li>Codex CLI のサンドボックスは <code>workspace-write</code>、<code>approval_policy</code> は <code>on-failure</code>（<code>.codex/config.toml</code>）。</li>
 <li><code>ORACLE_PWD</code> / <code>ORACLE_APP_PWD</code> などの機密値は <code>[shell_environment_policy].include_only</code> から意図的に除外され Codex に渡らない。</li>
-<li>機密ファイル（<code>.env*</code> / <code>*.pem</code> / <code>~/.ssh</code> / <code>~/.bashrc</code> 等）の読取、破壊的 Git 操作（<code>reset --hard</code> / <code>push --force</code> / 共有 <code>main</code> への push など。push 先は自分の <code>&lt;github-id&gt;</code> ブランチのみ）、<code>sudo</code>、リモートコード実行（<code>curl URL | bash</code>）は研修ハーネスで物理ブロック。</li>
+<li>機密ファイル（<code>.env*</code> / <code>*.pem</code> / <code>~/.ssh</code> / <code>~/.bashrc</code> 等）の読取、破壊的 Git 操作（<code>reset --hard</code> / <code>push --force</code> / 共有 <code>main</code> への push など。push 先は自分の <code>&lt;github-id&gt;</code> ブランチのみ）、<code>sudo</code> は研修ハーネスで物理ブロック。リモートコード実行（<code>curl URL | bash</code>）は規範（プロンプト層）で禁止し、被害はコンテナの capability 剥奪・非 root・マスクで限定する（層別の守備範囲は <a href="../instructor/codex-guard-guide.md">instructor/codex-guard-guide.md §2-7</a> 参照）。</li>
 </ul>
 <hr />
 </section>
@@ -281,8 +281,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <div class="sourceCode" id="cb1"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows: 管理者 PowerShell</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\scripts\setup<span class="op">.</span><span class="fu">ps1</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WSL2 (Ubuntu) で初回起動後</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/setup-wsl.sh</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build-codex-image.sh   <span class="co"># codex-devbox イメージビルド</span></span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/setup-wsl.sh   <span class="co"># codex-devbox イメージのビルド (build-codex-image.sh) も内部で自動実行される</span></span></code></pre></div>
+<blockquote>
+<p>💡 受講生の正規手順は「かんたんセットアップ」フォルダのバッチ経由 （<a href="../education/student-setup-guide.md">education/student-setup-guide.md</a> 参照）。 上記は内部で実行されるコマンドの俯瞰用。</p>
+</blockquote>
 </section>
 <section id="日常の開発サイクル" class="level3">
 <h3>日常の開発サイクル</h3>
@@ -293,15 +295,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Codex CLI コンテナへ入る</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span>           <span class="co"># = bash /mnt/c/workspace/&lt;repo&gt;/scripts/run-codex.sh</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. テスト先行（軽量モード: H2）</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. テスト + 品質ゲート（テストは常に H2 で実行される — 下記注記参照）</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Oracle 統合テスト（Flyway → JPA validate → Oracle XE）</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Plocal</span> verify</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. アプリ起動して動作確認</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-Plocal</span> spring-boot:run</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># http://localhost:8080/  → posts/list</span></span></code></pre></div>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. アプリ起動して動作確認（local プロファイル: 起動時に Flyway 適用と</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#    JPA validate が Oracle XE に対して実行されるので、Oracle 経路の検証を兼ねる）</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-Plocal</span> spring-boot:run</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># http://localhost:8080/  → posts/list</span></span></code></pre></div>
 </section>
 <section id="spring-プロファイル切替" class="level3">
 <h3>Spring プロファイル切替</h3>
@@ -324,17 +324,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <tr>
 <td><code>local</code>（既定）</td>
 <td>Oracle XE on Podman</td>
-<td>本番系 DB と同じ DDL/方言で検証</td>
-<td><code>./mvnw -Plocal verify</code></td>
+<td>アプリ起動で本番系 DB と同じ DDL/方言を検証</td>
+<td><code>./mvnw -Plocal spring-boot:run</code></td>
 </tr>
 <tr>
 <td><code>h2</code></td>
 <td>H2 in-memory（<code>MODE=Oracle</code>）</td>
-<td>CI / 軽量ローカル。Flyway 適用後 <code>ddl-auto: none</code></td>
-<td><code>./mvnw -Ph2 verify</code></td>
+<td>軽量ローカル起動 / テスト</td>
+<td><code>./mvnw -Ph2 spring-boot:run</code></td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>📌 <strong>テスト（<code>verify</code> / <code>test</code>）は Maven プロファイルに関わらず常に H2 で実行される</strong> （<code>src/test/resources/application.yml</code> が <code>spring.profiles.active: h2</code> を固定しているため）。 <code>-Plocal</code> / <code>-Ph2</code> が切り替えるのは <code>spring-boot:run</code> で起動するアプリの接続先。</p>
+</blockquote>
 <hr />
 </section>
 </section>
@@ -526,7 +529,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 <tr>
 <td><code>coverage-day1</code></td>
-<td>JaCoCo <code>LINE COVEREDRATIO</code> 下限を <code>0.60</code> に設定</td>
+<td>JaCoCo 行カバレッジ（counter=<code>LINE</code>, value=<code>COVEREDRATIO</code>）の下限を <code>0.60</code> に設定</td>
 </tr>
 <tr>
 <td><code>coverage-day2</code></td>

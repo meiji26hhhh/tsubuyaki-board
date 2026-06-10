@@ -21,7 +21,14 @@ RECURSIVE=0
 MODE=""
 for arg in "$@"; do
     case "${arg}" in
-        -R|--recursive|-Rv|-vR)
+        --recursive)
+            RECURSIVE=1
+            ;;
+        --*)
+            ;;
+        -*R*)
+            # 結合フラグも再帰とみなす (-R, -Rv, -vR, -fR, -cfR 等)。
+            # モード指定 (-x, a-w 等) に大文字 R は現れないため誤検知しない
             RECURSIVE=1
             ;;
         777|0777|a+rwx|a=rwx|ugo+rwx|ugo=rwx)

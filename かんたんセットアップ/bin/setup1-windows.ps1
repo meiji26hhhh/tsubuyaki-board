@@ -10,10 +10,22 @@ $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $principal = New-Object Security.Principal.WindowsPrincipal($identity)
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
     Write-Host "管理者権限が必要です。確認画面が出たら「はい」を押してください..."
-    Start-Process powershell -Verb RunAs -ArgumentList @(
-        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`""
-    )
-    return
+    try {
+        # 昇格した別ウィンドウで続きを実行する (このウィンドウはここで役目を終える)
+        Start-Process powershell -Verb RunAs -ArgumentList @(
+            "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`""
+        )
+    } catch {
+        # UAC で「いいえ」を選ぶと例外になる。生エラーのまま閉じると受講生が
+        # 読めないため、案内を出して明示的に失敗させる。
+        Write-Banner -Color "Red" -Lines @(
+            " [中止] 管理者権限が許可されませんでした。",
+            " もう一度バッチをダブルクリックし、確認画面で「はい」を押してください。"
+        )
+        Wait-Enter
+        exit 1
+    }
+    exit 0
 }
 
 Write-Banner -Lines @(

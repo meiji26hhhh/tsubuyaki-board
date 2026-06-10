@@ -8,10 +8,12 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${REPO_ROOT}"
 
 # .env があれば読み込む (ORACLE_PWD / ORACLE_APP_PWD)
+# メモ帳等の編集で CRLF 化していると値末尾の \r がパスワード不一致を生むため、
+# \r を除去しながら読み込む
 if [[ -f .env ]]; then
     set -a
-    # shellcheck disable=SC1091
-    source .env
+    # shellcheck disable=SC1090
+    source <(tr -d '\r' < .env)
     set +a
 fi
 
@@ -45,9 +47,13 @@ echo "Starting Oracle XE (${COMPOSE_CMD[*]} up -d oracle)..."
 # timer で起動しようとして以下の error を出すが動作には影響しないので抑制する:
 #   "unable to get systemd connection to (add|start) healthchecks: ..."
 # (start-oracle.sh は後段で podman exec healthcheck.sh を直接呼んで疎通確認する)
+# 注: `|| true` で受けると PIPESTATUS が true のもの (常に 0) に上書きされ
+# 失敗検知が無効化されるため、`||` の右辺で compose 側の exit code を拾う。
+# (grep -v は全行フィルタ時に 1 を返すので、pipefail でもエラー扱いにしない)
+COMPOSE_RC=0
 "${COMPOSE_CMD[@]}" up -d oracle 2>&1 \
-    | grep -vE 'unable to get systemd connection to (add|start) healthchecks' || true
-COMPOSE_RC=${PIPESTATUS[0]}
+    | grep -vE 'unable to get systemd connection to (add|start) healthchecks' \
+    || COMPOSE_RC=${PIPESTATUS[0]}
 if [[ ${COMPOSE_RC} -ne 0 ]]; then
     echo "podman-compose up が失敗しました (exit=${COMPOSE_RC})" >&2
     exit "${COMPOSE_RC}"

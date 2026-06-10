@@ -3,11 +3,14 @@
 # 起動時に環境を検証し、対話シェルもしくは指定コマンドを起動する。
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-RESET='\033[0m'
+# $'...' (ANSI-C quoting) で実際のエスケープ文字を格納する。
+# '\033...' のリテラルだと echo -e では色になるが、起動バナーの heredoc (cat <<EOF)
+# はバックスラッシュを解釈しないため、生の「\033[0;32m」が画面に出てしまう。
+RED=$'\033[0;31m'
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+CYAN=$'\033[0;36m'
+RESET=$'\033[0m'
 
 # --- 1. OPENAI_API_KEY 検査 ----------------------------------------------
 if [[ -z "${OPENAI_API_KEY:-}" ]]; then
@@ -24,6 +27,10 @@ fi
 # 注: PATH 先頭の codex-guard が git config --global を reject するため、
 #     ここでは実体パスを直接呼ぶ。これは entrypoint (= 起動時の正規セットアップ)
 #     なので、Codex が走り出す前に必要な操作。
+# 注: scripts/run-codex.sh 経由の起動では ~/.gitconfig が /dev/null:ro で
+#     マスクされるため、この書き込みは失敗して no-op になる (|| true で握る)。
+#     その経路は --userns=keep-id で uid が一致し safe.directory 自体が不要。
+#     マスク無しで直接 podman run された場合のための保険として残している。
 REAL_GIT=/usr/bin/git
 [[ -x "${REAL_GIT}" ]] || REAL_GIT=/bin/git
 if [[ -x "${REAL_GIT}" ]]; then

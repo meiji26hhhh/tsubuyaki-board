@@ -24,6 +24,7 @@
 | `Oracle起動.bat` | `scripts/start-oracle.sh` |
 | `Oracle停止.bat` | `scripts/stop-oracle.sh` |
 | `Oracle削除.bat` | `scripts/stop-oracle.sh --purge` |
+| `研修終了_環境削除.bat` | （このフォルダのスクリプトは使わず `wsl --unregister Ubuntu-22.04` を実行） |
 
 ## 講師・開発者向け
 

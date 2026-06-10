@@ -11,18 +11,10 @@ REAL_CHOWN="$(guard_real_bin chown)" || {
     exit 127
 }
 
+# 再帰 (-R) 付きの広範囲 chown も、対象パスが guard_contains_dangerous_path で
+# 捕捉されるため個別のフラグ判定は持たない
 if guard_contains_dangerous_path "$@"; then
     guard_reject "chown" "システム/機密パスの所有者変更は禁止" "$@"
 fi
-
-# 再帰的に / / /workspace 等を chown するのは特に危険
-for arg in "$@"; do
-    case "${arg}" in
-        -R|--recursive)
-            # -R 付きで明らかに広範囲は guard_contains_dangerous_path で大半捕捉済
-            :
-            ;;
-    esac
-done
 
 exec "${REAL_CHOWN}" "$@"

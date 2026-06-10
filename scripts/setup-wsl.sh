@@ -48,13 +48,17 @@ else
 fi
 
 if ${MODE_ROLLBACK}; then
-    echo "Rollback: apt purge + podman image rm"
+    echo "Rollback: apt purge + pip uninstall + podman image rm"
+    # 注: podman-compose は pip 導入のため apt では消えない。gh は本スクリプトでは
+    # 導入していない。nodejs は --install-codex-host 時のみ導入される。
     ${SUDO} apt-get purge -y \
-        temurin-21-jdk maven podman podman-compose nodejs gh \
+        temurin-21-jdk maven podman nodejs \
         ripgrep fd-find jq 2>/dev/null || true
     ${SUDO} apt-get autoremove -y || true
+    ${SUDO} pip3 uninstall -y podman-compose 2>/dev/null || true
+    ${SUDO} rm -f /etc/apt/sources.list.d/adoptium.list /etc/apt/keyrings/adoptium.gpg
     podman image rm codex-devbox:latest 2>/dev/null || true
-    echo "Rollback 完了"
+    echo "Rollback 完了 (git リポジトリと ~/.bashrc は変更しません)"
     exit 0
 fi
 
@@ -76,8 +80,9 @@ echo ""
 echo "==> 3. Eclipse Temurin 21"
 if ! dpkg -s temurin-21-jdk >/dev/null 2>&1; then
     ${SUDO} mkdir -p /etc/apt/keyrings
+    # --yes: 再実行時に既存ファイルへの上書き確認 (tty なしでは非ゼロ終了) を防ぐ
     wget -qO- https://packages.adoptium.net/artifactory/api/gpg/key/public \
-        | ${SUDO} gpg --dearmor -o /etc/apt/keyrings/adoptium.gpg
+        | ${SUDO} gpg --dearmor --yes -o /etc/apt/keyrings/adoptium.gpg
     CODENAME="$(awk -F= '/VERSION_CODENAME/ {print $2}' /etc/os-release)"
     echo "deb [signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb ${CODENAME} main" \
         | ${SUDO} tee /etc/apt/sources.list.d/adoptium.list > /dev/null
@@ -143,6 +148,11 @@ if [[ ! -f "${USER_CONTAINERS_DIR}/containers.conf" ]]; then
 cgroup_manager = "cgroupfs"
 events_logger = "file"
 EOF
+elif ! grep -q 'cgroup_manager' "${USER_CONTAINERS_DIR}/containers.conf"; then
+    # 既存ファイルがあるのに必要設定を欠く場合は警告のみ (勝手に書き換えない)
+    echo "  ⚠ ${USER_CONTAINERS_DIR}/containers.conf に cgroup_manager 設定がありません。" >&2
+    echo "    WSL2 では [engine] に cgroup_manager = \"cgroupfs\" / events_logger = \"file\" が" >&2
+    echo "    無いと podman build / run が sd-bus Permission denied で失敗します。" >&2
 fi
 # 既に vfs で初期化されていて、ローカルイメージがまだ無ければ
 # storage を一度だけリセットして overlay で再初期化する (初回セットアップ救済)
@@ -195,7 +205,8 @@ export TZ=Asia/Tokyo
 alias codex-shell='bash ${REPO_ROOT}/scripts/run-codex.sh'
 ${MARKER_END}
 EOF
-if grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null; then
+if grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null \
+    && grep -qF "${MARKER_END}" "${BASHRC}" 2>/dev/null; then
     awk -v begin="${MARKER_BEGIN}" -v end="${MARKER_END}" -v block_file="${TMP_BLOCK}" '
         BEGIN { in_block = 0 }
         $0 ~ begin { in_block = 1
@@ -204,6 +215,12 @@ if grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null; then
         $0 ~ end   { in_block = 0; next }
         in_block == 0 { print }
     ' "${BASHRC}" > "${BASHRC}.tmp" && mv "${BASHRC}.tmp" "${BASHRC}"
+elif grep -qF "${MARKER_BEGIN}" "${BASHRC}" 2>/dev/null; then
+    # END マーカーだけ消えた壊れブロック: 上の awk だと BEGIN 以降の全行が
+    # 消えてしまうため、BEGIN 行のみ除去して新ブロックを末尾に追記する。
+    # (旧ブロックの残骸行はあとに追記される新ブロックの定義で上書きされる)
+    grep -vF "${MARKER_BEGIN}" "${BASHRC}" > "${BASHRC}.tmp" && mv "${BASHRC}.tmp" "${BASHRC}"
+    cat "${TMP_BLOCK}" >> "${BASHRC}"
 else
     cat "${TMP_BLOCK}" >> "${BASHRC}"
 fi
