@@ -29,6 +29,8 @@ if (-not $principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administra
 }
 
 # --- ログ Transcript --------------------------------------------------
+# 注: このパスは かんたんセットアップ\bin\setup1-windows.ps1 の失敗時案内文にも
+# 記載されている。変更する場合は両方を更新すること。
 $logDir = "C:\workspace\.kitting"
 if (-not (Test-Path $logDir)) {
     New-Item -ItemType Directory -Force -Path $logDir | Out-Null
@@ -62,13 +64,17 @@ try {
         }
     } catch {}
 
+    # インストール失敗を集計し、末尾で exit code に反映する
+    # (これが無いと失敗しても exit 0 になり、呼び出し元バッチが「完了」と誤表示する)
+    $script:InstallFailed = @()
+
     function Install-IfMissing {
         param(
             [string]$Id,
             [string]$Name
         )
         $listOut = winget list --id $Id --exact --accept-source-agreements 2>$null | Out-String
-        if ($listOut -match $Id) {
+        if ($listOut -match [regex]::Escape($Id)) {
             Write-Host "  [SKIP] $Name は既にインストール済み" -ForegroundColor Green
             return
         }
@@ -84,6 +90,10 @@ try {
                 $wingetArgs += "--disable-interactivity"
             }
             winget @wingetArgs
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "  $Name のインストールに失敗 (exit=$LASTEXITCODE)"
+                $script:InstallFailed += $Name
+            }
         }
     }
 
@@ -163,6 +173,14 @@ try {
     Write-Host "  OPENAI_API_KEY は **WSL 側の ~/.bashrc に設定** します。" -ForegroundColor Yellow
     Write-Host "  Windows 側の User 環境変数は WSL に伝搬しないため、こちらには入れません。"
     Write-Host "  詳細手順は education/student-setup-guide.md §7 を参照。"
+
+    if ($script:InstallFailed.Count -gt 0) {
+        Write-Host ""
+        Write-Warning ("インストールに失敗したパッケージ: " + ($script:InstallFailed -join ", "))
+        Write-Warning "ネットワーク等を確認して、このセットアップを再実行してください。"
+        Write-Warning "ログファイル: $logFile"
+        exit 1
+    }
 
     Write-Host ""
     Write-Host "==> Windows 側セットアップ完了" -ForegroundColor Green

@@ -6,11 +6,10 @@
     WSL 内部の検査は scripts/doctor.sh で行う (本スクリプト最後に案内を出す)。
 #>
 [CmdletBinding()]
-param(
-    [switch]$Quick
-)
+param()
 
 $ErrorActionPreference = "Continue"
+$env:WSL_UTF8 = "1"  # wsl.exe 出力 (UTF-16LE) の文字化けによる誤判定を防ぐ
 
 $script:PASS = 0
 $script:WARN = 0
@@ -80,11 +79,14 @@ if (-not $wslCmd) {
         Write-Ok "wsl --list --verbose 成功"
         if ($wslOutput -match "Ubuntu") {
             Write-Ok "Ubuntu ディストリ確認"
+            # `wsl --list --verbose` の行形式: <name> <state> <version>
+            if ($wslOutput -match "(?m)Ubuntu\S*\s+\S+\s+2\s*$") {
+                Write-Ok "Ubuntu は WSL2 (VERSION 2) で動作"
+            } else {
+                Write-Warn2 "Ubuntu が WSL2 (VERSION 2) か確認できない — wsl --set-version <distro> 2 を検討"
+            }
         } else {
             Write-Warn2 "Ubuntu ディストリが見つからない"
-        }
-        if ($wslOutput -match "2\s*$" -or $wslOutput -match "VERSION") {
-            Write-Ok "WSL バージョン情報を取得"
         }
     } else {
         Write-Ng "wsl --list が失敗"
@@ -142,7 +144,7 @@ Write-Host "=== Doctor (Windows) Summary ===" -ForegroundColor Cyan
 Write-Host ("  PASS: {0}    WARN: {1}    FAIL: {2}" -f $script:PASS, $script:WARN, $script:FAIL)
 Write-Host ""
 Write-Host "次のステップ — WSL 側の検査:" -ForegroundColor Cyan
-Write-Host "  wsl bash /mnt/c/workspace/<your-repo>/scripts/doctor.sh"
+Write-Host "  wsl -d Ubuntu-22.04 bash /mnt/c/workspace/<your-repo>/scripts/doctor.sh"
 
 if ($script:FAIL -gt 0) {
     exit 1
