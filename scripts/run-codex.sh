@@ -72,7 +72,6 @@ mkdir -p "${CODEX_HOME}" "${M2_HOME}"
 # --cap-drop=ALL : Linux capability を全削除 (network 等は podman の network で別途)
 RUN_OPTS=(
     --rm
-    -it
     --name "codex-devbox-$$"
     --userns=keep-id
     --security-opt label=disable
@@ -86,6 +85,12 @@ RUN_OPTS=(
     -v "${M2_HOME}:/home/codex/.m2:rw"
     --workdir /workspace
 )
+
+# 対話シェルとして使うのが基本だが、非 TTY (スクリプト経由等) では -it が
+# "input device is not a TTY" で失敗するため、TTY がある時だけ付ける
+if [[ -t 0 ]]; then
+    RUN_OPTS+=(-it)
+fi
 
 # --- 研修ハーネス: 機密ファイルを /dev/null 上書きマウント ----------------
 # Codex がリポルートを読んでも、以下のファイルは「空」として返るようにする。
@@ -111,7 +116,14 @@ done
 
 # ホスト側に存在する場合のみマスク (/workspace 配下の機密)
 while IFS= read -r -d '' secret_path; do
-    rel_path="${secret_path#${WORKSPACE_HOST}/}"
+    rel_path="${secret_path#"${WORKSPACE_HOST}"/}"
+    # --mount はカンマ区切りでオプションを解釈するため、`,` を含むパスは指定できない。
+    # マスクを黙ってスキップすると機密が露出する (fail-open) ので、起動を中止する。
+    if [[ "${rel_path}" == *,* ]]; then
+        echo "機密ファイル名に ',' が含まれるためマスクできません: ${rel_path}" >&2
+        echo "ファイル名を変更してから再実行してください。" >&2
+        exit 1
+    fi
     RUN_OPTS+=(--mount "type=bind,src=/dev/null,dst=/workspace/${rel_path},ro=true")
 done < <(
     find "${WORKSPACE_HOST}" -path "${WORKSPACE_HOST}/.git" -prune -o \

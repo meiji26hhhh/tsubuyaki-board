@@ -32,7 +32,11 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --only)
-            ONLY_FILTER="$2"
+            ONLY_FILTER="${2:-}"
+            if [[ -z "${ONLY_FILTER}" ]]; then
+                echo "--only にはカテゴリをカンマ区切りで指定してください (例: --only network,jdk)" >&2
+                exit 1
+            fi
             shift 2
             ;;
         -h|--help)
@@ -90,6 +94,12 @@ fi
 
 # --- 2. ロケール / TZ ----------------------------------------------------
 if section "locale" "ロケール / TZ"; then
+    # 非対話シェル (wsl -- bash -c) では update-locale の結果 (/etc/default/locale) が
+    # 読まれず LANG が未設定に見えるため、正本ファイルからフォールバック読込する
+    if [[ "${LANG:-}" != "ja_JP.UTF-8" && -r /etc/default/locale ]]; then
+        LANG_FROM_FILE="$(sed -n 's/^LANG=//p' /etc/default/locale | tr -d '"' | tail -n1)"
+        [[ -n "${LANG_FROM_FILE}" ]] && LANG="${LANG_FROM_FILE}"
+    fi
     if [[ "${LANG:-}" == "ja_JP.UTF-8" ]]; then
         ok "LANG" "${LANG}"
     else
@@ -204,7 +214,9 @@ fi
 
 # --- 8. Codex devbox image -----------------------------------------------
 if section "codex-image" "Codex devbox image"; then
-    if podman image exists codex-devbox:latest 2>/dev/null; then
+    if ! command -v podman >/dev/null 2>&1; then
+        warn "podman がないためスキップ" "先に setup-wsl.sh を実行してください"
+    elif podman image exists codex-devbox:latest 2>/dev/null; then
         ok "codex-devbox:latest 存在"
     else
         warn "codex-devbox:latest 未ビルド" "bash scripts/build-codex-image.sh"
@@ -228,6 +240,9 @@ if ! ${MODE_QUICK} && section "codex-cli" "codex CLI"; then
 fi
 
 # --- 9.5. Codex training harness -----------------------------------------
+# 注: この検査は scripts/run-codex.sh が組み立てる実マウント構成を「手書きで再現」
+# したフィクスチャである。run-codex.sh のマスク条件・マウント構成を変更したら、
+# このセクションも必ず追従させること (自動同期はされない)。
 if ! ${MODE_QUICK} && section "harness" "Codex 研修ハーネス"; then
     if ! command -v podman >/dev/null 2>&1; then
         warn "podman がないためハーネス実行検証をスキップ"
@@ -235,7 +250,7 @@ if ! ${MODE_QUICK} && section "harness" "Codex 研修ハーネス"; then
         warn "codex-devbox:latest 未ビルドのためハーネス実行検証をスキップ" "bash scripts/build-codex-image.sh"
     else
         HARNESS_TMP="$(mktemp -d)"
-        mkdir -p "${HARNESS_TMP}/.codex" "${HARNESS_TMP}/instructor" "${HARNESS_TMP}/.github" "${HARNESS_TMP}/src" "${HARNESS_TMP}/target"
+        mkdir -p "${HARNESS_TMP}/.codex" "${HARNESS_TMP}/src" "${HARNESS_TMP}/target"
         printf 'harness test\n' > "${HARNESS_TMP}/AGENTS.md"
         printf '<project/>\n' > "${HARNESS_TMP}/pom.xml"
         printf 'approval_policy = "on-failure"\n' > "${HARNESS_TMP}/.codex/config.toml"
