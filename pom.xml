@@ -29,6 +29,12 @@
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
         <checkstyle.version>10.18.2</checkstyle.version>
 
+        <!-- Spring プロファイル既定値 (local/h2 プロファイルで上書き)。
+             spring-boot:run の profiles 設定に渡される。-Pcoverage-dayN 等を
+             単独指定すると activeByDefault の local が無効化されるため、
+             ここでフォールバック値を定義しておく -->
+        <spring.profiles.active>local</spring.profiles.active>
+
         <!-- カバレッジ閾値 (coverage-day1/2/3 プロファイルで上書き) -->
         <jacoco.line-min>0.60</jacoco.line-min>
 
@@ -102,6 +108,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- -Plocal / -Ph2 を spring-boot:run の Spring プロファイルに反映する。
+                         これが無いと Maven プロパティ spring.profiles.active は fork された
+                         アプリ JVM に伝搬せず、-Ph2 spring-boot:run でも既定 (local=Oracle)
+                         で起動してしまう。テスト (surefire) は src/test/resources の
+                         application.yml により常に h2 固定で、本設定の影響を受けない -->
+                    <profiles>
+                        <profile>${spring.profiles.active}</profile>
+                    </profiles>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

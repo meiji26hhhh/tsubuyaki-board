@@ -17,8 +17,6 @@ spring:
       # 不一致と判定して失敗するため、validate ではなく none を使う。
       ddl-auto: none
     show-sql: false
-  flyway:
-    enabled: true
   h2:
     console:
       enabled: false
