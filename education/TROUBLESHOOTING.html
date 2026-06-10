@@ -198,7 +198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <section id="q8.-接続時に-ora-01017-invalid-usernamepassword" class="level3">
 <h3>Q8. 接続時に <code>ORA-01017: invalid username/password</code></h3>
 <p><code>.env</code> の <code>ORACLE_APP_PWD</code> と <code>application-local.yml</code> の参照名が一致しているか確認。 コンテナを作り直すと <code>.env</code> の値が再反映される:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> compose down <span class="at">--volumes</span> <span class="kw">&amp;&amp;</span> <span class="fu">bash</span> scripts/start-oracle.sh</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ⚠️ Oracle のデータボリューム (作成した表とデータ) も削除されます</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/stop-oracle.sh <span class="at">--purge</span> <span class="kw">&amp;&amp;</span> <span class="fu">bash</span> scripts/start-oracle.sh</span></code></pre></div>
 </section>
 <section id="q9.-h2-vs-oracle-で--ph2-verify-だけ落ちる" class="level3">
 <h3>Q9. <code>H2 vs Oracle</code> で <code>-Ph2 verify</code> だけ落ちる</h3>
@@ -360,7 +361,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <section id="最後の手段" class="level2">
 <h2>最後の手段</h2>
 <ul>
-<li>環境を破壊した気がする → <code>bash scripts/setup-wsl.sh --rollback</code> → 再セットアップ</li>
+<li>環境を破壊した気がする → <code>bash scripts/setup-wsl.sh --rollback</code>（JDK / Maven / Podman / codex-devbox イメージを削除する。git リポジトリと自分のコードには影響しない）→ <code>セットアップ2_Ubuntu準備.bat</code> から再セットアップ</li>
 <li>自分のブランチを壊した気がする → <code>git switch main</code> → <code>git switch -c &lt;github-id&gt;-retry origin/main</code> で <code>main</code> から作業ブランチを切り直す（共有リポや <code>main</code> は消さない）。ローカル clone ごと作り直したい場合は、フォルダを消して student-setup-guide §4-2 から共有リポを clone し直す</li>
 <li>何もかも分からない → 講師に「何を試して何が起きたか」を 3 行で報告する</li>
 </ul>

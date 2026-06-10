@@ -122,7 +122,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <h2>全体像</h2>
 <ul>
 <li><strong>題材</strong>: 「社内つぶやきボード」 (X風ミニ SNS) — <code>EXERCISES.md</code> を参照</li>
-<li><strong>スタック</strong>: Spring Boot 3.4.x + Thymeleaf + Spring Data JPA + Maven, JDK 21</li>
+<li><strong>スタック</strong>: Spring Boot 3.4.1 + Thymeleaf + Spring Data JPA + Maven, JDK 21</li>
 <li><strong>DB (ローカル)</strong>: Oracle DB XE 21c (Podman / <code>gvenzl/oracle-xe</code>)</li>
 <li><strong>DB (軽量・テスト用)</strong>: H2 メモリ (<code>MODE=Oracle</code>)</li>
 <li><strong>AI エージェント</strong>: Codex CLI (<code>@openai/codex</code>) を WSL + Podman 上で起動</li>
@@ -223,19 +223,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/stop-oracle.sh</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ビルド・テスト</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify                    <span class="co"># 基本検証 (H2)</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Plocal</span> verify                 <span class="co"># ローカル Oracle XE</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 本だけテストを動かす</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Dtest</span><span class="op">=</span><span class="st">&#39;SamplePostControllerTest&#39;</span> test</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ビルド・テスト (テストは常に H2 で実行される)</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify                    <span class="co"># 基本検証</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># アプリ起動</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-Plocal</span> spring-boot:run           <span class="co"># Oracle XE 接続 (既定)</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-Ph2</span> spring-boot:run              <span class="co"># H2 で起動 (Oracle 不要)</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span>                              <span class="co"># devbox に入る</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># カバレッジ閾値の切替</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify  <span class="co"># 仕上げ合否判定 (80% + 警告→エラー)</span></span></code></pre></div>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 本だけテストを動かす</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Dtest</span><span class="op">=</span><span class="st">&#39;SamplePostControllerTest&#39;</span> test</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span>                              <span class="co"># devbox に入る</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># カバレッジ閾値の切替</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify  <span class="co"># 仕上げ合否判定 (80% + 警告→エラー)</span></span></code></pre></div>
 </section>
 <section id="openai-api-キーの渡し方" class="level2">
 <h2>OpenAI API キーの渡し方</h2>

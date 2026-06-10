@@ -326,16 +326,14 @@ bash scripts/doctor.sh           # 全件
 
 bash scripts/start-oracle.sh
 
-# Oracle XE 経路でも verify が通ること（受講生は H2 のみで OK）
-./mvnw -B -Plocal verify
-
-# 受講生と同じ H2 経路
+# 受講生と同じ H2 経路 (テストは -P 指定に関わらず常に H2 で実行される)
 ./mvnw -B -Ph2 verify
 
 # 仕上げ合否ゲート
 ./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify
 
 # Oracle 接続でアプリ起動 → /posts まで描画されること
+# (起動時に Flyway 適用と JPA validate が Oracle XE に対して走るため、Oracle 経路の検証を兼ねる)
 SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
 # 別タブで:
 curl http://localhost:8080/actuator/health   # {"status":"UP"}
@@ -532,8 +530,8 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 - [ ] `./mvnw -v` で `Java version: 21.x.x, vendor: Eclipse Adoptium` が表示される
 - [ ] `OPENAI_API_KEY` 設定済（`~/.bashrc`）
 - [ ] `bash scripts/doctor.sh`（**全件**）緑
-- [ ] `./mvnw -B -Plocal verify`（Oracle XE）緑
-- [ ] `./mvnw -B -Ph2 verify`（H2 基本検証）緑
+- [ ] `./mvnw -B -Ph2 verify`（基本検証。テストは常に H2 で実行される）緑
+- [ ] `SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run` で起動し `/actuator/health` が `UP`・`/posts` が 200（Oracle XE 経路の確認）
 - [ ] `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify`（仕上げ合否ゲート）緑
 - [ ] `codex-shell` → `codex --help` 表示
 

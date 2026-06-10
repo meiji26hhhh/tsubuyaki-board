@@ -446,24 +446,22 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle XE 経路でも verify が通ること（受講生は H2 のみで OK）</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Plocal</span> verify</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じ H2 経路 (テストは -P 指定に関わらず常に H2 で実行される)</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じ H2 経路</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 仕上げ合否ゲート</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify</span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 仕上げ合否ゲート</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle 接続でアプリ起動 → /posts まで描画されること</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>local <span class="ex">./mvnw</span> spring-boot:run</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 別タブで:</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/actuator/health   <span class="co"># {&quot;status&quot;:&quot;UP&quot;}</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-I</span> http://localhost:8080/posts          <span class="co"># 200 OK</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex も必ず実機で 1 度動かす</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span></code></pre></div>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle 接続でアプリ起動 → /posts まで描画されること</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># (起動時に Flyway 適用と JPA validate が Oracle XE に対して走るため、Oracle 経路の検証を兼ねる)</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>local <span class="ex">./mvnw</span> spring-boot:run</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 別タブで:</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/actuator/health   <span class="co"># {&quot;status&quot;:&quot;UP&quot;}</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-I</span> http://localhost:8080/posts          <span class="co"># 200 OK</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex も必ず実機で 1 度動かす</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span></code></pre></div>
 <p><code>doctor.sh</code>（全件）の出力で以下が確実に揃うことを目視確認:</p>
 <ul>
 <li><code>== JDK ==</code> セクション
@@ -665,8 +663,8 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <li><label><input type="checkbox"></input><code>./mvnw -v</code> で <code>Java version: 21.x.x, vendor: Eclipse Adoptium</code> が表示される</label></li>
 <li><label><input type="checkbox"></input><code>OPENAI_API_KEY</code> 設定済（<code>~/.bashrc</code>）</label></li>
 <li><label><input type="checkbox"></input><code>bash scripts/doctor.sh</code>（<strong>全件</strong>）緑</label></li>
-<li><label><input type="checkbox"></input><code>./mvnw -B -Plocal verify</code>（Oracle XE）緑</label></li>
-<li><label><input type="checkbox"></input><code>./mvnw -B -Ph2 verify</code>（H2 基本検証）緑</label></li>
+<li><label><input type="checkbox"></input><code>./mvnw -B -Ph2 verify</code>（基本検証。テストは常に H2 で実行される）緑</label></li>
+<li><label><input type="checkbox"></input><code>SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run</code> で起動し <code>/actuator/health</code> が <code>UP</code>・<code>/posts</code> が 200（Oracle XE 経路の確認）</label></li>
 <li><label><input type="checkbox"></input><code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code>（仕上げ合否ゲート）緑</label></li>
 <li><label><input type="checkbox"></input><code>codex-shell</code> → <code>codex --help</code> 表示</label></li>
 </ul>

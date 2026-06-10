@@ -159,7 +159,7 @@ flowchart TB
 | guard | 拒否する操作 | 通す操作（研修で正常に使う） |
 |---|---|---|
 | `rm-guard.sh` | `rm -rf /` `~` `.` `..` / システム・機密・規範パス削除 / 許可外ディレクトリの再帰削除 | `rm <file>`、`rm -r` は `target/` `build/` `node_modules/` `.cache/` `tmp/` `out/` `logs/` のみ許可 |
-| `git-guard.sh` | `push --force/-f/--force-with-lease`・**`push` の宛先が `main`（共有 main 保護）**・`rm -r`・`clean -f系`・`reset --hard`・`checkout -- .`・`restore .`・`config --global/--system`・`filter-branch`・`update-ref --delete` | `add` `commit` `自分のブランチへの通常 push` `rm <file>`（単発）`restore <file>`（単発）`stash` `status` `log` `diff` |
+| `git-guard.sh` | `push --force/-f/--force-with-lease`・**`push` の宛先が `main`（共有 main 保護。`main` checkout 中の refspec なし / `HEAD` の暗黙 push も拒否）**・`rm -r`・`clean -f系`（結合順不問）・`reset --hard`・`checkout -- .`・`restore .`・`config --global/--system`・`filter-branch`・`update-ref --delete` | `add` `commit` `自分のブランチへの通常 push` `rm <file>`（単発）`restore <file>`（単発）`stash` `status` `log` `diff` |
 | `chmod-guard.sh` | `chmod -R 777`、システム・機密・規範パスへの適用 | `chmod +x script.sh`、通常の `644` など |
 | `chown-guard.sh` | システム・機密パスへの所有者変更 | ローカルファイルの通常変更 |
 | `dd-guard.sh` | **一律拒否**（研修に正当用途なし） | — |
@@ -236,7 +236,7 @@ sequenceDiagram
 
 ビルド時・起動時には guard を**意図的にバイパスする正規操作**が 2 か所ある。いずれも「Codex が走り出す前」のセットアップで、絶対パスを使う。
 
-- `Containerfile:89-95`: `/bin/chmod +x entrypoint.sh`（PATH 先頭の guard を避けるため絶対パス）。
+- `Containerfile:94-95`: `/bin/chmod +x entrypoint.sh`（PATH 先頭の guard を避けるため絶対パス）。
 - `entrypoint.sh:27-32`: `/usr/bin/git config --global safe.directory`（guard が `config --global` を拒否するため実体直呼び）。
 
 > 💡 これは「ハーネスを仕込む過程でハーネス自身に引っかからない」ための回避であり、**Codex に許された穴ではない**。Codex が同じ絶対パス迂回をすることは `AGENTS.md §7.3.3` で明示的に禁止されている。

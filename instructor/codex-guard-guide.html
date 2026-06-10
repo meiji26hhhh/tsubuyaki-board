@@ -375,7 +375,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 <tr>
 <td><code>git-guard.sh</code></td>
-<td><code>push --force/-f/--force-with-lease</code>・<strong><code>push</code> の宛先が <code>main</code>（共有 main 保護）</strong>・<code>rm -r</code>・<code>clean -f系</code>・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
+<td><code>push --force/-f/--force-with-lease</code>・<strong><code>push</code> の宛先が <code>main</code>（共有 main 保護。<code>main</code> checkout 中の refspec なし / <code>HEAD</code> の暗黙 push も拒否）</strong>・<code>rm -r</code>・<code>clean -f系</code>（結合順不問）・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
 <td><code>add</code> <code>commit</code> <code>自分のブランチへの通常 push</code> <code>rm &lt;file&gt;</code>（単発）<code>restore &lt;file&gt;</code>（単発）<code>stash</code> <code>status</code> <code>log</code> <code>diff</code></td>
 </tr>
 <tr>
@@ -539,7 +539,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </blockquote>
 <p>ビルド時・起動時には guard を<strong>意図的にバイパスする正規操作</strong>が 2 か所ある。いずれも「Codex が走り出す前」のセットアップで、絶対パスを使う。</p>
 <ul>
-<li><code>Containerfile:89-95</code>: <code>/bin/chmod +x entrypoint.sh</code>（PATH 先頭の guard を避けるため絶対パス）。</li>
+<li><code>Containerfile:94-95</code>: <code>/bin/chmod +x entrypoint.sh</code>（PATH 先頭の guard を避けるため絶対パス）。</li>
 <li><code>entrypoint.sh:27-32</code>: <code>/usr/bin/git config --global safe.directory</code>（guard が <code>config --global</code> を拒否するため実体直呼び）。</li>
 </ul>
 <blockquote>

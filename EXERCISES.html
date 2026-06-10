@@ -28,7 +28,7 @@ vertical-align: middle;
 <li><a href="#exercises-社内つぶやきボード-機能要件と受入基準" id="toc-exercises-社内つぶやきボード-機能要件と受入基準">EXERCISES — 社内つぶやきボード 機能要件と受入基準</a>
 <ul>
 <li><a href="#must-0-8時間目で必達" id="toc-must-0-8時間目で必達">MUST (0-8時間目で必達)</a></li>
-<li><a href="#should-9.5-13時間目で3つすべて必達" id="toc-should-9.5-13時間目で3つすべて必達">SHOULD (9.5-13時間目で3つすべて必達)</a></li>
+<li><a href="#should-9.5-14.5時間目で3つすべて必達" id="toc-should-9.5-14.5時間目で3つすべて必達">SHOULD (9.5-14.5時間目で3つすべて必達)</a></li>
 <li><a href="#could-14.5-17時間目で1つ選択して必達" id="toc-could-14.5-17時間目で1つ選択して必達">COULD (14.5-17時間目で1つ選択して必達)</a></li>
 <li><a href="#意図的に外す機能" id="toc-意図的に外す機能">意図的に外す機能</a></li>
 <li><a href="#完走判定-15-点ルーブリック11-点で合格" id="toc-完走判定-15-点ルーブリック11-点で合格">完走判定 (15 点ルーブリック、11 点で合格)</a></li>
@@ -86,12 +86,12 @@ vertical-align: middle;
 <p>受入基準: - [ ] <code>./mvnw -B -Ph2 spring-boot:run</code> で起動した状態で <code>curl http://localhost:8080/actuator/health</code> が 200 を返す - [ ] M4 完了時点で <code>{&quot;status&quot;:&quot;UP&quot;}</code> が変わっていないこと（DataSource 等の破壊回帰が無い）</p>
 </section>
 </section>
-<section id="should-9.5-13時間目で3つすべて必達" class="level2">
-<h2>SHOULD (9.5-13時間目で3つすべて必達)</h2>
+<section id="should-9.5-14.5時間目で3つすべて必達" class="level2">
+<h2>SHOULD (9.5-14.5時間目で3つすべて必達)</h2>
 <blockquote>
 <p>8h-9.5h は「リファクタ＋カバレッジ80%到達」フェーズ（<a href="./education/ONBOARDING.md">ONBOARDING.md タイムテーブル</a>参照）。SHOULD はその後の 9.5h から開始する。</p>
 </blockquote>
-<p>3 つすべて (S1/S2/S3) を完走対象とする。順序は任意。</p>
+<p>3 つすべて (S1/S2/S3) を完走対象とする。順序は任意。 タイムテーブル上は S1/S2 が 2日目 (9.5-13h)、S3 が 3日目 (13.25-14.5h) に配置されている (<a href="./instructor/timetable.md">instructor/timetable.md</a> / <a href="./education/ONBOARDING.md">ONBOARDING.md</a> 参照)。</p>
 <section id="s1-いいね" class="level3">
 <h3>S1: いいね</h3>
 <ul>
@@ -133,7 +133,7 @@ vertical-align: middle;
 <section id="c3-rest-api" class="level3">
 <h3>C3: REST API</h3>
 <p><code>GET /api/posts</code> で JSON 返却、簡易 OpenAPI ドキュメント。</p>
-<p>受入基準: - [ ] <code>GET /api/posts</code> が最新 50 件を JSON 配列で返す - [ ] JSON には <code>id</code>, <code>author</code>, <code>body</code>, <code>createdAt</code> を含め、内部 Entity を直接返さない - [ ] MockMvc テストで status 200、JSON フィールド、件数上限を確認する - [ ] <code>docs/api.md</code> にエンドポイント、レスポンス例、エラー時の扱いを記載する</p>
+<p>受入基準: - [ ] <code>GET /api/posts</code> が最新 50 件を JSON 配列で返す - [ ] JSON には <code>id</code>, <code>author</code>, <code>body</code>, <code>createdAt</code> を含め、内部 Entity を直接返さない - [ ] MockMvc テストで status 200、JSON フィールド、件数上限を確認する - [ ] <code>docs/api.md</code> を<strong>新規作成</strong>し、エンドポイント、レスポンス例、エラー時の扱いを記載する (スターターには存在しない。C3 を選んだ受講生が作る)</p>
 </section>
 </section>
 <section id="意図的に外す機能" class="level2">
@@ -150,7 +150,7 @@ vertical-align: middle;
 <h2>完走判定 (15 点ルーブリック、11 点で合格)</h2>
 <p>詳細は <code>instructor/rubric.md</code>。要約:</p>
 <ul>
-<li>機能要件 6 点 (各 MUST 1 点 + SHOULD 3 つ完了 1 点 + COULD 選択枠 1 つ完了 1 点)</li>
+<li>機能要件 6 点 (M1-M4 各 1 点 + SHOULD 3 つ完了で 1 点 + COULD 選択枠 1 つ完了で 1 点。M5 は単独の配点なし — テスト網羅の verify 緑で回帰確認する)</li>
 <li>テスト網羅 5 点 (Repository / Service / Controller / <code>./mvnw -B -Ph2 verify</code> 緑 / <code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code> 緑)</li>
 <li>コミットの質 3 点 (Conventional Commits / 1 関心事 1 コミット / コミットメッセージとセルフチェックの質)</li>
 <li>AI 協働の作法 1 点 (<code>docs/prompts-i-used.md</code> に 3 件以上のプロンプトと「効いた / 効かなかった」コメント)</li>

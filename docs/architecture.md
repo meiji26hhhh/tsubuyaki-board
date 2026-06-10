@@ -24,7 +24,7 @@
 | テスト系 DB | H2（`MODE=Oracle`、メモリモード） |
 | ビルド | Maven Wrapper (`mvnw`) |
 | 静的解析 | Checkstyle 10.18 / SpotBugs 4.8 / JaCoCo 0.8.12 |
-| AI コーディング | Codex CLI (`gpt-5-codex`, MIT / OpenAI 製) |
+| AI コーディング | Codex CLI (`gpt-5-codex`, Apache-2.0 / OpenAI 製) |
 | コンテナ | Podman + `compose.yaml` |
 | 開発 OS | Windows 11 + WSL2 (Ubuntu 22.04) |
 
@@ -51,13 +51,13 @@
 | `/workspace` ← リポジトリ | コード生成・編集対象（`codex-devbox` で書き込み可） |
 | `~/.m2` ← Maven キャッシュ | コンテナ再起動を跨いだ依存キャッシュの保持 |
 | `~/.codex-training/tsubuyaki-board` ← Codex 履歴 | 受講生ホームから隔離した研修専用 `CODEX_HOME` |
-| `oracle-data`（named volume）| Oracle のデータファイル永続化 |
+| `tsubuyaki-oracle-data`（named volume、`compose.yaml` 内のキー名は `oracle-data`）| Oracle のデータファイル永続化 |
 
 ### セキュリティ境界
 
 - Codex CLI のサンドボックスは `workspace-write`、`approval_policy` は `on-failure`（`.codex/config.toml`）。
 - `ORACLE_PWD` / `ORACLE_APP_PWD` などの機密値は `[shell_environment_policy].include_only` から意図的に除外され Codex に渡らない。
-- 機密ファイル（`.env*` / `*.pem` / `~/.ssh` / `~/.bashrc` 等）の読取、破壊的 Git 操作（`reset --hard` / `push --force` / 共有 `main` への push など。push 先は自分の `<github-id>` ブランチのみ）、`sudo`、リモートコード実行（`curl URL | bash`）は研修ハーネスで物理ブロック。
+- 機密ファイル（`.env*` / `*.pem` / `~/.ssh` / `~/.bashrc` 等）の読取、破壊的 Git 操作（`reset --hard` / `push --force` / 共有 `main` への push など。push 先は自分の `<github-id>` ブランチのみ）、`sudo` は研修ハーネスで物理ブロック。リモートコード実行（`curl URL | bash`）は規範（プロンプト層）で禁止し、被害はコンテナの capability 剥奪・非 root・マスクで限定する（層別の守備範囲は [instructor/codex-guard-guide.md §2-7](../instructor/codex-guard-guide.md) 参照）。
 
 ---
 
@@ -74,9 +74,12 @@
 
 ```bash
 # WSL2 (Ubuntu) で初回起動後
-bash scripts/setup-wsl.sh
-bash scripts/build-codex-image.sh   # codex-devbox イメージビルド
+bash scripts/setup-wsl.sh   # codex-devbox イメージのビルド (build-codex-image.sh) も内部で自動実行される
 ```
+
+> 💡 受講生の正規手順は「かんたんセットアップ」フォルダのバッチ経由
+> （[education/student-setup-guide.md](../education/student-setup-guide.md) 参照）。
+> 上記は内部で実行されるコマンドの俯瞰用。
 
 ### 日常の開発サイクル
 
@@ -88,13 +91,11 @@ bash scripts/start-oracle.sh
 # 2. Codex CLI コンテナへ入る
 codex-shell           # = bash /mnt/c/workspace/<repo>/scripts/run-codex.sh
 
-# 3. テスト先行（軽量モード: H2）
+# 3. テスト + 品質ゲート（テストは常に H2 で実行される — 下記注記参照）
 ./mvnw -B -Ph2 verify
 
-# 4. Oracle 統合テスト（Flyway → JPA validate → Oracle XE）
-./mvnw -B -Plocal verify
-
-# 5. アプリ起動して動作確認
+# 4. アプリ起動して動作確認（local プロファイル: 起動時に Flyway 適用と
+#    JPA validate が Oracle XE に対して実行されるので、Oracle 経路の検証を兼ねる）
 ./mvnw -Plocal spring-boot:run
 # http://localhost:8080/  → posts/list
 ```
@@ -103,8 +104,12 @@ codex-shell           # = bash /mnt/c/workspace/<repo>/scripts/run-codex.sh
 
 | プロファイル | 接続先 | 用途 | Maven 起動例 |
 | --- | --- | --- | --- |
-| `local`（既定） | Oracle XE on Podman | 本番系 DB と同じ DDL/方言で検証 | `./mvnw -Plocal verify` |
-| `h2` | H2 in-memory（`MODE=Oracle`）| CI / 軽量ローカル。Flyway 適用後 `ddl-auto: none` | `./mvnw -Ph2 verify` |
+| `local`（既定） | Oracle XE on Podman | アプリ起動で本番系 DB と同じ DDL/方言を検証 | `./mvnw -Plocal spring-boot:run` |
+| `h2` | H2 in-memory（`MODE=Oracle`）| 軽量ローカル起動 / テスト | `./mvnw -Ph2 spring-boot:run` |
+
+> 📌 **テスト（`verify` / `test`）は Maven プロファイルに関わらず常に H2 で実行される**
+> （`src/test/resources/application.yml` が `spring.profiles.active: h2` を固定しているため）。
+> `-Plocal` / `-Ph2` が切り替えるのは `spring-boot:run` で起動するアプリの接続先。
 
 ---
 
@@ -189,7 +194,7 @@ com.example.tsubuyaki
 | --- | --- |
 | `local`（既定） | `spring.profiles.active=local`（Oracle 接続） |
 | `h2` | `spring.profiles.active=h2`（H2 接続） |
-| `coverage-day1` | JaCoCo `LINE COVEREDRATIO` 下限を `0.60` に設定 |
+| `coverage-day1` | JaCoCo 行カバレッジ（counter=`LINE`, value=`COVEREDRATIO`）の下限を `0.60` に設定 |
 | `coverage-day2` | 同 `0.70` |
 | `coverage-day3` | 同 `0.80` |
 | `strict` | Checkstyle / SpotBugs / JaCoCo を `fail-on-violation` 化（評価フェーズ用） |
