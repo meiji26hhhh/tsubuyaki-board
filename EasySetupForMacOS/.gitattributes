@@ -1,0 +1,6 @@
+# macOS 用エントリポイント/スクリプトは必ず LF にする。
+# CRLF だと shebang が "#!/usr/bin/env bash\r" となり起動に失敗するため。
+# (git はサブディレクトリの .gitattributes も尊重するので、リポルートの
+#  .gitattributes を変更せずここで自己完結させる)
+*.command text eol=lf
+*.sh      text eol=lf

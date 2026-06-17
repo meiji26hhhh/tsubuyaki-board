@@ -13,6 +13,9 @@ bin/
 # かんたんセットアップの .bat が委譲する PowerShell 実体 (bin/*.ps1) も追跡対象。
 !かんたんセットアップ/bin/
 !かんたんセットアップ/bin/**
+# EasySetupForMacOS の .command が委譲する bash 実体 (bin/*.sh) も追跡対象。
+!EasySetupForMacOS/bin/
+!EasySetupForMacOS/bin/**
 .metadata
 *.launch
 
