@@ -1,24 +1,31 @@
-This is free and unencumbered software released into the public domain.
+Copyright (c) 2026 株式会社システムシェアード. All Rights Reserved.
 
-Anyone is free to copy, modify, publish, use, compile, sell, or
-distribute this software, either in source code form or as a compiled
-binary, for any purpose, commercial or non-commercial, and by any
-means.
+本ソフトウェアおよび関連する研修教材・ドキュメント（以下「本資料」）は、
+株式会社システムシェアードが著作権を保有する。
 
-In jurisdictions that recognize copyright laws, the author or authors
-of this software dedicate any and all copyright interest in the
-software to the public domain. We make this dedication for the benefit
-of the public at large and to the detriment of our heirs and
-successors. We intend this dedication to be an overt act of
-relinquishment in perpetuity of all present and future rights to this
-software under copyright law.
+1. 本資料は、研修目的での閲覧およびローカル環境での実行に限り、利用を許可する。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
+2. 著作権者の事前の書面による許可なく、本資料の全部または一部を、複製、改変、
+   翻案、再配布、公衆送信、貸与、販売、または第三者へ提供することを禁止する。
 
-For more information, please refer to <https://unlicense.org>
+3. 本資料は現状有姿（AS IS）で提供され、明示黙示を問わずいかなる保証も伴わない。
+   著作権者は、本資料の利用または利用不能に起因する一切の損害について責任を負わない。
+
+---
+
+Copyright (c) 2026 SystemSharde Corporation. All Rights Reserved.
+
+This software and the related training materials and documentation
+(the "Materials") are the copyrighted property of SystemSharde Corporation.
+
+1. The Materials may be used solely for viewing and local execution for
+   training purposes.
+
+2. No part of the Materials may be copied, modified, adapted, redistributed,
+   publicly transmitted, lent, sold, or otherwise provided to any third party
+   without the prior written permission of the copyright holder.
+
+3. The Materials are provided "AS IS", without warranty of any kind, express
+   or implied. The copyright holder shall not be liable for any damages
+   arising from the use of or inability to use the Materials.
+
