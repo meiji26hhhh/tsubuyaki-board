@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>faq</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -138,11 +142,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <h2>Codex の暴走系</h2>
 <section id="q.-1-人だけ-codex-が-git-push---force-しようとした" class="level3">
 <h3>Q. 1 人だけ Codex が <code>git push --force</code> しようとした</h3>
-<p><strong>即決</strong>: AGENTS.md §7.3.3 の禁止コマンド一覧をその場で読ませる。コンテナ内 Codex の force push は Codex Guard（<code>git-guard.sh</code>）が exit 126 で拒否するが、コンテナ外の素の git は通る。Free×private のため GitHub branch protection は使えず（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a>）、<strong>事前の物理ブロックは無い</strong>。</p>
-<p>代わりに以下の手順で復旧：</p>
+<p><strong>即決</strong>: AGENTS.md §7.3.3 の禁止コマンド一覧をその場で読ませる。コンテナ内 Codex の force push は Codex Guard（<code>git-guard.sh</code>）が exit 126 で拒否する。さらに fork モデルでは受講生は upstream への push 権限を持たず、upstream <code>main</code> は branch protection で<strong>事前にブロック</strong>される（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a>）。</p>
+<p>念のための手順：</p>
 <ol type="1">
-<li>共有 <code>main</code> に入った不正コミットがあれば、講師が手元の clone で <code>git revert &lt;SHA&gt;</code> の打ち消しコミットを作り、<code>main</code> へ push して戻す（§4 の CI 監視 Workflow が通知してくれる）。canonical なスターターは基幹リポ／講師手元にあるので、最悪は <code>main</code> の強制復元も可能。</li>
-<li>ローカルの作業ツリーは <code>git stash push -u</code> で退避し、必要な変更だけ自分の <code>&lt;github-id&gt;</code> ブランチに戻す。</li>
+<li>upstream <code>main</code> への影響は無い（受講生に push 権限が無く、ブランチ保護も効いている）。万一受講生が自分の fork の <code>main</code> を汚した場合でも影響は本人の fork に閉じるので、慌てず本人の作業ブランチ（<code>&lt;github-id&gt;</code>）で作業を続けさせる。fork の main を作り直したい場合は受講生ガイド <a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING の「最後の手段」</a> を案内。</li>
+<li>ローカルの作業ツリーで救いたい変更は <code>git stash push -u</code> で退避し、必要な変更だけ自分の <code>&lt;github-id&gt;</code> ブランチに戻す。</li>
 <li>force push による履歴書き換えは研修手順として許可しない。AGENTS.md §7.3.3「履歴・権限改ざん禁止」を全体に再共有。</li>
 </ol>
 </section>

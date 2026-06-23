@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>codex-guard-guide</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -198,7 +202,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><strong>学習の場</strong> — Codex が暴走して環境を壊すと、受講生は本題（TDD と設計）ではなく復旧に時間を奪われる。</li>
 <li><strong>受講生の機密</strong> — <code>OPENAI_API_KEY</code> や DB パスワード（<code>.env</code>）が Codex のコンテキストやログに漏れない。</li>
 <li><strong>研修の進行</strong> — 1 人のトラブルが全体を止めない。物理的に「起き得ない」状態にしておく。</li>
-<li><strong>共有 main</strong> — 本研修は全受講生が同じ共有リポを使うため、誰かが共有 <code>main</code> を汚すと全員に波及する。Codex が <code>main</code> へ push しようとするのを止める（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a> の共有 main 保護 4 層の一翼。Codex Guard はそのうちコンテナ内 Codex の経路を担う）。</li>
+<li><strong><code>main</code> ブランチ</strong> — 受講生は各自の fork で作業し、変更は PR で upstream に提案する。<code>main</code>（fork の main も upstream も）を直接汚さない規律を守るため、Codex が <code>main</code> へ push しようとするのを止める（<a href="./instructor-setup-guide.md">instructor-setup-guide.md §4</a> のブランチ保護 + Codex Guard の一翼。Codex Guard はそのうちコンテナ内 Codex の経路を担う）。</li>
 </ol>
 </section>
 <section id="想定リスク" class="level3">
@@ -348,7 +352,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <pre class="mermaid"><code>flowchart TB
     C[&quot;コマンド実行&lt;br/&gt;例: rm -rf /workspace&quot;] --&gt; P[&quot;PATH 先頭 /opt/codex-guard/bin で名前解決&quot;]
     P --&gt; G[&quot;guard wrapper&lt;br/&gt;rm-guard.sh&quot;]
-    G --&gt; D{&quot;危険パス /&lt;br/&gt;破壊オプション /&lt;br/&gt;共有 main への push?&quot;}
+    G --&gt; D{&quot;危険パス /&lt;br/&gt;破壊オプション /&lt;br/&gt;main への push?&quot;}
     D --&gt;|該当| REJ[&quot;reject&lt;br/&gt;exit 126・log 記録・代替案を促す&quot;]
     D --&gt;|安全| EX[&quot;実体 /bin/rm を exec&lt;br/&gt;（通常どおり実行）&quot;]</code></pre>
 <blockquote>
@@ -375,7 +379,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 <tr>
 <td><code>git-guard.sh</code></td>
-<td><code>push --force/-f/--force-with-lease</code>・<strong><code>push</code> の宛先が <code>main</code>（共有 main 保護。<code>main</code> checkout 中の refspec なし / <code>HEAD</code> の暗黙 push も拒否）</strong>・<code>rm -r</code>・<code>clean -f系</code>（結合順不問）・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
+<td><code>push --force/-f/--force-with-lease</code>・<strong><code>push</code> の宛先が <code>main</code>（fork の main も直接 push させない。<code>main</code> checkout 中の refspec なし / <code>HEAD</code> の暗黙 push も拒否）</strong>・<code>rm -r</code>・<code>clean -f系</code>（結合順不問）・<code>reset --hard</code>・<code>checkout -- .</code>・<code>restore .</code>・<code>config --global/--system</code>・<code>filter-branch</code>・<code>update-ref --delete</code></td>
 <td><code>add</code> <code>commit</code> <code>自分のブランチへの通常 push</code> <code>rm &lt;file&gt;</code>（単発）<code>restore &lt;file&gt;</code>（単発）<code>stash</code> <code>status</code> <code>log</code> <code>diff</code></td>
 </tr>
 <tr>
@@ -494,7 +498,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tbody>
 </table>
 <p>旧版の config.toml にあった <code>instructions</code> キー（禁止リストのプロンプト注入）と独自の <code>[network]</code> allowlist セクションは、現行 CLI でそれぞれ「予約済みで機能しない」「スキーマ外」のため削除した。プロンプト層の禁止リストは <strong><code>AGENTS.md</code> §7 が正本</strong>（Codex がプロジェクトの AGENTS.md を自動で読み込む）。通信先の制限は L1〜L3 のコンテナ層と規範で担保する。</p>
-<p>なお、リポ直下の <code>.codex/config.toml</code>（プロジェクトローカル設定）は <strong>trusted なプロジェクトでのみ</strong>読み込まれる。研修コンテナでは <code>entrypoint.sh</code> が研修専用 CODEX_HOME に <code>[projects."/workspace"] trust_level = "trusted"</code> を自動追記して有効化し、あわせて <code>OPENAI_API_KEY</code> から <code>auth.json</code> を生成（<code>codex login --with-api-key</code>）、<code>.codex/prompts/</code> を <code>$CODEX_HOME/prompts/</code>（スラッシュコマンド）へ同期する。</p>
+<p>なお、リポ直下の <code>.codex/config.toml</code>（プロジェクトローカル設定）は <strong>trusted なプロジェクトでのみ</strong>読み込まれる。研修コンテナでは <code>entrypoint.sh</code> が研修専用 CODEX_HOME に <code>[projects.&quot;/workspace&quot;] trust_level = &quot;trusted&quot;</code> を自動追記して有効化し、あわせて <code>OPENAI_API_KEY</code> から <code>auth.json</code> を生成（<code>codex login --with-api-key</code>）、<code>.codex/prompts/</code> を <code>$CODEX_HOME/prompts/</code>（スラッシュコマンド）へ同期する。</p>
 <blockquote>
 <p>💡 config.toml の冒頭コメント自身が「本設定は『Codex への約束事 (設定層)』であり、最終的な物理ブロックはコンテナの研修ハーネスで別途行われる。多層防御の最内殻」と明記している。config は約束事、物理ブロックは L1/L2/L3 という役割分担。</p>
 </blockquote>
@@ -597,7 +601,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="切替ポイント運用判断" class="level3">
 <h3>3-4. 切替ポイント（運用判断）</h3>
-<p>研修の回や受講生のレベルに応じて、講師が調整できる箇所。いずれも <code>.codex/config.toml</code> を編集し、講師が共有リポの <code>main</code> に反映する運用（受講生のブランチには影響しない）。</p>
+<p>研修の回や受講生のレベルに応じて、講師が調整できる箇所。いずれも <code>.codex/config.toml</code> を編集し、講師が upstream リポの <code>main</code> に反映する運用（受講生の fork には影響しない）。</p>
 <table>
 <colgroup>
 <col style="width: 33%" />

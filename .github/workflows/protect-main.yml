@@ -1,104 +1,104 @@
-# =============================================================================
-# protect-main.yml — 共有 main 保護の CI 監視（GitHub Actions）
-#
-# 目的:
-#   本研修は 1 つの共有リポを全受講生で使い、共有 main は配布時のスターターのまま
-#   温存する（誰も更新しない）。GitHub Free の private リポでは branch protection /
-#   ruleset が強制されないため、main への push を「事前に reject」する手段が無い。
-#   本 Workflow は main への push を検知し、講師許可リスト外のアカウントによる push を
-#   Issue で通知する「検知 + 通知」層（instructor-setup-guide.md §4 の 4 層防御の 3 層目）。
-#
-# 設定（講師がここを編集）:
-#   下の script 内 `instructors` 配列に、main を更新してよいアカウント（講師）の
-#   GitHub ユーザ名を列挙する。ここに無いアカウントが main へ push すると Issue で通知される。
-#
-# 動作とコスト:
-#   - main への push 時のみ起動する（受講生は自分の <github-id> ブランチへ push するため
-#     ほぼ起動しない）→ Free private の 2,000 分/月枠をほぼ消費しない。
-#   - 既定は「Issue 通知」のみ（巻き戻しはしない）。講師が確認のうえ git revert で是正する
-#     （instructor-setup-guide.md §9-3）。自動 revert は誤爆防止のため既定で無効（末尾コメント参照）。
-#
-# 制約（重要）:
-#   GitHub Actions は push 完了後に走るため、push 自体を reject することはできない
-#   （真の事前ブロックは GitHub Enterprise Server の pre-receive hook のみ）。本 Workflow は
-#   あくまで是正のための「検知」であり、予防ではない。
-# =============================================================================
-name: protect-main
+# # =============================================================================
+# # protect-main.yml — 共有 main 保護の CI 監視（GitHub Actions）
+# #
+# # 目的:
+# #   本研修は 1 つの共有リポを全受講生で使い、共有 main は配布時のスターターのまま
+# #   温存する（誰も更新しない）。GitHub Free の private リポでは branch protection /
+# #   ruleset が強制されないため、main への push を「事前に reject」する手段が無い。
+# #   本 Workflow は main への push を検知し、講師許可リスト外のアカウントによる push を
+# #   Issue で通知する「検知 + 通知」層（instructor-setup-guide.md §4 の 4 層防御の 3 層目）。
+# #
+# # 設定（講師がここを編集）:
+# #   下の script 内 `instructors` 配列に、main を更新してよいアカウント（講師）の
+# #   GitHub ユーザ名を列挙する。ここに無いアカウントが main へ push すると Issue で通知される。
+# #
+# # 動作とコスト:
+# #   - main への push 時のみ起動する（受講生は自分の <github-id> ブランチへ push するため
+# #     ほぼ起動しない）→ Free private の 2,000 分/月枠をほぼ消費しない。
+# #   - 既定は「Issue 通知」のみ（巻き戻しはしない）。講師が確認のうえ git revert で是正する
+# #     （instructor-setup-guide.md §9-3）。自動 revert は誤爆防止のため既定で無効（末尾コメント参照）。
+# #
+# # 制約（重要）:
+# #   GitHub Actions は push 完了後に走るため、push 自体を reject することはできない
+# #   （真の事前ブロックは GitHub Enterprise Server の pre-receive hook のみ）。本 Workflow は
+# #   あくまで是正のための「検知」であり、予防ではない。
+# # =============================================================================
+# name: protect-main
 
-on:
-  push:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
 
-permissions:
-  contents: read
-  issues: write
+# permissions:
+#   contents: read
+#   issues: write
 
-jobs:
-  notify-on-main-push:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify instructor on unauthorized push to main
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // ▼▼▼ main を更新してよい講師アカウントをここに列挙（小文字）▼▼▼
-            const instructors = ["instructor-account"];
-            // ▲▲▲ ここに無いアカウントが main へ push すると Issue 通知される ▲▲▲
+# jobs:
+#   notify-on-main-push:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Notify instructor on unauthorized push to main
+#         uses: actions/github-script@v7
+#         with:
+#           script: |
+#             // ▼▼▼ main を更新してよい講師アカウントをここに列挙（小文字）▼▼▼
+#             const instructors = ["instructor-account"];
+#             // ▲▲▲ ここに無いアカウントが main へ push すると Issue 通知される ▲▲▲
 
-            const actor = context.actor;
-            // context.actor は login の実際の大文字小文字を保持するため、両辺を小文字化して比較する
-            const actorLower = (actor || "").toLowerCase();
-            const instructorsLower = instructors.map((s) => s.toLowerCase());
-            if (instructorsLower.includes(actorLower)) {
-              core.info(`main was updated by instructor '${actor}' — OK, no action.`);
-              return;
-            }
+#             const actor = context.actor;
+#             // context.actor は login の実際の大文字小文字を保持するため、両辺を小文字化して比較する
+#             const actorLower = (actor || "").toLowerCase();
+#             const instructorsLower = instructors.map((s) => s.toLowerCase());
+#             if (instructorsLower.includes(actorLower)) {
+#               core.info(`main was updated by instructor '${actor}' — OK, no action.`);
+#               return;
+#             }
 
-            const sha = context.sha;
-            const { owner, repo } = context.repo;
-            core.warning(`Unauthorized push to main by '${actor}' (commit ${sha})`);
+#             const sha = context.sha;
+#             const { owner, repo } = context.repo;
+#             core.warning(`Unauthorized push to main by '${actor}' (commit ${sha})`);
 
-            const title = "[protect-main] 共有 main への想定外 push を検知";
-            const body = [
-              "共有 `main` に、講師許可リスト外のアカウントから push が検知されました。",
-              "",
-              `- push 主体: \`${actor}\``,
-              `- コミット: ${sha}`,
-              `- リポジトリ: ${owner}/${repo}`,
-              "",
-              "対応（instructor-setup-guide.md §9-3）:",
-              "1. `git fetch && git log --oneline origin/main` で内容を確認",
-              "2. 不要なら `git revert <SHA>` の打ち消しコミットを作り、main へ push して戻す",
-              "3. 本人へ「push 先は自分の `<github-id>` ブランチ」を再周知",
-              "",
-              "> canonical なスターターは基幹リポ／講師手元にあるので、最悪は main の強制復元も可能です。",
-            ].join("\n");
+#             const title = "[protect-main] 共有 main への想定外 push を検知";
+#             const body = [
+#               "共有 `main` に、講師許可リスト外のアカウントから push が検知されました。",
+#               "",
+#               `- push 主体: \`${actor}\``,
+#               `- コミット: ${sha}`,
+#               `- リポジトリ: ${owner}/${repo}`,
+#               "",
+#               "対応（instructor-setup-guide.md §9-3）:",
+#               "1. `git fetch && git log --oneline origin/main` で内容を確認",
+#               "2. 不要なら `git revert <SHA>` の打ち消しコミットを作り、main へ push して戻す",
+#               "3. 本人へ「push 先は自分の `<github-id>` ブランチ」を再周知",
+#               "",
+#               "> canonical なスターターは基幹リポ／講師手元にあるので、最悪は main の強制復元も可能です。",
+#             ].join("\n");
 
-            // 同タイトルの open Issue があればコメント追記、無ければ新規作成
-            // paginate で全 open Issue を走査し、100 件超でも既存 Issue を取りこぼさない
-            const issues = await github.paginate(github.rest.issues.listForRepo, {
-              owner, repo, state: "open", per_page: 100,
-            });
-            const existing = issues.find((i) => i.title === title);
-            if (existing) {
-              await github.rest.issues.createComment({
-                owner, repo, issue_number: existing.number, body,
-              });
-              core.info(`Commented on existing issue #${existing.number}.`);
-            } else {
-              const { data: created } = await github.rest.issues.create({
-                owner, repo, title, body,
-              });
-              core.info(`Created issue #${created.number}.`);
-            }
+#             // 同タイトルの open Issue があればコメント追記、無ければ新規作成
+#             // paginate で全 open Issue を走査し、100 件超でも既存 Issue を取りこぼさない
+#             const issues = await github.paginate(github.rest.issues.listForRepo, {
+#               owner, repo, state: "open", per_page: 100,
+#             });
+#             const existing = issues.find((i) => i.title === title);
+#             if (existing) {
+#               await github.rest.issues.createComment({
+#                 owner, repo, issue_number: existing.number, body,
+#               });
+#               core.info(`Commented on existing issue #${existing.number}.`);
+#             } else {
+#               const { data: created } = await github.rest.issues.create({
+#                 owner, repo, title, body,
+#               });
+#               core.info(`Created issue #${created.number}.`);
+#             }
 
-# -----------------------------------------------------------------------------
-# （任意）自動 revert を有効化する場合:
-#   誤爆（講師の正当な main 更新まで巻き戻す）を防ぐため、必ず上の instructors 許可リストで
-#   講師を除外したうえで使うこと。具体的には:
-#     1. permissions に `contents: write` を追加
-#     2. 上記 step の前に actions/checkout（fetch-depth: 0）で main を取得
-#     3. 許可リスト外の場合のみ `git revert --no-edit <SHA> && git push origin main` するステップを追加
-#   既定では無効（通知のみ）。受講生のコミットを勝手に消すリスクがあるため、運用に慣れるまでは
-#   「通知 → 講師が手動 revert」を推奨する。
-# -----------------------------------------------------------------------------
+# # -----------------------------------------------------------------------------
+# # （任意）自動 revert を有効化する場合:
+# #   誤爆（講師の正当な main 更新まで巻き戻す）を防ぐため、必ず上の instructors 許可リストで
+# #   講師を除外したうえで使うこと。具体的には:
+# #     1. permissions に `contents: write` を追加
+# #     2. 上記 step の前に actions/checkout（fetch-depth: 0）で main を取得
+# #     3. 許可リスト外の場合のみ `git revert --no-edit <SHA> && git push origin main` するステップを追加
+# #   既定では無効（通知のみ）。受講生のコミットを勝手に消すリスクがあるため、運用に慣れるまでは
+# #   「通知 → 講師が手動 revert」を推奨する。
+# # -----------------------------------------------------------------------------

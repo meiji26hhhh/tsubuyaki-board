@@ -9,17 +9,16 @@ AI 駆動開発研修 3 日コースを開催する**講師が、研修開始の
 ## 配布アーキテクチャ全体像
 
 ```
-[基幹リポ (private)]              [講師 Organization]              [受講生]
-TokyoItSchool-dev/               <org>/tsubuyaki-board            全員が同じ共有リポを clone
-tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自分の作業ブランチ <github-id>
-     │                                 │                               │
-     │  内容を 1 回 push               │  Organization にメンバー招待  │
-     │ ──────────────────────►         │ ────────────────────────────►│
-     │  (講師がスターターを用意)       │  (受講生は招待を承認して参加) │
-     │                                 │                               │
-     │                                 │ ◄──────────────────────────── │
-     │                                 │  自分のブランチへ push(PRなし)│
-     │                                 │  共有 main は誰も触らない     │
+[基幹リポ (private)]          [公開リポ upstream]              [受講生ごとの fork]
+TokyoItSchool-dev/            <owner>/tsubuyaki-board          <github-id>/tsubuyaki-board
+tsubuyaki-board.git          (公開・main はロック)            (各自が Fork して作る)
+     │                            │                                 │
+     │  内容を 1 回 push          │   受講生が Fork (招待不要)       │
+     │ ─────────────────►        │ ───────────────────────────────►│
+     │  (講師がスターター用意)    │                                 │
+     │                            │ ◄────────────────────────────── │
+     │                            │   fork のブランチ → PR で提案    │
+     │                            │   upstream main はロック         │
 ```
 
 ---
@@ -27,9 +26,9 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 ## 0. このガイドが扱うこと・扱わないこと
 
 **扱う:**
-- 共有リポを Organization で初期化する手順（基幹リポの内容を 1 回 push）
-- 受講生を Organization に招待する手順
-- 共有 main を守る 4 層防御（規約／Codex Guard／CI 監視 Workflow／講師確認）の設定
+- 研修リポを公開（public）リポジトリとして用意する手順（基幹リポの内容を 1 回 push）
+- 受講生に Fork してもらう運用（招待は不要）
+- upstream `main` をブランチ保護でロックする手順（+ Codex Guard）
 - 講師自身のローカル環境キッティング
 - 当日運営のリンク集（個別の運営要綱は [timetable.md](./timetable.md) と [rubric.md](./rubric.md)）
 
@@ -45,36 +44,35 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 | 項目 | 用途 | 確認方法 |
 |---|---|---|
 | GitHub アカウント | 全操作 | `gh auth status` で認証済 |
-| GitHub Organization 管理者権限 | Org への push、メンバー招待、リポ権限設定 | Org の Settings にアクセス可 |
-| 基幹リポへの read 権限 | 共有リポの初期化（`git clone` → push） | https://github.com/TokyoItSchool-dev/tsubuyaki-board にアクセス可 |
+| 公開リポの所有者権限 | upstream リポの公開・ブランチ保護設定 | 個人アカウント、または Org 管理者として `<owner>/tsubuyaki-board` を作成・設定できる |
+| 基幹リポへの read 権限 | 公開リポの初期化（`git clone` → push） | https://github.com/TokyoItSchool-dev/tsubuyaki-board にアクセス可 |
 | OpenAI 課金済アカウント | 自分の Codex CLI 動作確認 | `OPENAI_API_KEY` 発行済、課金残高あり |
 | `gh` CLI | スクリプト実行 | `gh --version` で 2.x 系 |
 | ローカルマシン | 環境キッティング検証 | Windows 11 + WSL2 が動く |
 
 ---
 
-## 2. Organization 準備
+## 2. 研修リポの所有者（owner）を決める
 
-### 2-1. Organization の新規作成 or 既存利用
+公開リポ `<owner>/tsubuyaki-board` を置く場所を決めます。Organization は**任意**です（fork モデルでは受講生の招待が不要なため、Org の請求・メンバー管理は要りません）。
 
-新規作成する場合：
+| 選択肢 | `<owner>` | 補足 |
+|---|---|---|
+| 講師の個人アカウント | 講師の GitHub ユーザ名 | 最も手軽。公開リポなので誰でも Fork できる |
+| 既存の Organization | Org 名 | すでに Org がある場合。Free プランで問題ない |
+| 新規 Organization | 新 Org 名 | 必須ではない。作るなら https://github.com/account/organizations/new |
 
-1. https://github.com/account/organizations/new で「Create a free organization」または有料プラン。
-2. Organization 名（例: `acme-training-2026q2`）と請求先メールを設定。
-
-> 本研修では**採点・合否判定に GitHub Actions の CI を使わない**方針（受講生・講師ともローカル `./mvnw -B -Ph2 verify` で基本検証し、仕上げは `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify` で合否判定する）。Organization のプランは Free で問題ない。
+> 本研修では**採点・合否判定に GitHub Actions の CI を使いません**（受講生・講師ともローカル `./mvnw -B -Ph2 verify` で基本検証し、仕上げは `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify` で合否判定）。CI を使わないので、どの owner でも Free プランで足ります。
 >
-> ただし**共有 main を守る監視用に、軽量な GitHub Actions Workflow（`.github/workflows/protect-main.yml`）のみ**を 1 本だけ使う（§4 参照）。これは main への push を検知して講師へ通知するだけで、main への push 時しか起動しないため Free private の 2,000 分/月枠をほぼ消費しない。
+> **公開リポなら `main` のブランチ保護が Free で使えます**（§4）。受講生は各自の fork で作業し、upstream には直接 push できないため、`main` は二重に守られます。
 
-### 2-2. Member seat 数の確認
-
-Free プランは無制限ですが、Team プランは seat 課金。受講生人数分の seat が確保されているか **Settings > Billing** で確認。
+> 💡 以降このガイドでは upstream リポを `<owner>/tsubuyaki-board` と表記します。配布時に実際の owner 名へ読み替えてください（受講生ガイドの `<owner>` と一致させる）。
 
 ---
 
-## 3. 共有リポを Organization で初期化
+## 3. 研修リポを公開（public）リポジトリとして用意
 
-全受講生が使う**共有リポを 1 個だけ** Organization に作り、基幹リポのスターター内容を 1 回 push します。Classroom のような個人リポ自動生成や template 化は不要です。
+upstream となる**公開リポを 1 個**作り、基幹リポのスターター内容を 1 回 push します。受講生はこれを Fork して使うので、Classroom のような個人リポ自動生成や template 化は不要です。
 
 ### 3-1. 基幹リポをローカルに用意
 
@@ -86,124 +84,112 @@ cd tsubuyaki-board
 
 > 💡 既に講師マシンに clone 済みの基幹リポがあればそれを使ってもよい。重要なのは「配布したい状態（main の最新）」が手元にあること。
 
-### 3-2. Organization に共有リポ（private）を作成
+### 3-2. 公開リポ（public）を作成
 
 ```bash
 gh auth status   # 認証済か確認
 
-gh repo create <org>/tsubuyaki-board \
-    --private \
-    --description "AI 駆動開発研修 (Codex × Spring Boot) 演習リポジトリ（共有・受講生は各自ブランチで作業）"
+gh repo create <owner>/tsubuyaki-board \
+    --public \
+    --description "AI 駆動開発研修 (Codex × Spring Boot) 演習リポジトリ（受講生は各自 Fork して作業）"
 ```
 
-### 3-3. スターター内容を共有リポへ push
+> 💡 既存のリポを後から公開へ切り替える場合は `gh repo edit <owner>/tsubuyaki-board --visibility public`（または Settings → 最下部 Danger Zone → Change visibility → Public）。
+
+### 3-3. スターター内容を公開リポへ push
 
 配布したいのは「main の最新スナップショット」です。`--mirror` は使わず（基幹リポの全ブランチ・全履歴を受講生に見せる必要はない）、main を通常 push します。
 
 ```bash
-# 共有リポを remote として追加（origin は基幹リポなので別名 org にする）
-git remote add org https://github.com/<org>/tsubuyaki-board.git
+# 公開リポを remote として追加（origin は基幹リポなので別名 upstream にする）
+git remote add upstream https://github.com/<owner>/tsubuyaki-board.git
 
-# main を共有リポへ push
-git push org main
+# main を公開リポへ push
+git push upstream main
 
 # 配布したいタグがあれば一緒に（無ければ省略可）
-# git push org --tags
+# git push upstream --tags
 ```
 
-> 💡 受講生に配るブランチは `main` 1 本で十分です。受講生は各自この `main` から自分の `<github-id>` ブランチを切ります。
+> 💡 受講生に配るブランチは `main` 1 本で十分です。受講生は各自このリポを Fork し、自分の fork の `main` から `<github-id>` ブランチを切ります。
 
 ### 3-4. 検証
 
 ```bash
-gh repo view <org>/tsubuyaki-board --json visibility,defaultBranchRef
+gh repo view <owner>/tsubuyaki-board --json visibility,defaultBranchRef
 ```
 
 期待出力:
 
 ```json
 {
-  "visibility": "PRIVATE",
+  "visibility": "PUBLIC",
   "defaultBranchRef": {"name": "main"}
 }
 ```
 
-> 💡 共有リポなので `isTemplate` は不要（`false` のままで OK）。
+> 💡 `visibility` が `PUBLIC` であることが重要です（fork と Free のブランチ保護が使える前提）。`isTemplate` は不要（`false` のままで OK）。
 
 ---
 
-## 4. 共有 main を守る 4 層防御
+## 4. upstream `main` をブランチ保護でロック（+ Codex Guard）
 
-**重要な制約**: GitHub Free の private リポでは branch protection / ruleset が**強制されません**（設定しても "won't be enforced until you upgrade to Team" エラーになる）。つまり push を物理的に reject する手段が無いため、共有 main は次の 4 層で「汚さない／汚れても必ず戻せる」を担保します。
+公開リポでは **branch protection が Free で使える**ため、upstream の `main` を「**誰も直接 push できない**」状態にできます。加えて受講生は各自の fork で作業し upstream への push 権限を持たないため、`main` は実質的に二重で守られます。
 
-1. **規約**（AGENTS.md §3.2 / ONBOARDING.md 禁止事項 / student-setup-guide §6）— 「共有 main へは push しない。push 先は常に自分の `<github-id>` ブランチ」を初日キックオフで明示。
+### 4-1. ブランチ保護で `main` をロック（手順）
 
-2. **Codex Guard**（`containers/codex-devbox/bin/git-guard.sh`）— コンテナ内 Codex が `main` へ push しようとすると exit 126 で拒否（force push 拒否は既存）。ただしコンテナ外の素の git は対象外。
+GitHub の **Settings → Branches → Add branch protection rule**（または新しい **Rulesets**）で `main` を保護します。どこまで厳格にするかは**講師の裁量**ですが、最低限おすすめは次の設定です。
 
-3. **CI 監視 Workflow**（`.github/workflows/protect-main.yml`）— `main` への push を検知すると、push 主体（`github.actor`）が講師許可リスト外の場合に Issue を作成して講師へ通知（既定動作）。GitHub Actions は push 後に走るため事前ブロックはできないが、「誰が・いつ・どのコミットを」main に入れたかを即座に把握できる。許可リスト（講師アカウント）の設定箇所は当該ファイル冒頭のコメント参照。
+- **Branch name pattern**: `main`
+- ☑ **Require a pull request before merging**（PR 必須 = 直接 push を禁止。承認数は 0 でも可）
+- ☑ **Block force pushes**（force push 禁止。既定で含まれることが多い）
+- ☑（任意）**Do not allow bypassing the above settings** / **Restrict deletions**
 
-4. **講師モニタリング** — CI 通知、または `git log --oneline origin/main` で違反を把握し、後述 §9-3 の手順で `git revert` して戻す。canonical なスターターは基幹リポ／講師手元に保持しておく。
+`gh` で設定する例（PR 必須＝直接 push 禁止の最小構成。JSON を `--input` で渡す）:
 
-> 受講生が自分の素の git（コンテナ外）で `git push origin main` する経路だけは技術的に塞げません。CI 検知 → 講師 `git revert` で是正する前提で運用します。事故時の手順は §9-3 を参照。
+```bash
+cat <<'JSON' | gh api -X PUT "repos/<owner>/tsubuyaki-board/branches/main/protection" --input -
+{
+  "required_status_checks": null,
+  "enforce_admins": false,
+  "required_pull_request_reviews": { "required_approving_review_count": 0 },
+  "restrictions": null
+}
+JSON
+```
+
+> 💡 **厳格さは講師が選びます**。`enforce_admins` を `true` にすると講師自身も直接 push 不可（PR 必須）になります。線形履歴・削除禁止・必須レビュー数なども必要に応じて足してください。最小構成（PR 必須で直接 push を防ぐだけ）でも、受講生の事故 push をブロックする目的は果たせます。
 >
-> 共有 main を**完全にロック**したい場合の選択肢: (a) リポを public 化すれば Free でも branch protection が使える、(b) GitHub Team / Education 特典で private のまま branch protection が使える。本研修は Free×private 前提で進めます。
+> 💡 そもそも**受講生は upstream への push 権限を持たない**（fork で作業する）ので、ブランチ保護は「講師自身の誤操作」や「将来 collaborator を足した場合」への保険という位置づけです。
+
+### 4-2. Codex Guard（コンテナ内 Codex 経路）
+
+`containers/codex-devbox/bin/git-guard.sh` が、コンテナ内 Codex の `main` への push（fork の main 含む）と force push を exit 126 で拒否します。受講生が Codex に作業させても、`main` を直接汚す経路はコンテナ側でも塞がれています（詳細は [codex-guard-guide.md](./codex-guard-guide.md)）。
 
 ---
 
-## 5. 受講生を Organization に招待
+## 5. 受講生に Fork してもらう（招待は不要）
 
-Classroom の代わりに、受講生を共有リポへ **Write 権限**で招待します。受講生は自分の `<github-id>` ブランチへ push できればよいので、共有リポへの Write があれば十分です。
+fork モデルでは**受講生の招待・collaborator 追加は一切不要**です。公開リポなので、受講生は自分で Fork するだけで作業を始められます。講師がやることは「リポ URL を伝える」「ブランチ名規約と PR 作成を伝える」だけです。
 
-### 5-1. 受講生の GitHub ユーザ名を集める
+### 5-1. 受講生の GitHub ユーザ名（採点・識別用）
 
-事前に受講生全員の GitHub ユーザ名（小文字）を集めておきます（申込フォーム / 事前アンケートなど）。ブランチ名・採点時の識別に使うため、**正確な綴り**を確認します。
+push 権限の付与には不要になりましたが、**採点・ブランチ識別のために GitHub ユーザ名（小文字）を集めておく**と便利です（申込フォーム / 事前アンケートなど）。当日でも、各自が作成する PR の作成者から把握できます。
 
-### 5-2. 共有リポへ Write 権限で招待（推奨: collaborator 追加）
-
-最もシンプルで安全なのは、共有リポに各受講生を **collaborator（Write）として直接追加**する方法です（Org 全体の権限を緩めず、この 1 リポにだけ Write を与える）。受講生宛に招待メールが届き、承認するとアクセスできます。
-
-```bash
-# 受講生 1 人を共有リポに Write で招待
-gh api -X PUT "repos/<org>/tsubuyaki-board/collaborators/<github-id>" -f permission=push
-```
-
-複数人をまとめて招待する例（ユーザ名を改行区切りで `students.txt` に用意）:
-
-```bash
-while read -r gh_id; do
-  [ -z "$gh_id" ] && continue
-  echo "inviting $gh_id ..."
-  gh api -X PUT "repos/<org>/tsubuyaki-board/collaborators/$gh_id" -f permission=push
-done < students.txt
-```
-
-> 💡 `permission=push` が「Write（push 可能）」を意味します。受講生は自分のブランチを push できますが、Free×private では共有 main を技術的にロックできない点は §4 のとおり（規約＋CI 監視で担保）。
->
-> 💡 Org の **Settings > Member privileges > Base permissions** を `Read`（または None）のままにしておけば、collaborator 追加したこの共有リポ以外に受講生はアクセスできません（最小権限）。
-
-### 5-3. 招待状況の確認
-
-```bash
-# 招待承認待ち（pending）の一覧
-gh api "repos/<org>/tsubuyaki-board/invitations" --jq '.[].invitee.login'
-
-# 承認済み collaborator の一覧
-gh api "repos/<org>/tsubuyaki-board/collaborators" --jq '.[].login'
-```
-
-受講生が招待メールを承認すると pending から消え、collaborators 側に現れます。当日までに全員が承認済みになっているか確認します。
-
-### 5-4. 受講生への案内事項
+### 5-2. 受講生への案内事項
 
 研修初日に受講生へ次を伝えます（受講生ガイド §2・§3 と対応）:
 
-- **Organization 名** `<org>` と **共有リポ URL** `https://github.com/<org>/tsubuyaki-board`
-- 「招待メール（または `https://github.com/<org>`）から参加を承認すること」
-- 「clone 後は自分の GitHub ユーザ名で `git switch -c <github-id> origin/main` してから作業すること」
+- **研修リポ（upstream）URL** `https://github.com/<owner>/tsubuyaki-board`
+- 「このリポを **Fork** して、自分の fork を clone すること」（招待・承認の手順は無い）
+- 「clone 後は自分の GitHub ユーザ名で `git switch -c <github-id> origin/main`（fork の main 起点）してから作業すること」
+- 「初回 push 後、fork のブランチ → upstream main へ **Draft PR** を 1 本作ること（講師レビュー用・マージしない）」
 
-### 5-5. リハーサル（テストアカウント検証）は §7 で実施
+> 💡 招待メールの送付・承認待ち・collaborator 状況の確認といった作業が**すべて不要**になりました。受講生は到着後すぐ Fork できます。
 
-テストアカウントを使った「招待承認 → 共有リポ clone → `<github-id>` ブランチ作成 → `./mvnw -B -Ph2 verify`」の確認は [§7 リハーサル](#7-リハーサルテストアカウントでの動作確認) で行います。**先に §6 で講師マシンを整備**（Temurin JDK 21 / Maven / Podman 導入）してからでないと、`./mvnw -B -Ph2 verify` が JDK 未導入で失敗します。
+### 5-3. リハーサル（テストアカウント検証）は §7 で実施
+
+テストアカウントを使った「Fork → clone → `<github-id>` ブランチ作成 → `./mvnw -B -Ph2 verify` → Draft PR」の確認は [§7 リハーサル](#7-リハーサルテストアカウントでの動作確認) で行います。**先に §6 で講師マシンを整備**（Temurin JDK 21 / Maven / Podman 導入）してからでないと、`./mvnw -B -Ph2 verify` が JDK 未導入で失敗します。
 
 ---
 
@@ -218,7 +204,7 @@ WSL2 機能はまだ有効化されていないので、**Windows 側の PowerSh
 ```powershell
 New-Item -ItemType Directory -Force -Path "C:\workspace" | Out-Null
 cd C:\workspace
-git clone https://github.com/<org>/tsubuyaki-board.git
+git clone https://github.com/<owner>/tsubuyaki-board.git
 cd tsubuyaki-board
 ```
 
@@ -365,12 +351,12 @@ codex-shell
 
 ## 7. リハーサル（テストアカウントでの動作確認）
 
-§5 で招待した受講生視点で、共有リポを clone して自分のブランチで作業できるかを、**講師の業務 GitHub とは別のアカウント**で踏破して確認します。詰まったポイントは受講生ガイド / TROUBLESHOOTING への追記材料にします。
+受講生視点で、研修リポを Fork して clone し、自分のブランチで作業 → PR までを、**講師の業務 GitHub とは別のアカウント**で踏破して確認します。詰まったポイントは受講生ガイド / TROUBLESHOOTING への追記材料にします。
 
 ### 7-0. 前提条件
 
 - §6 講師キッティングが完走し、自分のマシン上で `./mvnw -B -Ph2 verify` が **BUILD SUCCESS を返している**こと
-- §5 で共有リポへの受講生招待（テストアカウント分を含む）が完了していること
+- §3 で upstream リポが **public** で公開され、§4 で `main` のブランチ保護を設定済みであること
 - WSL Ubuntu で `java --version` が `21`、`echo "$JAVA_HOME"` が `/usr/lib/jvm/temurin-21-jdk-amd64` を返すこと（§6-3-2 の検証済）
 
 > ⚠️ §6 を飛ばして本節を実施すると、`./mvnw -B -Ph2 verify` が JDK 未導入で**確実に失敗**します。先に §6 を終わらせること。
@@ -378,13 +364,13 @@ codex-shell
 ### 7-1. テストアカウントを用意
 
 - 講師の業務 GitHub アカウントとは別のアカウント（個人アカウントなど）を準備
-- 当該アカウントを §5-2 と同じ手順で共有リポに collaborator（Write）として招待し、承認しておく
+- 公開リポなので、このアカウントへの招待や collaborator 追加は不要（Fork するだけ）
 
-### 7-2. 招待を承認して共有リポにアクセス
+### 7-2. テストアカウントで Fork する
 
 1. 🌐 ブラウザで GitHub からサインアウト → **テストアカウントで再サインイン**
-2. 共有リポへの招待メール（または `https://github.com/<org>/tsubuyaki-board`）を開き、招待を承認する
-3. 受講生ガイド §3 と同じく、共有リポ `https://github.com/<org>/tsubuyaki-board` を開ける／ファイル一覧に `AGENTS.md` / `README.md` / `EXERCISES.md` / `pom.xml` が並ぶことを確認
+2. 受講生ガイド §3 と同じく、upstream `https://github.com/<owner>/tsubuyaki-board` を開き、右上の「**Fork**」でテストアカウントのアカウントへ Fork する
+3. Fork 後 `https://github.com/<test-account-id>/tsubuyaki-board` が開ける／ファイル一覧に `AGENTS.md` / `README.md` / `EXERCISES.md` / `pom.xml` が並ぶことを確認
 
 ### 7-3. 別ディレクトリへ clone（既存講師リポと衝突回避）して自分のブランチを切る
 
@@ -395,11 +381,11 @@ codex-shell
 mkdir -p /mnt/c/workspace/.rehearsal
 cd /mnt/c/workspace/.rehearsal
 
-# 共有リポを clone（受講生と同じ URL。本番リポと名前が衝突しないよう別名で）
-git clone https://github.com/<org>/tsubuyaki-board.git rehearsal-tsubuyaki
+# テストアカウントの fork を clone（受講生と同じ流れ。本番リポと名前が衝突しないよう別名で）
+git clone https://github.com/<test-account-id>/tsubuyaki-board.git rehearsal-tsubuyaki
 cd rehearsal-tsubuyaki
 
-# 受講生と同じく、自分の作業ブランチを main から切る
+# 受講生と同じく、自分の作業ブランチを fork の main から切る
 git switch -c <test-account-id> origin/main
 ```
 
@@ -422,6 +408,28 @@ git switch -c <test-account-id> origin/main
 
 初回は依存ライブラリの DL で 5〜10 分かかる（受講生も同様）。
 
+#### push と Draft PR、upstream main 直 push 不可の確認
+
+受講生と同じく fork へ push し、PR を作り、upstream main へ直接 push できないことを確認します:
+
+```bash
+# fork（origin）の作業ブランチへ push
+git push -u origin <test-account-id>
+
+# Draft PR を作成（gh が auth 済みの場合。未認証ならブラウザで Compare & pull request）
+gh pr create --repo <owner>/tsubuyaki-board \
+  --base main --head <test-account-id>:<test-account-id> --draft --fill
+
+# upstream main へ直接 push できないことを確認
+git remote add upstream https://github.com/<owner>/tsubuyaki-board.git
+git switch main
+git commit --allow-empty -m "test: should be rejected"
+git push upstream main   # → protected branch / 403 で拒否されれば OK
+git switch <test-account-id>
+```
+
+> 💡 `git push upstream main` が拒否されれば（protected branch / 403）、ブランチ保護が正しく効いています。テストアカウントは upstream への push 権限も持たないため、いずれにせよ拒否されます。確認用の空コミットはリハーサルクローン内だけのものなので、§7-5 でクローンごと破棄すれば消えます。
+
 #### 詰まったときの確認順
 
 1. `java --version` が `21` を返すか → 違うなら §6-3 の Temurin 21 検証へ戻る
@@ -442,8 +450,8 @@ cd /mnt/c/workspace/tsubuyaki-board
 rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 ```
 
-- 共有リポに push してしまったテスト用ブランチがあれば削除: `git push <共有リポ> --delete <test-account-id>`（または GitHub の branches タブから削除）
-- テストアカウントの collaborator 権限は研修開始前に Settings > Collaborators から外す（本番受講生と混在させない）
+- テストアカウントの fork（`<test-account-id>/tsubuyaki-board`）は削除してよい（GitHub の fork ページ → Settings → 最下部 Danger Zone → Delete this repository）
+- テストアカウントが作った Draft PR は close する（upstream の Pull requests タブから）
 - 予備 `OPENAI_API_KEY` を Codex でも使ったなら、研修終了時に rotate（§6-4 参照）
 
 ---
@@ -455,7 +463,7 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 ### 8-1. 0 時間目（受講生到着〜セットアップ開始）
 
 - 受講生に [../education/student-setup-guide.md](../education/student-setup-guide.md) を案内（事前送付推奨）
-- 共有リポ URL（`https://github.com/<org>/tsubuyaki-board`）と Organization 名を配布（Slack / メール / ホワイトボード）。Organization への招待は前日までに送り、当日までに全員承認済みが理想
+- 研修リポ（upstream）URL（`https://github.com/<owner>/tsubuyaki-board`）を配布（Slack / メール / ホワイトボード）。「各自 Fork して使う」ことを明示。招待・承認の作業は無い
 - Pleiades 配布媒体を回覧
 - `OPENAI_API_KEY` 未発行の受講生がいれば即座に発行サポート
 
@@ -464,15 +472,15 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 受講生ガイドの [§8 動作確認 5 点セット](../education/student-setup-guide.md) を全員クリアさせる。
 講師は「詰まっている受講生」を回って [../education/TROUBLESHOOTING.md](../education/TROUBLESHOOTING.md) を一緒に追う。
 
-### 8-3. ブランチレビューフロー（演習中）
+### 8-3. PR レビューフロー（演習中）
 
-受講生は共有リポ内で：
-1. 自分の作業ブランチ `<github-id>` で開発（PR は作らない）
-2. 自分のブランチへ push
+受講生は各自の fork 内で：
+1. 自分の作業ブランチ `<github-id>` で開発
+2. 自分の fork へ push（upstream main へ向けた Draft PR が自動更新される）
 
-講師は共有リポの **branches タブ**で各受講生ブランチの更新を一覧し、`https://github.com/<org>/tsubuyaki-board/compare/main...<github-id>` の **Compare ビュー**で差分を確認、コミット／行にコメントを残します。レビューポイントは [rubric.md](./rubric.md) の 15 点ルーブリックに沿って。
+講師は upstream の **Pull requests タブ**で各受講生の PR を一覧し、各 PR の **Files changed** で差分を確認、コミット／行にコメントを残します。レビューポイントは [rubric.md](./rubric.md) の 15 点ルーブリックに沿って。
 
-> 💡 共有 `main` に想定外の push が無いか（§4 の CI 監視 Workflow 通知、または `git log --oneline origin/main`）も時々確認します。違反があれば §9-3 で是正。
+> 💡 ブランチ保護（§4）により upstream `main` への直接 push は事前にブロックされます。万一の異常は upstream の `main` 履歴（`git log --oneline upstream/main`）で確認できます。
 
 ### 8-4. 相互レビュー（19-20 時間目）
 
@@ -486,11 +494,11 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 
 ## 9. 権限プレイブック（トラブル時）
 
-### 9-1. 受講生が共有リポにアクセスできない
+### 9-1. 受講生が Fork / clone できない
 
-- 症状: 共有リポを開くと 404、または clone が `Repository not found` / 認証エラー
-- 原因: 招待メール未承認、招待先 GitHub ユーザ名の綴り誤り、または SAML SSO 未認証
-- 対処: §5-3 の `gh api .../invitations` で pending を確認。未承認なら本人に承認を依頼。ユーザ名が違っていれば §5-2 で正しい ID に招待し直す。SAML 必須 Org の場合は受講生に再認証を依頼
+- 症状: upstream を開けない、Fork できない、自分の fork を clone すると 404 / 認証エラー
+- 原因: upstream が public になっていない、clone 先が upstream（`<owner>/...`）のまま、PAT のスコープ／失効
+- 対処: §3-4 で upstream の `visibility` が `PUBLIC` か確認。受講生には「Fork してから**自分の fork**（`<github-id>/...`）を clone」「PAT は `public_repo` スコープ」を案内（受講生ガイド [Q13](../education/TROUBLESHOOTING.md)）
 
 ### 9-2. 受講生の `OPENAI_API_KEY` が当日発行不能
 
@@ -498,11 +506,11 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 - 対処: 講師が予備キー 1 本を保持しておき、当日のみ貸与（研修終了時に rotate）
 - 予備キーの管理・配布経路は [§6-4](#6-4-openai_api_key-設定--受講生ガイドと同手順) を参照
 
-### 9-3. 受講生が共有 main に直 push してしまった
+### 9-3. upstream `main` を保護できているか不安
 
-- 症状: 共有リポの `main` に、受講生のコミットが直接 push される（§4 の CI 監視 Workflow が Issue で通知、または `git log origin/main` で発覚）
-- 原因: 規約違反（Free×private のため branch protection は使えず、技術的な事前ブロックは無い）
-- 対処: 講師が手元の clone で当該コミットを `git revert` し、`main` へ push して打ち消す（force push は禁止）。canonical なスターターは基幹リポ／講師手元にあるので、最悪は `main` の強制復元も可能。本人へは「push 先は自分の `<github-id>` ブランチ」を再周知
+- 症状: 「受講生が upstream main を汚さないか」が不安
+- 原因/前提: fork モデルでは**受講生は upstream への push 権限を持たない**うえ、§4 のブランチ保護で `main` への直接 push は**事前にブロック**される（公開リポは Free でブランチ保護が効く）。旧来の「Free×private で物理ブロック不可」という制約は無くなった
+- 対処: §4 のブランチ保護が有効か（Settings → Branches、または §7-4 の「直 push 不可の確認」）を点検するだけでよい。万一講師自身が誤って main を更新した場合は、手元の clone で `git revert` して打ち消す（canonical なスターターは基幹リポ／講師手元にある）
 
 ---
 
@@ -510,17 +518,16 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 
 研修開始前日までに以下が全て ✓ なら準備完了。
 
-### Organization / リポ
-- [ ] Organization 作成済
-- [ ] `<org>/tsubuyaki-board` が **private**（共有リポ。template 化は不要）
-- [ ] 基幹リポの main を共有リポへ push 済（スターターが見える）
-- [ ] `.github/workflows/protect-main.yml` を配置し、講師アカウントを許可リストに設定済（§4 の CI 監視）
-- [ ] 共有 main 保護の 4 層（規約／Codex Guard／CI 監視／講師確認）を理解し、受講生周知の用意ができている
+### 公開リポ / ブランチ保護
+- [ ] `<owner>/tsubuyaki-board` を **public** で作成済（§3）
+- [ ] 基幹リポの main を公開リポへ push 済（スターターが見える）
+- [ ] upstream `main` をブランチ保護でロック済（§4。PR 必須＝直接 push 禁止。厳格さは講師裁量）
+- [ ] `main` 保護（ブランチ保護＋ Codex Guard の 2 層）を理解し、受講生周知（Fork → ブランチ → push → PR）の用意ができている
 
-### 受講生招待
-- [ ] 受講生全員の GitHub ユーザ名（小文字）を収集済
-- [ ] 共有リポへ collaborator（Write）として招待済（§5-2）。当日までに承認状況を §5-3 で確認
-- [ ] テストアカウントで 招待承認 → clone → `<github-id>` ブランチ作成 → `./mvnw -B -Ph2 verify` 緑のリハーサル成功（[§7 リハーサル](#7-リハーサルテストアカウントでの動作確認) で実施）
+### 受講生案内・リハーサル
+- [ ] 受講生の GitHub ユーザ名（小文字）を収集済（採点・識別用。push 権限付与には不要）
+- [ ] 受講生案内（Fork → 自分の fork を clone → `<github-id>` ブランチ → push → Draft PR）を周知する用意ができている
+- [ ] テストアカウントで Fork → clone → `<github-id>` ブランチ作成 → `./mvnw -B -Ph2 verify` 緑 → Draft PR → upstream main 直 push 不可、のリハーサル成功（[§7 リハーサル](#7-リハーサルテストアカウントでの動作確認) で実施）
 
 ### 講師マシン
 - [ ] `セットアップ1_Windows準備.bat`（= `setup.ps1`）完走、PC 再起動済
@@ -537,7 +544,7 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 
 ### 配布物
 - [ ] Pleiades 配布媒体準備（USB / 共有ドライブ）
-- [ ] 共有リポ URL（`https://github.com/<org>/tsubuyaki-board`）と Organization 名を受講生案内に記載
+- [ ] 研修リポ（upstream）URL（`https://github.com/<owner>/tsubuyaki-board`）を受講生案内に記載（「各自 Fork」の旨も）
 - [ ] 予備 OPENAI_API_KEY を 1 本保持
 
 すべて ✓ なら、研修当日は受講生対応に集中できます。
@@ -546,30 +553,27 @@ rm -rf /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki
 
 ## 10.5. 研修後のクリーンアップ
 
-研修終了後、Organization を片付けます。共有リポ 1 個に集約されているため片付けは容易です。**いずれか**を選びます。
+fork モデルでは受講生の成果は**各自の fork**にあり、upstream には PR として紐づくだけです。片付けは容易です。
 
-- **受講生ブランチだけ削除してスターターを次期研修に再利用**: 共有 `main` は無傷のまま、各受講生ブランチを削除する。
-
-  ```bash
-  # 受講生ブランチを一覧（main 以外）
-  git ls-remote --heads https://github.com/<org>/tsubuyaki-board.git \
-    | awk '{print $2}' | sed 's#refs/heads/##' | grep -v '^main$'
-
-  # 個別に削除
-  git push https://github.com/<org>/tsubuyaki-board.git --delete <github-id>
-  ```
-
-  GitHub の branches タブから手動削除も可。`main` は残るので、次回はまた §5（招待）から再開できる。
-
-- **共有リポごと削除**: 次期研修で作り直す場合。
+- **PR を close し、upstream はそのまま次期研修へ再利用**: upstream の `main` は無傷なので、受講生の Draft PR を close するだけで次期研修にそのまま使えます。受講生の fork は各自の所有物なので、講師が消す必要はありません。
 
   ```bash
-  gh repo delete <org>/tsubuyaki-board --yes
+  # upstream に紐づく open PR を一覧
+  gh pr list --repo <owner>/tsubuyaki-board --state open
+
+  # 個別に close（マージはしない）
+  gh pr close --repo <owner>/tsubuyaki-board <PR番号>
   ```
 
-- **Organization ごと削除**: その Organization を二度と使わない場合。Settings の最下部「Delete this organization」から。collaborator・リポ・全ブランチが一括で消える。
+- **受講生に fork 削除を案内（任意）**: 残したくない受講生は各自の fork（`<github-id>/tsubuyaki-board`）を削除（Settings → 最下部 Danger Zone → Delete this repository）。講師側から他人の fork は削除できません。
 
-> ⚠️ 削除前に、成果物（受講生の各ブランチ）を保全する必要がないか確認してください。採点・記録が済んでから片付けます。
+- **upstream リポごと削除**: 次期研修で作り直す場合。
+
+  ```bash
+  gh repo delete <owner>/tsubuyaki-board --yes
+  ```
+
+> ⚠️ 削除前に、成果物（受講生の PR / fork）を保全する必要がないか確認してください。採点・記録が済んでから片付けます。受講生の fork は各自の所有物なので、講師が一括削除はできません（必要なら各自に依頼）。
 >
 > 💡 予備 `OPENAI_API_KEY` を配布・使用した場合は、OpenAI ダッシュボードで rotate（発行し直し）して締めます。
 

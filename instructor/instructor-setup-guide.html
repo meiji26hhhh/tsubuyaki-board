@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>instructor-setup-guide</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -95,10 +99,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><a href="#配布アーキテクチャ全体像" id="toc-配布アーキテクチャ全体像">配布アーキテクチャ全体像</a></li>
 <li><a href="#このガイドが扱うこと扱わないこと" id="toc-このガイドが扱うこと扱わないこと">0. このガイドが扱うこと・扱わないこと</a></li>
 <li><a href="#前提アカウント権限" id="toc-前提アカウント権限">1. 前提アカウント・権限</a></li>
-<li><a href="#organization-準備" id="toc-organization-準備">2. Organization 準備</a></li>
-<li><a href="#共有リポを-organization-で初期化" id="toc-共有リポを-organization-で初期化">3. 共有リポを Organization で初期化</a></li>
-<li><a href="#共有-main-を守る-4-層防御" id="toc-共有-main-を守る-4-層防御">4. 共有 main を守る 4 層防御</a></li>
-<li><a href="#受講生を-organization-に招待" id="toc-受講生を-organization-に招待">5. 受講生を Organization に招待</a></li>
+<li><a href="#研修リポの所有者ownerを決める" id="toc-研修リポの所有者ownerを決める">2. 研修リポの所有者（owner）を決める</a></li>
+<li><a href="#研修リポを公開publicリポジトリとして用意" id="toc-研修リポを公開publicリポジトリとして用意">3. 研修リポを公開（public）リポジトリとして用意</a></li>
+<li><a href="#upstream-main-をブランチ保護でロック-codex-guard" id="toc-upstream-main-をブランチ保護でロック-codex-guard">4. upstream <code>main</code> をブランチ保護でロック（+ Codex Guard）</a></li>
+<li><a href="#受講生に-fork-してもらう招待は不要" id="toc-受講生に-fork-してもらう招待は不要">5. 受講生に Fork してもらう（招待は不要）</a></li>
 <li><a href="#講師自身のキッティング" id="toc-講師自身のキッティング">6. 講師自身のキッティング</a></li>
 <li><a href="#リハーサルテストアカウントでの動作確認" id="toc-リハーサルテストアカウントでの動作確認">7. リハーサル（テストアカウントでの動作確認）</a></li>
 <li><a href="#当日運営フロー" id="toc-当日運営フロー">8. 当日運営フロー</a></li>
@@ -116,22 +120,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <hr />
 <section id="配布アーキテクチャ全体像" class="level2">
 <h2>配布アーキテクチャ全体像</h2>
-<pre><code>[基幹リポ (private)]              [講師 Organization]              [受講生]
-TokyoItSchool-dev/               &lt;org&gt;/tsubuyaki-board            全員が同じ共有リポを clone
-tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自分の作業ブランチ &lt;github-id&gt;
-     │                                 │                               │
-     │  内容を 1 回 push               │  Organization にメンバー招待  │
-     │ ──────────────────────►         │ ────────────────────────────►│
-     │  (講師がスターターを用意)       │  (受講生は招待を承認して参加) │
-     │                                 │                               │
-     │                                 │ ◄──────────────────────────── │
-     │                                 │  自分のブランチへ push(PRなし)│
-     │                                 │  共有 main は誰も触らない     │</code></pre>
+<pre><code>[基幹リポ (private)]          [公開リポ upstream]              [受講生ごとの fork]
+TokyoItSchool-dev/            &lt;owner&gt;/tsubuyaki-board          &lt;github-id&gt;/tsubuyaki-board
+tsubuyaki-board.git          (公開・main はロック)            (各自が Fork して作る)
+     │                            │                                 │
+     │  内容を 1 回 push          │   受講生が Fork (招待不要)       │
+     │ ─────────────────►        │ ───────────────────────────────►│
+     │  (講師がスターター用意)    │                                 │
+     │                            │ ◄────────────────────────────── │
+     │                            │   fork のブランチ → PR で提案    │
+     │                            │   upstream main はロック         │</code></pre>
 <hr />
 </section>
 <section id="このガイドが扱うこと扱わないこと" class="level2">
 <h2>0. このガイドが扱うこと・扱わないこと</h2>
-<p><strong>扱う:</strong> - 共有リポを Organization で初期化する手順（基幹リポの内容を 1 回 push） - 受講生を Organization に招待する手順 - 共有 main を守る 4 層防御（規約／Codex Guard／CI 監視 Workflow／講師確認）の設定 - 講師自身のローカル環境キッティング - 当日運営のリンク集（個別の運営要綱は <a href="./timetable.md">timetable.md</a> と <a href="./rubric.md">rubric.md</a>）</p>
+<p><strong>扱う:</strong> - 研修リポを公開（public）リポジトリとして用意する手順（基幹リポの内容を 1 回 push） - 受講生に Fork してもらう運用（招待は不要） - upstream <code>main</code> をブランチ保護でロックする手順（+ Codex Guard） - 講師自身のローカル環境キッティング - 当日運営のリンク集（個別の運営要綱は <a href="./timetable.md">timetable.md</a> と <a href="./rubric.md">rubric.md</a>）</p>
 <p><strong>扱わない:</strong> - 研修内容そのもの（→ <a href="../EXERCISES.md">../EXERCISES.md</a>） - 21 時間のタイムテーブル詳細（→ <a href="../education/ONBOARDING.md">../education/ONBOARDING.md</a>, <a href="./timetable.md">timetable.md</a>） - Codex への規範（→ <a href="../AGENTS.md">../AGENTS.md</a>）</p>
 <hr />
 </section>
@@ -157,13 +160,13 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <td><code>gh auth status</code> で認証済</td>
 </tr>
 <tr>
-<td>GitHub Organization 管理者権限</td>
-<td>Org への push、メンバー招待、リポ権限設定</td>
-<td>Org の Settings にアクセス可</td>
+<td>公開リポの所有者権限</td>
+<td>upstream リポの公開・ブランチ保護設定</td>
+<td>個人アカウント、または Org 管理者として <code>&lt;owner&gt;/tsubuyaki-board</code> を作成・設定できる</td>
 </tr>
 <tr>
 <td>基幹リポへの read 権限</td>
-<td>共有リポの初期化（<code>git clone</code> → push）</td>
+<td>公開リポの初期化（<code>git clone</code> → push）</td>
 <td>https://github.com/TokyoItSchool-dev/tsubuyaki-board にアクセス可</td>
 </tr>
 <tr>
@@ -185,29 +188,52 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 </table>
 <hr />
 </section>
-<section id="organization-準備" class="level2">
-<h2>2. Organization 準備</h2>
-<section id="organization-の新規作成-or-既存利用" class="level3">
-<h3>2-1. Organization の新規作成 or 既存利用</h3>
-<p>新規作成する場合：</p>
-<ol type="1">
-<li>https://github.com/account/organizations/new で「Create a free organization」または有料プラン。</li>
-<li>Organization 名（例: <code>acme-training-2026q2</code>）と請求先メールを設定。</li>
-</ol>
+<section id="研修リポの所有者ownerを決める" class="level2">
+<h2>2. 研修リポの所有者（owner）を決める</h2>
+<p>公開リポ <code>&lt;owner&gt;/tsubuyaki-board</code> を置く場所を決めます。Organization は<strong>任意</strong>です（fork モデルでは受講生の招待が不要なため、Org の請求・メンバー管理は要りません）。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>選択肢</th>
+<th><code>&lt;owner&gt;</code></th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>講師の個人アカウント</td>
+<td>講師の GitHub ユーザ名</td>
+<td>最も手軽。公開リポなので誰でも Fork できる</td>
+</tr>
+<tr>
+<td>既存の Organization</td>
+<td>Org 名</td>
+<td>すでに Org がある場合。Free プランで問題ない</td>
+</tr>
+<tr>
+<td>新規 Organization</td>
+<td>新 Org 名</td>
+<td>必須ではない。作るなら https://github.com/account/organizations/new</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p>本研修では<strong>採点・合否判定に GitHub Actions の CI を使わない</strong>方針（受講生・講師ともローカル <code>./mvnw -B -Ph2 verify</code> で基本検証し、仕上げは <code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code> で合否判定する）。Organization のプランは Free で問題ない。</p>
-<p>ただし<strong>共有 main を守る監視用に、軽量な GitHub Actions Workflow（<code>.github/workflows/protect-main.yml</code>）のみ</strong>を 1 本だけ使う（§4 参照）。これは main への push を検知して講師へ通知するだけで、main への push 時しか起動しないため Free private の 2,000 分/月枠をほぼ消費しない。</p>
+<p>本研修では<strong>採点・合否判定に GitHub Actions の CI を使いません</strong>（受講生・講師ともローカル <code>./mvnw -B -Ph2 verify</code> で基本検証し、仕上げは <code>./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify</code> で合否判定）。CI を使わないので、どの owner でも Free プランで足ります。</p>
+<p><strong>公開リポなら <code>main</code> のブランチ保護が Free で使えます</strong>（§4）。受講生は各自の fork で作業し、upstream には直接 push できないため、<code>main</code> は二重に守られます。</p>
 </blockquote>
-</section>
-<section id="member-seat-数の確認" class="level3">
-<h3>2-2. Member seat 数の確認</h3>
-<p>Free プランは無制限ですが、Team プランは seat 課金。受講生人数分の seat が確保されているか <strong>Settings &gt; Billing</strong> で確認。</p>
+<blockquote>
+<p>💡 以降このガイドでは upstream リポを <code>&lt;owner&gt;/tsubuyaki-board</code> と表記します。配布時に実際の owner 名へ読み替えてください（受講生ガイドの <code>&lt;owner&gt;</code> と一致させる）。</p>
+</blockquote>
 <hr />
 </section>
-</section>
-<section id="共有リポを-organization-で初期化" class="level2">
-<h2>3. 共有リポを Organization で初期化</h2>
-<p>全受講生が使う<strong>共有リポを 1 個だけ</strong> Organization に作り、基幹リポのスターター内容を 1 回 push します。Classroom のような個人リポ自動生成や template 化は不要です。</p>
+<section id="研修リポを公開publicリポジトリとして用意" class="level2">
+<h2>3. 研修リポを公開（public）リポジトリとして用意</h2>
+<p>upstream となる<strong>公開リポを 1 個</strong>作り、基幹リポのスターター内容を 1 回 push します。受講生はこれを Fork して使うので、Classroom のような個人リポ自動生成や template 化は不要です。</p>
 <section id="基幹リポをローカルに用意" class="level3">
 <h3>3-1. 基幹リポをローカルに用意</h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /tmp   <span class="co"># 作業用ディレクトリ、後で削除可</span></span>
@@ -217,102 +243,101 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <p>💡 既に講師マシンに clone 済みの基幹リポがあればそれを使ってもよい。重要なのは「配布したい状態（main の最新）」が手元にあること。</p>
 </blockquote>
 </section>
-<section id="organization-に共有リポprivateを作成" class="level3">
-<h3>3-2. Organization に共有リポ（private）を作成</h3>
+<section id="公開リポpublicを作成" class="level3">
+<h3>3-2. 公開リポ（public）を作成</h3>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> auth status   <span class="co"># 認証済か確認</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo create <span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board <span class="dt">\</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--private</span> <span class="dt">\</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--description</span> <span class="st">&quot;AI 駆動開発研修 (Codex × Spring Boot) 演習リポジトリ（共有・受講生は各自ブランチで作業）&quot;</span></span></code></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo create <span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--public</span> <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--description</span> <span class="st">&quot;AI 駆動開発研修 (Codex × Spring Boot) 演習リポジトリ（受講生は各自 Fork して作業）&quot;</span></span></code></pre></div>
+<blockquote>
+<p>💡 既存のリポを後から公開へ切り替える場合は <code>gh repo edit &lt;owner&gt;/tsubuyaki-board --visibility public</code>（または Settings → 最下部 Danger Zone → Change visibility → Public）。</p>
+</blockquote>
 </section>
-<section id="スターター内容を共有リポへ-push" class="level3">
-<h3>3-3. スターター内容を共有リポへ push</h3>
+<section id="スターター内容を公開リポへ-push" class="level3">
+<h3>3-3. スターター内容を公開リポへ push</h3>
 <p>配布したいのは「main の最新スナップショット」です。<code>--mirror</code> は使わず（基幹リポの全ブランチ・全履歴を受講生に見せる必要はない）、main を通常 push します。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 共有リポを remote として追加（origin は基幹リポなので別名 org にする）</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add org https://github.com/<span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board.git</span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 公開リポを remote として追加（origin は基幹リポなので別名 upstream にする）</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add upstream https://github.com/<span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board.git</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># main を共有リポへ push</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push org main</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># main を公開リポへ push</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push upstream main</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 配布したいタグがあれば一緒に（無ければ省略可）</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># git push org --tags</span></span></code></pre></div>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># git push upstream --tags</span></span></code></pre></div>
 <blockquote>
-<p>💡 受講生に配るブランチは <code>main</code> 1 本で十分です。受講生は各自この <code>main</code> から自分の <code>&lt;github-id&gt;</code> ブランチを切ります。</p>
+<p>💡 受講生に配るブランチは <code>main</code> 1 本で十分です。受講生は各自このリポを Fork し、自分の fork の <code>main</code> から <code>&lt;github-id&gt;</code> ブランチを切ります。</p>
 </blockquote>
 </section>
 <section id="検証" class="level3">
 <h3>3-4. 検証</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo view <span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board <span class="at">--json</span> visibility,defaultBranchRef</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo view <span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board <span class="at">--json</span> visibility,defaultBranchRef</span></code></pre></div>
 <p>期待出力:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;visibility&quot;</span><span class="fu">:</span> <span class="st">&quot;PRIVATE&quot;</span><span class="fu">,</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;visibility&quot;</span><span class="fu">:</span> <span class="st">&quot;PUBLIC&quot;</span><span class="fu">,</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;defaultBranchRef&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;main&quot;</span><span class="fu">}</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <blockquote>
-<p>💡 共有リポなので <code>isTemplate</code> は不要（<code>false</code> のままで OK）。</p>
+<p>💡 <code>visibility</code> が <code>PUBLIC</code> であることが重要です（fork と Free のブランチ保護が使える前提）。<code>isTemplate</code> は不要（<code>false</code> のままで OK）。</p>
 </blockquote>
 <hr />
 </section>
 </section>
-<section id="共有-main-を守る-4-層防御" class="level2">
-<h2>4. 共有 main を守る 4 層防御</h2>
-<p><strong>重要な制約</strong>: GitHub Free の private リポでは branch protection / ruleset が<strong>強制されません</strong>（設定しても “won’t be enforced until you upgrade to Team” エラーになる）。つまり push を物理的に reject する手段が無いため、共有 main は次の 4 層で「汚さない／汚れても必ず戻せる」を担保します。</p>
-<ol type="1">
-<li><p><strong>規約</strong>（AGENTS.md §3.2 / ONBOARDING.md 禁止事項 / student-setup-guide §6）— 「共有 main へは push しない。push 先は常に自分の <code>&lt;github-id&gt;</code> ブランチ」を初日キックオフで明示。</p></li>
-<li><p><strong>Codex Guard</strong>（<code>containers/codex-devbox/bin/git-guard.sh</code>）— コンテナ内 Codex が <code>main</code> へ push しようとすると exit 126 で拒否（force push 拒否は既存）。ただしコンテナ外の素の git は対象外。</p></li>
-<li><p><strong>CI 監視 Workflow</strong>（<code>.github/workflows/protect-main.yml</code>）— <code>main</code> への push を検知すると、push 主体（<code>github.actor</code>）が講師許可リスト外の場合に Issue を作成して講師へ通知（既定動作）。GitHub Actions は push 後に走るため事前ブロックはできないが、「誰が・いつ・どのコミットを」main に入れたかを即座に把握できる。許可リスト（講師アカウント）の設定箇所は当該ファイル冒頭のコメント参照。</p></li>
-<li><p><strong>講師モニタリング</strong> — CI 通知、または <code>git log --oneline origin/main</code> で違反を把握し、後述 §9-3 の手順で <code>git revert</code> して戻す。canonical なスターターは基幹リポ／講師手元に保持しておく。</p></li>
-</ol>
+<section id="upstream-main-をブランチ保護でロック-codex-guard" class="level2">
+<h2>4. upstream <code>main</code> をブランチ保護でロック（+ Codex Guard）</h2>
+<p>公開リポでは <strong>branch protection が Free で使える</strong>ため、upstream の <code>main</code> を「<strong>誰も直接 push できない</strong>」状態にできます。加えて受講生は各自の fork で作業し upstream への push 権限を持たないため、<code>main</code> は実質的に二重で守られます。</p>
+<section id="ブランチ保護で-main-をロック手順" class="level3">
+<h3>4-1. ブランチ保護で <code>main</code> をロック（手順）</h3>
+<p>GitHub の <strong>Settings → Branches → Add branch protection rule</strong>（または新しい <strong>Rulesets</strong>）で <code>main</code> を保護します。どこまで厳格にするかは<strong>講師の裁量</strong>ですが、最低限おすすめは次の設定です。</p>
+<ul>
+<li><strong>Branch name pattern</strong>: <code>main</code></li>
+<li>☑ <strong>Require a pull request before merging</strong>（PR 必須 = 直接 push を禁止。承認数は 0 でも可）</li>
+<li>☑ <strong>Block force pushes</strong>（force push 禁止。既定で含まれることが多い）</li>
+<li>☑（任意）<strong>Do not allow bypassing the above settings</strong> / <strong>Restrict deletions</strong></li>
+</ul>
+<p><code>gh</code> で設定する例（PR 必須＝直接 push 禁止の最小構成。JSON を <code>--input</code> で渡す）:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt;&#39;JSON&#39;</span> <span class="kw">|</span> <span class="ex">gh</span> api <span class="at">-X</span> PUT <span class="st">&quot;repos/&lt;owner&gt;/tsubuyaki-board/branches/main/protection&quot;</span> <span class="at">--input</span> <span class="at">-</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="st">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;required_status_checks&quot;: null,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;enforce_admins&quot;: false,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;required_pull_request_reviews&quot;: { &quot;required_approving_review_count&quot;: 0 },</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">  &quot;restrictions&quot;: null</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">JSON</span></span></code></pre></div>
 <blockquote>
-<p>受講生が自分の素の git（コンテナ外）で <code>git push origin main</code> する経路だけは技術的に塞げません。CI 検知 → 講師 <code>git revert</code> で是正する前提で運用します。事故時の手順は §9-3 を参照。</p>
-<p>共有 main を<strong>完全にロック</strong>したい場合の選択肢: (a) リポを public 化すれば Free でも branch protection が使える、(b) GitHub Team / Education 特典で private のまま branch protection が使える。本研修は Free×private 前提で進めます。</p>
+<p>💡 <strong>厳格さは講師が選びます</strong>。<code>enforce_admins</code> を <code>true</code> にすると講師自身も直接 push 不可（PR 必須）になります。線形履歴・削除禁止・必須レビュー数なども必要に応じて足してください。最小構成（PR 必須で直接 push を防ぐだけ）でも、受講生の事故 push をブロックする目的は果たせます。</p>
+<p>💡 そもそも<strong>受講生は upstream への push 権限を持たない</strong>（fork で作業する）ので、ブランチ保護は「講師自身の誤操作」や「将来 collaborator を足した場合」への保険という位置づけです。</p>
 </blockquote>
+</section>
+<section id="codex-guardコンテナ内-codex-経路" class="level3">
+<h3>4-2. Codex Guard（コンテナ内 Codex 経路）</h3>
+<p><code>containers/codex-devbox/bin/git-guard.sh</code> が、コンテナ内 Codex の <code>main</code> への push（fork の main 含む）と force push を exit 126 で拒否します。受講生が Codex に作業させても、<code>main</code> を直接汚す経路はコンテナ側でも塞がれています（詳細は <a href="./codex-guard-guide.md">codex-guard-guide.md</a>）。</p>
 <hr />
 </section>
-<section id="受講生を-organization-に招待" class="level2">
-<h2>5. 受講生を Organization に招待</h2>
-<p>Classroom の代わりに、受講生を共有リポへ <strong>Write 権限</strong>で招待します。受講生は自分の <code>&lt;github-id&gt;</code> ブランチへ push できればよいので、共有リポへの Write があれば十分です。</p>
-<section id="受講生の-github-ユーザ名を集める" class="level3">
-<h3>5-1. 受講生の GitHub ユーザ名を集める</h3>
-<p>事前に受講生全員の GitHub ユーザ名（小文字）を集めておきます（申込フォーム / 事前アンケートなど）。ブランチ名・採点時の識別に使うため、<strong>正確な綴り</strong>を確認します。</p>
 </section>
-<section id="共有リポへ-write-権限で招待推奨-collaborator-追加" class="level3">
-<h3>5-2. 共有リポへ Write 権限で招待（推奨: collaborator 追加）</h3>
-<p>最もシンプルで安全なのは、共有リポに各受講生を <strong>collaborator（Write）として直接追加</strong>する方法です（Org 全体の権限を緩めず、この 1 リポにだけ Write を与える）。受講生宛に招待メールが届き、承認するとアクセスできます。</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生 1 人を共有リポに Write で招待</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> api <span class="at">-X</span> PUT <span class="st">&quot;repos/&lt;org&gt;/tsubuyaki-board/collaborators/&lt;github-id&gt;&quot;</span> <span class="at">-f</span> permission=push</span></code></pre></div>
-<p>複数人をまとめて招待する例（ユーザ名を改行区切りで <code>students.txt</code> に用意）:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="at">-r</span> <span class="va">gh_id</span><span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$gh_id</span><span class="st">&quot;</span> <span class="bu">]</span> <span class="kw">&amp;&amp;</span> <span class="cf">continue</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;inviting </span><span class="va">$gh_id</span><span class="st"> ...&quot;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">gh</span> api <span class="at">-X</span> PUT <span class="st">&quot;repos/&lt;org&gt;/tsubuyaki-board/collaborators/</span><span class="va">$gh_id</span><span class="st">&quot;</span> <span class="at">-f</span> permission=push</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span> <span class="op">&lt;</span> students.txt</span></code></pre></div>
-<blockquote>
-<p>💡 <code>permission=push</code> が「Write（push 可能）」を意味します。受講生は自分のブランチを push できますが、Free×private では共有 main を技術的にロックできない点は §4 のとおり（規約＋CI 監視で担保）。</p>
-<p>💡 Org の <strong>Settings &gt; Member privileges &gt; Base permissions</strong> を <code>Read</code>（または None）のままにしておけば、collaborator 追加したこの共有リポ以外に受講生はアクセスできません（最小権限）。</p>
-</blockquote>
-</section>
-<section id="招待状況の確認" class="level3">
-<h3>5-3. 招待状況の確認</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 招待承認待ち（pending）の一覧</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> api <span class="st">&quot;repos/&lt;org&gt;/tsubuyaki-board/invitations&quot;</span> <span class="at">--jq</span> <span class="st">&#39;.[].invitee.login&#39;</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 承認済み collaborator の一覧</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> api <span class="st">&quot;repos/&lt;org&gt;/tsubuyaki-board/collaborators&quot;</span> <span class="at">--jq</span> <span class="st">&#39;.[].login&#39;</span></span></code></pre></div>
-<p>受講生が招待メールを承認すると pending から消え、collaborators 側に現れます。当日までに全員が承認済みになっているか確認します。</p>
+<section id="受講生に-fork-してもらう招待は不要" class="level2">
+<h2>5. 受講生に Fork してもらう（招待は不要）</h2>
+<p>fork モデルでは<strong>受講生の招待・collaborator 追加は一切不要</strong>です。公開リポなので、受講生は自分で Fork するだけで作業を始められます。講師がやることは「リポ URL を伝える」「ブランチ名規約と PR 作成を伝える」だけです。</p>
+<section id="受講生の-github-ユーザ名採点識別用" class="level3">
+<h3>5-1. 受講生の GitHub ユーザ名（採点・識別用）</h3>
+<p>push 権限の付与には不要になりましたが、<strong>採点・ブランチ識別のために GitHub ユーザ名（小文字）を集めておく</strong>と便利です（申込フォーム / 事前アンケートなど）。当日でも、各自が作成する PR の作成者から把握できます。</p>
 </section>
 <section id="受講生への案内事項" class="level3">
-<h3>5-4. 受講生への案内事項</h3>
+<h3>5-2. 受講生への案内事項</h3>
 <p>研修初日に受講生へ次を伝えます（受講生ガイド §2・§3 と対応）:</p>
 <ul>
-<li><strong>Organization 名</strong> <code>&lt;org&gt;</code> と <strong>共有リポ URL</strong> <code>https://github.com/&lt;org&gt;/tsubuyaki-board</code></li>
-<li>「招待メール（または <code>https://github.com/&lt;org&gt;</code>）から参加を承認すること」</li>
-<li>「clone 後は自分の GitHub ユーザ名で <code>git switch -c &lt;github-id&gt; origin/main</code> してから作業すること」</li>
+<li><strong>研修リポ（upstream）URL</strong> <code>https://github.com/&lt;owner&gt;/tsubuyaki-board</code></li>
+<li>「このリポを <strong>Fork</strong> して、自分の fork を clone すること」（招待・承認の手順は無い）</li>
+<li>「clone 後は自分の GitHub ユーザ名で <code>git switch -c &lt;github-id&gt; origin/main</code>（fork の main 起点）してから作業すること」</li>
+<li>「初回 push 後、fork のブランチ → upstream main へ <strong>Draft PR</strong> を 1 本作ること（講師レビュー用・マージしない）」</li>
 </ul>
+<blockquote>
+<p>💡 招待メールの送付・承認待ち・collaborator 状況の確認といった作業が<strong>すべて不要</strong>になりました。受講生は到着後すぐ Fork できます。</p>
+</blockquote>
 </section>
 <section id="リハーサルテストアカウント検証は-7-で実施" class="level3">
-<h3>5-5. リハーサル（テストアカウント検証）は §7 で実施</h3>
-<p>テストアカウントを使った「招待承認 → 共有リポ clone → <code>&lt;github-id&gt;</code> ブランチ作成 → <code>./mvnw -B -Ph2 verify</code>」の確認は <a href="#7-リハーサルテストアカウントでの動作確認">§7 リハーサル</a> で行います。<strong>先に §6 で講師マシンを整備</strong>（Temurin JDK 21 / Maven / Podman 導入）してからでないと、<code>./mvnw -B -Ph2 verify</code> が JDK 未導入で失敗します。</p>
+<h3>5-3. リハーサル（テストアカウント検証）は §7 で実施</h3>
+<p>テストアカウントを使った「Fork → clone → <code>&lt;github-id&gt;</code> ブランチ作成 → <code>./mvnw -B -Ph2 verify</code> → Draft PR」の確認は <a href="#7-リハーサルテストアカウントでの動作確認">§7 リハーサル</a> で行います。<strong>先に §6 で講師マシンを整備</strong>（Temurin JDK 21 / Maven / Podman 導入）してからでないと、<code>./mvnw -B -Ph2 verify</code> が JDK 未導入で失敗します。</p>
 <hr />
 </section>
 </section>
@@ -322,10 +347,10 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <section id="講師リポを-clone-管理者-powershell" class="level3">
 <h3>6-1. 講師リポを clone（🪟 管理者 PowerShell）</h3>
 <p>WSL2 機能はまだ有効化されていないので、<strong>Windows 側の PowerShell</strong> で clone する（受講生ガイド §4-2 と同じ流れ）：</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">New-Item</span> <span class="op">-</span>ItemType Directory <span class="op">-</span>Force <span class="op">-</span>Path <span class="st">&quot;C:\workspace&quot;</span> <span class="op">|</span> <span class="fu">Out-Null</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> C<span class="op">:</span>\workspace</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>git clone https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/&lt;</span>org<span class="op">&gt;/</span>tsubuyaki-board<span class="op">.</span><span class="fu">git</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> tsubuyaki-board</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">New-Item</span> <span class="op">-</span>ItemType Directory <span class="op">-</span>Force <span class="op">-</span>Path <span class="st">&quot;C:\workspace&quot;</span> <span class="op">|</span> <span class="fu">Out-Null</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> C<span class="op">:</span>\workspace</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>git clone https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/&lt;</span>owner<span class="op">&gt;/</span>tsubuyaki-board<span class="op">.</span><span class="fu">git</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> tsubuyaki-board</span></code></pre></div>
 <blockquote>
 <p>💡 Git for Windows が未導入なら <code>winget install Git.Git</code> を先に。<code>setup.ps1</code> でも自動導入されるが、§6-1 で clone するには事前に Git が必要。</p>
 </blockquote>
@@ -342,7 +367,7 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <p>講師が内部挙動を直接確認したい場合は、🪟 管理者 PowerShell で <code>Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1</code> を実行しても同じです（バッチはこれを呼んでいるだけ）。</p>
 </blockquote>
 <p><strong>講師固有の差分</strong>: - Pleiades は受講生に配布する媒体と<strong>同じ zip</strong> を <code>C:\Pleiades</code> に解凍してあること（配布媒体そのものの動作検証を兼ねる）。 - <code>setup.ps1</code> 完走後、🪟 PowerShell（管理者でも通常でも可）で Windows 側 Doctor を一度回し、緑揃いを確認:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\scripts\doctor<span class="op">.</span><span class="fu">ps1</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\scripts\doctor<span class="op">.</span><span class="fu">ps1</span></span></code></pre></div>
 <p>期待: <code>Pleiades</code> / <code>WSL2</code> / <code>Podman Desktop</code> / <code>Git for Windows</code> / <code>C:\workspace</code> の各セクションが <code>[ OK ]</code> または <code>[WARN]</code> で揃う。<code>[ NG ]</code> があれば §6-3 へ進む前に解消する。</p>
 </section>
 <section id="wsl-キッティング-受講生ガイドと同手順-temurin-jdk-21-検証" class="level3">
@@ -365,8 +390,8 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <li><p><code>/etc/apt/sources.list.d/adoptium.list</code> に <code>deb [signed-by=...] https://packages.adoptium.net/artifactory/deb &lt;codename&gt; main</code> を書き込み</p></li>
 <li><p><code>apt-get install -y temurin-21-jdk</code> で Java 21 を導入</p></li>
 <li><p><code>/etc/profile.d/jdk.sh</code> に以下を書き出し:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">JAVA_HOME</span><span class="op">=</span>/usr/lib/jvm/temurin-21-jdk-amd64</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${JAVA_HOME}</span><span class="st">/bin:</span><span class="va">${PATH}</span><span class="st">&quot;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">JAVA_HOME</span><span class="op">=</span>/usr/lib/jvm/temurin-21-jdk-amd64</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${JAVA_HOME}</span><span class="st">/bin:</span><span class="va">${PATH}</span><span class="st">&quot;</span></span></code></pre></div></li>
 <li><p><code>~/.bashrc</code> の <code>codex-training</code> ブロックから <code>jdk.sh</code> を <code>source</code> するよう追記</p></li>
 </ol>
 <blockquote>
@@ -376,21 +401,21 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <section id="temurin-jdk-21-の検証コマンド" class="level4">
 <h4>6-3-2. Temurin JDK 21 の検証コマンド</h4>
 <p><code>setup-wsl.sh</code> 完了後、新しいシェルを開く（または <code>source ~/.bashrc</code>）してから以下を順に実行:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) java コマンドが 21 を返すこと</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">java</span> <span class="at">--version</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># → openjdk 21.0.x 202x-xx-xx</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    OpenJDK Runtime Environment Temurin-21.0.x+yy (build 21.0.x+yy)</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    OpenJDK 64-Bit Server VM Temurin-21.0.x+yy (build 21.0.x+yy, mixed mode, sharing)</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) JAVA_HOME が Temurin 21 を指していること</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$JAVA_HOME</span><span class="st">&quot;</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># → /usr/lib/jvm/temurin-21-jdk-amd64</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Maven Wrapper がその JDK で動くこと（pom.xml がある場所で実行）</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-v</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># → Apache Maven 3.9.x ...</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#    Java version: 21.0.x, vendor: Eclipse Adoptium, runtime: /usr/lib/jvm/temurin-21-jdk-amd64</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) java コマンドが 21 を返すこと</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">java</span> <span class="at">--version</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># → openjdk 21.0.x 202x-xx-xx</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    OpenJDK Runtime Environment Temurin-21.0.x+yy (build 21.0.x+yy)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    OpenJDK 64-Bit Server VM Temurin-21.0.x+yy (build 21.0.x+yy, mixed mode, sharing)</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) JAVA_HOME が Temurin 21 を指していること</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$JAVA_HOME</span><span class="st">&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># → /usr/lib/jvm/temurin-21-jdk-amd64</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Maven Wrapper がその JDK で動くこと（pom.xml がある場所で実行）</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-v</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># → Apache Maven 3.9.x ...</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#    Java version: 21.0.x, vendor: Eclipse Adoptium, runtime: /usr/lib/jvm/temurin-21-jdk-amd64</span></span></code></pre></div>
 <p>3 つすべて期待出力どおりなら、§7 のリハーサルと §6-5 のフル動作確認に進める。</p>
 </section>
 <section id="jdk-が見えない場合の救済" class="level4">
@@ -441,27 +466,27 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <section id="動作確認フル-受講生より厳しめ" class="level3">
 <h3>6-5. 動作確認（フル — 受講生より厳しめ）</h3>
 <p>受講生ガイド <a href="../education/student-setup-guide.md">§8</a> の 5 点セットに加え、講師は <strong>Oracle 経路と全件 doctor</strong> も確認：</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生は --quick だが、講師は全件</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/doctor.sh           <span class="co"># 全件</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じ H2 経路 (テストは -P 指定に関わらず常に H2 で実行される)</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 仕上げ合否ゲート</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle 接続でアプリ起動 → /posts まで描画されること</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># (起動時に Flyway 適用と JPA validate が Oracle XE に対して走るため、Oracle 経路の検証を兼ねる)</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>local <span class="ex">./mvnw</span> spring-boot:run</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 別タブで:</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/actuator/health   <span class="co"># {&quot;status&quot;:&quot;UP&quot;}</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-I</span> http://localhost:8080/posts          <span class="co"># 200 OK</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex も必ず実機で 1 度動かす</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生は --quick だが、講師は全件</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/doctor.sh           <span class="co"># 全件</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じ H2 経路 (テストは -P 指定に関わらず常に H2 で実行される)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 仕上げ合否ゲート</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> <span class="at">-Pcoverage-day3</span> <span class="at">-Pstrict</span> verify</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Oracle 接続でアプリ起動 → /posts まで描画されること</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># (起動時に Flyway 適用と JPA validate が Oracle XE に対して走るため、Oracle 経路の検証を兼ねる)</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>local <span class="ex">./mvnw</span> spring-boot:run</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 別タブで:</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8080/actuator/health   <span class="co"># {&quot;status&quot;:&quot;UP&quot;}</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-I</span> http://localhost:8080/posts          <span class="co"># 200 OK</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Codex も必ず実機で 1 度動かす</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="ex">codex-shell</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># (コンテナ内) codex --help</span></span></code></pre></div>
 <p><code>doctor.sh</code>（全件）の出力で以下が確実に揃うことを目視確認:</p>
 <ul>
 <li><code>== JDK ==</code> セクション
@@ -490,12 +515,12 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 </section>
 <section id="リハーサルテストアカウントでの動作確認" class="level2">
 <h2>7. リハーサル（テストアカウントでの動作確認）</h2>
-<p>§5 で招待した受講生視点で、共有リポを clone して自分のブランチで作業できるかを、<strong>講師の業務 GitHub とは別のアカウント</strong>で踏破して確認します。詰まったポイントは受講生ガイド / TROUBLESHOOTING への追記材料にします。</p>
+<p>受講生視点で、研修リポを Fork して clone し、自分のブランチで作業 → PR までを、<strong>講師の業務 GitHub とは別のアカウント</strong>で踏破して確認します。詰まったポイントは受講生ガイド / TROUBLESHOOTING への追記材料にします。</p>
 <section id="前提条件" class="level3">
 <h3>7-0. 前提条件</h3>
 <ul>
 <li>§6 講師キッティングが完走し、自分のマシン上で <code>./mvnw -B -Ph2 verify</code> が <strong>BUILD SUCCESS を返している</strong>こと</li>
-<li>§5 で共有リポへの受講生招待（テストアカウント分を含む）が完了していること</li>
+<li>§3 で upstream リポが <strong>public</strong> で公開され、§4 で <code>main</code> のブランチ保護を設定済みであること</li>
 <li>WSL Ubuntu で <code>java --version</code> が <code>21</code>、<code>echo &quot;$JAVA_HOME&quot;</code> が <code>/usr/lib/jvm/temurin-21-jdk-amd64</code> を返すこと（§6-3-2 の検証済）</li>
 </ul>
 <blockquote>
@@ -506,43 +531,63 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <h3>7-1. テストアカウントを用意</h3>
 <ul>
 <li>講師の業務 GitHub アカウントとは別のアカウント（個人アカウントなど）を準備</li>
-<li>当該アカウントを §5-2 と同じ手順で共有リポに collaborator（Write）として招待し、承認しておく</li>
+<li>公開リポなので、このアカウントへの招待や collaborator 追加は不要（Fork するだけ）</li>
 </ul>
 </section>
-<section id="招待を承認して共有リポにアクセス" class="level3">
-<h3>7-2. 招待を承認して共有リポにアクセス</h3>
+<section id="テストアカウントで-fork-する" class="level3">
+<h3>7-2. テストアカウントで Fork する</h3>
 <ol type="1">
 <li>🌐 ブラウザで GitHub からサインアウト → <strong>テストアカウントで再サインイン</strong></li>
-<li>共有リポへの招待メール（または <code>https://github.com/&lt;org&gt;/tsubuyaki-board</code>）を開き、招待を承認する</li>
-<li>受講生ガイド §3 と同じく、共有リポ <code>https://github.com/&lt;org&gt;/tsubuyaki-board</code> を開ける／ファイル一覧に <code>AGENTS.md</code> / <code>README.md</code> / <code>EXERCISES.md</code> / <code>pom.xml</code> が並ぶことを確認</li>
+<li>受講生ガイド §3 と同じく、upstream <code>https://github.com/&lt;owner&gt;/tsubuyaki-board</code> を開き、右上の「<strong>Fork</strong>」でテストアカウントのアカウントへ Fork する</li>
+<li>Fork 後 <code>https://github.com/&lt;test-account-id&gt;/tsubuyaki-board</code> が開ける／ファイル一覧に <code>AGENTS.md</code> / <code>README.md</code> / <code>EXERCISES.md</code> / <code>pom.xml</code> が並ぶことを確認</li>
 </ol>
 </section>
 <section id="別ディレクトリへ-clone既存講師リポと衝突回避して自分のブランチを切る" class="level3">
 <h3>7-3. 別ディレクトリへ clone（既存講師リポと衝突回避）して自分のブランチを切る</h3>
 <p>🐧 WSL Ubuntu で実施:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># リハーサル用の一時ディレクトリを作って clone する</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /mnt/c/workspace/.rehearsal</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/.rehearsal</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 共有リポを clone（受講生と同じ URL。本番リポと名前が衝突しないよう別名で）</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/<span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board.git rehearsal-tsubuyaki</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rehearsal-tsubuyaki</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じく、自分の作業ブランチを main から切る</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> <span class="op">&lt;</span>test-account-id<span class="op">&gt;</span> origin/main</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># リハーサル用の一時ディレクトリを作って clone する</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /mnt/c/workspace/.rehearsal</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/.rehearsal</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># テストアカウントの fork を clone（受講生と同じ流れ。本番リポと名前が衝突しないよう別名で）</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/<span class="op">&lt;</span>test-account-id<span class="op">&gt;</span>/tsubuyaki-board.git rehearsal-tsubuyaki</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rehearsal-tsubuyaki</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生と同じく、自分の作業ブランチを fork の main から切る</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> <span class="op">&lt;</span>test-account-id<span class="op">&gt;</span> origin/main</span></code></pre></div>
 <blockquote>
 <p>💡 <code>.rehearsal/</code> は講師マシンのローカル作業ディレクトリ。本番の講師リポ（<code>/mnt/c/workspace/tsubuyaki-board</code>）と分離しておくと、後で <code>rm -rf</code> で安全に破棄できる。</p>
 </blockquote>
 </section>
 <section id="受講生と同じ経路で-.mvnw--b--ph2-verify" class="level3">
 <h3>7-4. 受講生と同じ経路で <code>./mvnw -B -Ph2 verify</code></h3>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 🐧 WSL Ubuntu — clone 直下で実行</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 🐧 WSL Ubuntu — clone 直下で実行</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span></code></pre></div>
 <p>期待出力:</p>
 <pre><code>[INFO] BUILD SUCCESS
 [INFO] -----------------------------------
 [INFO] Total time:  XX s</code></pre>
 <p>初回は依存ライブラリの DL で 5〜10 分かかる（受講生も同様）。</p>
+<section id="push-と-draft-prupstream-main-直-push-不可の確認" class="level4">
+<h4>push と Draft PR、upstream main 直 push 不可の確認</h4>
+<p>受講生と同じく fork へ push し、PR を作り、upstream main へ直接 push できないことを確認します:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fork（origin）の作業ブランチへ push</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">-u</span> origin <span class="op">&lt;</span>test-account-id<span class="op">&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Draft PR を作成（gh が auth 済みの場合。未認証ならブラウザで Compare &amp; pull request）</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> pr create <span class="at">--repo</span> <span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board <span class="dt">\</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--base</span> main <span class="at">--head</span> <span class="op">&lt;</span>test-account-id<span class="op">&gt;</span>:<span class="op">&lt;</span>test-account-id<span class="op">&gt;</span> --draft <span class="at">--fill</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># upstream main へ直接 push できないことを確認</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add upstream https://github.com/<span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board.git</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch main</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">--allow-empty</span> <span class="at">-m</span> <span class="st">&quot;test: should be rejected&quot;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push upstream main   <span class="co"># → protected branch / 403 で拒否されれば OK</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="op">&lt;</span>test-account-id<span class="op">&gt;</span></span></code></pre></div>
+<blockquote>
+<p>💡 <code>git push upstream main</code> が拒否されれば（protected branch / 403）、ブランチ保護が正しく効いています。テストアカウントは upstream への push 権限も持たないため、いずれにせよ拒否されます。確認用の空コミットはリハーサルクローン内だけのものなので、§7-5 でクローンごと破棄すれば消えます。</p>
+</blockquote>
+</section>
 <section id="詰まったときの確認順" class="level4">
 <h4>詰まったときの確認順</h4>
 <ol type="1">
@@ -557,14 +602,14 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <section id="後片付け" class="level3">
 <h3>7-5. 後片付け</h3>
 <p>リハーサル完了後:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 元の講師リポへ戻る</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># リハーサル用 clone は破棄して構わない</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 元の講師リポへ戻る</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># リハーサル用 clone は破棄して構わない</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /mnt/c/workspace/.rehearsal/rehearsal-tsubuyaki</span></code></pre></div>
 <ul>
-<li>共有リポに push してしまったテスト用ブランチがあれば削除: <code>git push &lt;共有リポ&gt; --delete &lt;test-account-id&gt;</code>（または GitHub の branches タブから削除）</li>
-<li>テストアカウントの collaborator 権限は研修開始前に Settings &gt; Collaborators から外す（本番受講生と混在させない）</li>
+<li>テストアカウントの fork（<code>&lt;test-account-id&gt;/tsubuyaki-board</code>）は削除してよい（GitHub の fork ページ → Settings → 最下部 Danger Zone → Delete this repository）</li>
+<li>テストアカウントが作った Draft PR は close する（upstream の Pull requests タブから）</li>
 <li>予備 <code>OPENAI_API_KEY</code> を Codex でも使ったなら、研修終了時に rotate（§6-4 参照）</li>
 </ul>
 <hr />
@@ -577,7 +622,7 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <h3>8-1. 0 時間目（受講生到着〜セットアップ開始）</h3>
 <ul>
 <li>受講生に <a href="../education/student-setup-guide.md">../education/student-setup-guide.md</a> を案内（事前送付推奨）</li>
-<li>共有リポ URL（<code>https://github.com/&lt;org&gt;/tsubuyaki-board</code>）と Organization 名を配布（Slack / メール / ホワイトボード）。Organization への招待は前日までに送り、当日までに全員承認済みが理想</li>
+<li>研修リポ（upstream）URL（<code>https://github.com/&lt;owner&gt;/tsubuyaki-board</code>）を配布（Slack / メール / ホワイトボード）。「各自 Fork して使う」ことを明示。招待・承認の作業は無い</li>
 <li>Pleiades 配布媒体を回覧</li>
 <li><code>OPENAI_API_KEY</code> 未発行の受講生がいれば即座に発行サポート</li>
 </ul>
@@ -586,12 +631,12 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <h3>8-2. 0-1 時間目（セットアップ確認）</h3>
 <p>受講生ガイドの <a href="../education/student-setup-guide.md">§8 動作確認 5 点セット</a> を全員クリアさせる。 講師は「詰まっている受講生」を回って <a href="../education/TROUBLESHOOTING.md">../education/TROUBLESHOOTING.md</a> を一緒に追う。</p>
 </section>
-<section id="ブランチレビューフロー演習中" class="level3">
-<h3>8-3. ブランチレビューフロー（演習中）</h3>
-<p>受講生は共有リポ内で： 1. 自分の作業ブランチ <code>&lt;github-id&gt;</code> で開発（PR は作らない） 2. 自分のブランチへ push</p>
-<p>講師は共有リポの <strong>branches タブ</strong>で各受講生ブランチの更新を一覧し、<code>https://github.com/&lt;org&gt;/tsubuyaki-board/compare/main...&lt;github-id&gt;</code> の <strong>Compare ビュー</strong>で差分を確認、コミット／行にコメントを残します。レビューポイントは <a href="./rubric.md">rubric.md</a> の 15 点ルーブリックに沿って。</p>
+<section id="pr-レビューフロー演習中" class="level3">
+<h3>8-3. PR レビューフロー（演習中）</h3>
+<p>受講生は各自の fork 内で： 1. 自分の作業ブランチ <code>&lt;github-id&gt;</code> で開発 2. 自分の fork へ push（upstream main へ向けた Draft PR が自動更新される）</p>
+<p>講師は upstream の <strong>Pull requests タブ</strong>で各受講生の PR を一覧し、各 PR の <strong>Files changed</strong> で差分を確認、コミット／行にコメントを残します。レビューポイントは <a href="./rubric.md">rubric.md</a> の 15 点ルーブリックに沿って。</p>
 <blockquote>
-<p>💡 共有 <code>main</code> に想定外の push が無いか（§4 の CI 監視 Workflow 通知、または <code>git log --oneline origin/main</code>）も時々確認します。違反があれば §9-3 で是正。</p>
+<p>💡 ブランチ保護（§4）により upstream <code>main</code> への直接 push は事前にブロックされます。万一の異常は upstream の <code>main</code> 履歴（<code>git log --oneline upstream/main</code>）で確認できます。</p>
 </blockquote>
 </section>
 <section id="相互レビュー19-20-時間目" class="level3">
@@ -606,12 +651,12 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 </section>
 <section id="権限プレイブックトラブル時" class="level2">
 <h2>9. 権限プレイブック（トラブル時）</h2>
-<section id="受講生が共有リポにアクセスできない" class="level3">
-<h3>9-1. 受講生が共有リポにアクセスできない</h3>
+<section id="受講生が-fork-clone-できない" class="level3">
+<h3>9-1. 受講生が Fork / clone できない</h3>
 <ul>
-<li>症状: 共有リポを開くと 404、または clone が <code>Repository not found</code> / 認証エラー</li>
-<li>原因: 招待メール未承認、招待先 GitHub ユーザ名の綴り誤り、または SAML SSO 未認証</li>
-<li>対処: §5-3 の <code>gh api .../invitations</code> で pending を確認。未承認なら本人に承認を依頼。ユーザ名が違っていれば §5-2 で正しい ID に招待し直す。SAML 必須 Org の場合は受講生に再認証を依頼</li>
+<li>症状: upstream を開けない、Fork できない、自分の fork を clone すると 404 / 認証エラー</li>
+<li>原因: upstream が public になっていない、clone 先が upstream（<code>&lt;owner&gt;/...</code>）のまま、PAT のスコープ／失効</li>
+<li>対処: §3-4 で upstream の <code>visibility</code> が <code>PUBLIC</code> か確認。受講生には「Fork してから<strong>自分の fork</strong>（<code>&lt;github-id&gt;/...</code>）を clone」「PAT は <code>public_repo</code> スコープ」を案内（受講生ガイド <a href="../education/TROUBLESHOOTING.md">Q13</a>）</li>
 </ul>
 </section>
 <section id="受講生の-openai_api_key-が当日発行不能" class="level3">
@@ -622,12 +667,12 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <li>予備キーの管理・配布経路は <a href="#6-4-openai_api_key-設定--受講生ガイドと同手順">§6-4</a> を参照</li>
 </ul>
 </section>
-<section id="受講生が共有-main-に直-push-してしまった" class="level3">
-<h3>9-3. 受講生が共有 main に直 push してしまった</h3>
+<section id="upstream-main-を保護できているか不安" class="level3">
+<h3>9-3. upstream <code>main</code> を保護できているか不安</h3>
 <ul>
-<li>症状: 共有リポの <code>main</code> に、受講生のコミットが直接 push される（§4 の CI 監視 Workflow が Issue で通知、または <code>git log origin/main</code> で発覚）</li>
-<li>原因: 規約違反（Free×private のため branch protection は使えず、技術的な事前ブロックは無い）</li>
-<li>対処: 講師が手元の clone で当該コミットを <code>git revert</code> し、<code>main</code> へ push して打ち消す（force push は禁止）。canonical なスターターは基幹リポ／講師手元にあるので、最悪は <code>main</code> の強制復元も可能。本人へは「push 先は自分の <code>&lt;github-id&gt;</code> ブランチ」を再周知</li>
+<li>症状: 「受講生が upstream main を汚さないか」が不安</li>
+<li>原因/前提: fork モデルでは<strong>受講生は upstream への push 権限を持たない</strong>うえ、§4 のブランチ保護で <code>main</code> への直接 push は<strong>事前にブロック</strong>される（公開リポは Free でブランチ保護が効く）。旧来の「Free×private で物理ブロック不可」という制約は無くなった</li>
+<li>対処: §4 のブランチ保護が有効か（Settings → Branches、または §7-4 の「直 push 不可の確認」）を点検するだけでよい。万一講師自身が誤って main を更新した場合は、手元の clone で <code>git revert</code> して打ち消す（canonical なスターターは基幹リポ／講師手元にある）</li>
 </ul>
 <hr />
 </section>
@@ -635,22 +680,21 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <section id="講師完了条件チェックリスト" class="level2">
 <h2>10. 講師完了条件チェックリスト</h2>
 <p>研修開始前日までに以下が全て ✓ なら準備完了。</p>
-<section id="organization-リポ" class="level3">
-<h3>Organization / リポ</h3>
+<section id="公開リポ-ブランチ保護" class="level3">
+<h3>公開リポ / ブランチ保護</h3>
 <ul class="task-list">
-<li><label><input type="checkbox"></input>Organization 作成済</label></li>
-<li><label><input type="checkbox"></input><code>&lt;org&gt;/tsubuyaki-board</code> が <strong>private</strong>（共有リポ。template 化は不要）</label></li>
-<li><label><input type="checkbox"></input>基幹リポの main を共有リポへ push 済（スターターが見える）</label></li>
-<li><label><input type="checkbox"></input><code>.github/workflows/protect-main.yml</code> を配置し、講師アカウントを許可リストに設定済（§4 の CI 監視）</label></li>
-<li><label><input type="checkbox"></input>共有 main 保護の 4 層（規約／Codex Guard／CI 監視／講師確認）を理解し、受講生周知の用意ができている</label></li>
+<li><label><input type="checkbox"></input><code>&lt;owner&gt;/tsubuyaki-board</code> を <strong>public</strong> で作成済（§3）</label></li>
+<li><label><input type="checkbox"></input>基幹リポの main を公開リポへ push 済（スターターが見える）</label></li>
+<li><label><input type="checkbox"></input>upstream <code>main</code> をブランチ保護でロック済（§4。PR 必須＝直接 push 禁止。厳格さは講師裁量）</label></li>
+<li><label><input type="checkbox"></input><code>main</code> 保護（ブランチ保護＋ Codex Guard の 2 層）を理解し、受講生周知（Fork → ブランチ → push → PR）の用意ができている</label></li>
 </ul>
 </section>
-<section id="受講生招待" class="level3">
-<h3>受講生招待</h3>
+<section id="受講生案内リハーサル" class="level3">
+<h3>受講生案内・リハーサル</h3>
 <ul class="task-list">
-<li><label><input type="checkbox"></input>受講生全員の GitHub ユーザ名（小文字）を収集済</label></li>
-<li><label><input type="checkbox"></input>共有リポへ collaborator（Write）として招待済（§5-2）。当日までに承認状況を §5-3 で確認</label></li>
-<li><label><input type="checkbox"></input>テストアカウントで 招待承認 → clone → <code>&lt;github-id&gt;</code> ブランチ作成 → <code>./mvnw -B -Ph2 verify</code> 緑のリハーサル成功（<a href="#7-リハーサルテストアカウントでの動作確認">§7 リハーサル</a> で実施）</label></li>
+<li><label><input type="checkbox"></input>受講生の GitHub ユーザ名（小文字）を収集済（採点・識別用。push 権限付与には不要）</label></li>
+<li><label><input type="checkbox"></input>受講生案内（Fork → 自分の fork を clone → <code>&lt;github-id&gt;</code> ブランチ → push → Draft PR）を周知する用意ができている</label></li>
+<li><label><input type="checkbox"></input>テストアカウントで Fork → clone → <code>&lt;github-id&gt;</code> ブランチ作成 → <code>./mvnw -B -Ph2 verify</code> 緑 → Draft PR → upstream main 直 push 不可、のリハーサル成功（<a href="#7-リハーサルテストアカウントでの動作確認">§7 リハーサル</a> で実施）</label></li>
 </ul>
 </section>
 <section id="講師マシン" class="level3">
@@ -673,7 +717,7 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 <h3>配布物</h3>
 <ul class="task-list">
 <li><label><input type="checkbox"></input>Pleiades 配布媒体準備（USB / 共有ドライブ）</label></li>
-<li><label><input type="checkbox"></input>共有リポ URL（<code>https://github.com/&lt;org&gt;/tsubuyaki-board</code>）と Organization 名を受講生案内に記載</label></li>
+<li><label><input type="checkbox"></input>研修リポ（upstream）URL（<code>https://github.com/&lt;owner&gt;/tsubuyaki-board</code>）を受講生案内に記載（「各自 Fork」の旨も）</label></li>
 <li><label><input type="checkbox"></input>予備 OPENAI_API_KEY を 1 本保持</label></li>
 </ul>
 <p>すべて ✓ なら、研修当日は受講生対応に集中できます。</p>
@@ -682,22 +726,20 @@ tsubuyaki-board.git              (共有リポ・1 個だけ)            → 自
 </section>
 <section id="研修後のクリーンアップ" class="level2">
 <h2>10.5. 研修後のクリーンアップ</h2>
-<p>研修終了後、Organization を片付けます。共有リポ 1 個に集約されているため片付けは容易です。<strong>いずれか</strong>を選びます。</p>
+<p>fork モデルでは受講生の成果は<strong>各自の fork</strong>にあり、upstream には PR として紐づくだけです。片付けは容易です。</p>
 <ul>
-<li><p><strong>受講生ブランチだけ削除してスターターを次期研修に再利用</strong>: 共有 <code>main</code> は無傷のまま、各受講生ブランチを削除する。</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 受講生ブランチを一覧（main 以外）</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> ls-remote <span class="at">--heads</span> https://github.com/<span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board.git <span class="dt">\</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{print $2}&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s#refs/heads/##&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-v</span> <span class="st">&#39;^main$&#39;</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 個別に削除</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push https://github.com/<span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board.git <span class="at">--delete</span> <span class="op">&lt;</span>github-id<span class="op">&gt;</span></span></code></pre></div>
-<p>GitHub の branches タブから手動削除も可。<code>main</code> は残るので、次回はまた §5（招待）から再開できる。</p></li>
-<li><p><strong>共有リポごと削除</strong>: 次期研修で作り直す場合。</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo delete <span class="op">&lt;</span>org<span class="op">&gt;</span>/tsubuyaki-board <span class="at">--yes</span></span></code></pre></div></li>
-<li><p><strong>Organization ごと削除</strong>: その Organization を二度と使わない場合。Settings の最下部「Delete this organization」から。collaborator・リポ・全ブランチが一括で消える。</p></li>
+<li><p><strong>PR を close し、upstream はそのまま次期研修へ再利用</strong>: upstream の <code>main</code> は無傷なので、受講生の Draft PR を close するだけで次期研修にそのまま使えます。受講生の fork は各自の所有物なので、講師が消す必要はありません。</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># upstream に紐づく open PR を一覧</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> pr list <span class="at">--repo</span> <span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board <span class="at">--state</span> open</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 個別に close（マージはしない）</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> pr close <span class="at">--repo</span> <span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board <span class="op">&lt;</span>PR番号<span class="op">&gt;</span></span></code></pre></div></li>
+<li><p><strong>受講生に fork 削除を案内（任意）</strong>: 残したくない受講生は各自の fork（<code>&lt;github-id&gt;/tsubuyaki-board</code>）を削除（Settings → 最下部 Danger Zone → Delete this repository）。講師側から他人の fork は削除できません。</p></li>
+<li><p><strong>upstream リポごと削除</strong>: 次期研修で作り直す場合。</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> repo delete <span class="op">&lt;</span>owner<span class="op">&gt;</span>/tsubuyaki-board <span class="at">--yes</span></span></code></pre></div></li>
 </ul>
 <blockquote>
-<p>⚠️ 削除前に、成果物（受講生の各ブランチ）を保全する必要がないか確認してください。採点・記録が済んでから片付けます。</p>
+<p>⚠️ 削除前に、成果物（受講生の PR / fork）を保全する必要がないか確認してください。採点・記録が済んでから片付けます。受講生の fork は各自の所有物なので、講師が一括削除はできません（必要なら各自に依頼）。</p>
 <p>💡 予備 <code>OPENAI_API_KEY</code> を配布・使用した場合は、OpenAI ダッシュボードで rotate（発行し直し）して締めます。</p>
 </blockquote>
 <hr />

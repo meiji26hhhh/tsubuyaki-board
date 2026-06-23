@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>README</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -108,20 +112,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <section id="tldr" class="level2">
 <h2>TL;DR</h2>
 <p>セットアップの<strong>正本は <a href="./education/student-setup-guide.md">education/student-setup-guide.md</a></strong>（受講生・講師ともこれを読む）。本 README には超圧縮版のみ置く。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Organization の招待を承認し、共有リポ &lt;org&gt;/tsubuyaki-board を clone (C:\workspace 配下)</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. &lt;owner&gt;/tsubuyaki-board を Fork し、自分の fork &lt;github-id&gt;/tsubuyaki-board を clone (C:\workspace 配下)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 🪟 管理者 PowerShell:  Set-ExecutionPolicy -Scope Process Bypass; .\scripts\setup.ps1</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. PC 再起動 → スタートメニューで Ubuntu 初回ログイン</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 🐧 Ubuntu:  cd /mnt/c/workspace/tsubuyaki-board &amp;&amp; bash scripts/setup-wsl.sh</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 🐧 Ubuntu:  git switch -c &lt;github-id&gt; origin/main  # 自分の作業ブランチ（共有 main には push しない）</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 🐧 Ubuntu:  git switch -c &lt;github-id&gt; origin/main  # 自分の作業ブランチ（fork の main にも upstream にも直接 push しない）</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. 🐧 Ubuntu:  OPENAI_API_KEY を ~/.bashrc に設定（値は画面表示しない）</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. 🐧 Ubuntu:  bash scripts/start-oracle.sh &amp;&amp; ./mvnw -B -Ph2 verify</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. 🐧 Ubuntu:  codex-shell    # Codex devbox コンテナへ</span></span></code></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. 🐧 Ubuntu:  codex-shell    # Codex devbox コンテナへ</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 9. 🌐 fork の &lt;github-id&gt; ブランチ → upstream main へ Draft PR を作成（講師レビュー用・マージしない）</span></span></code></pre></div>
 <p>詳細手順、つまずきポイント、用語ミニ辞書は <a href="./education/student-setup-guide.md">education/student-setup-guide.md</a> を参照。</p>
 </section>
 <section id="全体像" class="level2">
 <h2>全体像</h2>
 <ul>
-<li><strong>題材</strong>: 「社内つぶやきボード」 (X風ミニ SNS) — <code>EXERCISES.md</code> を参照</li>
+<li><strong>題材</strong>: 「社内つぶやきボード」 (X風ミニ SNS) — <code>education/EXERCISES.md</code> を参照</li>
 <li><strong>スタック</strong>: Spring Boot 3.4.1 + Thymeleaf + Spring Data JPA + Maven, JDK 21</li>
 <li><strong>DB (ローカル)</strong>: Oracle DB XE 21c (Podman / <code>gvenzl/oracle-xe</code>)</li>
 <li><strong>DB (軽量・テスト用)</strong>: H2 メモリ (<code>MODE=Oracle</code>)</li>
@@ -151,7 +156,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <td>共通プロンプト (TDD サイクル等)</td>
 </tr>
 <tr>
-<td><code>EXERCISES.md</code></td>
+<td><code>education/EXERCISES.md</code></td>
 <td>機能要件と受入基準 (MUST / SHOULD / COULD)</td>
 </tr>
 <tr>
@@ -256,7 +261,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><strong>講師</strong> → <code>instructor/instructor-setup-guide.md</code> で研修開始前の準備を完了</li>
 <li><code>AGENTS.md</code> — Codex に何をさせるか・させないか</li>
 <li><code>education/ONBOARDING.md</code> — 当日の流れ</li>
-<li><code>EXERCISES.md</code> — 何を作るか</li>
+<li><code>education/EXERCISES.md</code> — 何を作るか</li>
 <li>困ったら <code>education/TROUBLESHOOTING.md</code> → <code>bash scripts/doctor.sh</code></li>
 </ol>
 </section>
