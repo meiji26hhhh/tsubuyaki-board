@@ -20,7 +20,7 @@
 | B1 | Repository テスト 1 本以上 | `@DataJpaTest` を使っている |
 | B2 | Service テスト 1 本以上 (異常系含む) | Mockito、`assertThatThrownBy` を使う |
 | B3 | Controller テスト 1 本以上 | `@WebMvcTest`、`view().name()` と `model().attributeExists()` |
-| B4 | 受講生ブランチで `./mvnw -B -Ph2 verify` が緑 | 受講生の `<github-id>` ブランチを `git fetch` → `git switch <github-id>` して基本検証が BUILD SUCCESS |
+| B4 | 受講生ブランチで `./mvnw -B -Ph2 verify` が緑 | 受講生の PR を `gh pr checkout <PR番号>`（または fork を remote 追加して fetch）して基本検証が BUILD SUCCESS |
 | B5 | 仕上げ品質ゲートが緑 | `./mvnw -B -Ph2 -Pcoverage-day3 -Pstrict verify` が BUILD SUCCESS。JaCoCo line coverage 80% 以上、Checkstyle / SpotBugs 警告なし |
 
 ## C. コミットの質 (3 点)
@@ -42,14 +42,14 @@
 - COULD を 2 つ以上完了
 - `MODE=Oracle` の落とし穴に 2 つ以上自力で気付いた
 - Codex の生成コードを「ここはこう直しました」と言語化できる
-- 相互レビューで他者のブランチ（Compare ビュー）に有意義なコメントを付けた
+- 相互レビューで他者の PR に有意義なコメントを付けた
 
 ## 採点フォーマット (講師用)
 
 ```
 受講生: <name> (GitHub: <github-id>)
-ブランチ: <github-id>
-Compare: https://github.com/<org>/tsubuyaki-board/compare/main...<github-id>
+ブランチ: <github-id>（fork: <github-id>/tsubuyaki-board）
+PR: https://github.com/<owner>/tsubuyaki-board/pull/<PR番号>
 
 A. 機能 [_/6]  A1[ ] A2[ ] A3[ ] A4[ ] A5[ ] A6[ ]
 B. テスト [_/5] B1[ ] B2[ ] B3[ ] B4[ ] B5[ ]

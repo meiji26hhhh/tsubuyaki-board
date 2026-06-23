@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>TROUBLESHOOTING</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -249,13 +253,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <p>⚠️ 改行コードの正規化で一括破棄コマンドは使いません。差分を <code>git diff --staged</code> で確認してから commit してください。</p>
 </blockquote>
 </section>
-<section id="q13.-共有リポにアクセスできない404-clone-できない" class="level3">
-<h3>Q13. 共有リポにアクセスできない（404 / clone できない）</h3>
+<section id="q13.-fork-できない-自分の-fork-が見つからない-pr-が作れない" class="level3">
+<h3>Q13. Fork できない / 自分の fork が見つからない / PR が作れない</h3>
+<p><strong>Fork できない・自分の fork が見当たらない:</strong></p>
 <ul>
-<li>共有リポへの招待メール（または <code>https://github.com/&lt;org&gt;</code> の通知）から参加を <strong>Accept</strong> したか（GitHub の Notifications で確認可能）</li>
-<li>講師に伝えた <strong>自分の GitHub ユーザ名（小文字）</strong> の綴りが正しいか</li>
-<li>SAML SSO 必須の Organization なら、ブラウザで Organization トップを開いて SSO 認証を済ませる</li>
-<li>それでもダメなら講師に <strong>自分の GitHub ID</strong> を伝えて、共有リポの collaborator 招待状態を確認してもらう</li>
+<li>ブラウザで研修リポ（upstream <code>https://github.com/&lt;owner&gt;/tsubuyaki-board</code>）を開き、右上の「<strong>Fork</strong>」を押したか。公開リポなので招待は不要</li>
+<li>Fork 後の URL は <code>https://github.com/&lt;github-id&gt;/tsubuyaki-board</code>。自分のアバター →「Your repositories」にも出る</li>
+<li>「You already have a fork」と出る場合はすでに Fork 済み。その既存 fork をそのまま使えばよい（再 Fork 不要）</li>
+</ul>
+<p><strong>自分の fork を clone できない（404 / 認証エラー）:</strong></p>
+<ul>
+<li>clone 先が <strong>自分の fork（<code>&lt;github-id&gt;/...</code>）</strong> の URL か（upstream <code>&lt;owner&gt;/...</code> ではない）。<code>git remote -v</code> で確認</li>
+<li>ユーザ名は GitHub ユーザ名、パスワードは PAT（<code>ghp_...</code>）か（<a href="./student-setup-guide.md">student-setup-guide §3-3</a>。<code>public_repo</code> スコープ・未失効を確認）</li>
+</ul>
+<p><strong>PR が作れない / 向きがおかしい:</strong></p>
+<ul>
+<li>PR の <strong>base</strong> が <code>&lt;owner&gt;/tsubuyaki-board</code> の <code>main</code>、<strong>compare</strong> が <code>&lt;github-id&gt;/tsubuyaki-board</code> の <code>&lt;github-id&gt;</code> ブランチになっているか（<a href="./student-setup-guide.md">student-setup-guide §9-4</a>）</li>
+<li>先に fork へ push してあるか（push 済みのブランチでないと PR の compare に出ない）</li>
+<li>それでもダメなら講師に <strong>自分の GitHub ID と fork の URL</strong> を伝えて確認してもらう</li>
 </ul>
 </section>
 <section id="q14.-環境チェックで-git-config---global-user.name-が未設定-の-ng-が出る" class="level3">
@@ -344,7 +359,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <ol type="1">
 <li><strong>変更を捨てる前に必ず <code>git status</code> と <code>git diff</code> で内容を確認</strong></li>
 <li><strong>惜しい変更があれば必ず <code>git stash push -u</code> で退避</strong></li>
-<li><strong><code>git push --force</code> は禁止</strong>（自分のブランチを含め一律。<a href="../AGENTS.md">AGENTS.md §7.3</a>）。<strong>共有 <code>main</code> への push も禁止</strong>（push 先は常に自分の <code>&lt;github-id&gt;</code> ブランチ）</li>
+<li><strong><code>git push --force</code> は禁止</strong>（自分のブランチを含め一律。<a href="../AGENTS.md">AGENTS.md §7.3</a>）。<strong><code>main</code>（fork の main も upstream も）への直接 push も禁止</strong>（push 先は常に自分の <code>&lt;github-id&gt;</code> ブランチ。upstream には push 権限も無い）</li>
 <li><strong>完全に詰まったら、自分のブランチを <code>main</code> から切り直す</strong>のが安全（後述の「最後の手段」参照）</li>
 </ol>
 </section>
@@ -363,7 +378,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <h2>最後の手段</h2>
 <ul>
 <li>環境を破壊した気がする → <code>bash scripts/setup-wsl.sh --rollback</code>（JDK / Maven / Podman / codex-devbox イメージを削除する。git リポジトリと自分のコードには影響しない）→ <code>セットアップ2_Ubuntu準備.bat</code> から再セットアップ</li>
-<li>自分のブランチを壊した気がする → <code>git switch main</code> → <code>git switch -c &lt;github-id&gt;-retry origin/main</code> で <code>main</code> から作業ブランチを切り直す（共有リポや <code>main</code> は消さない）。ローカル clone ごと作り直したい場合は、フォルダを消して student-setup-guide §4-2 から共有リポを clone し直す</li>
+<li>自分のブランチを壊した気がする → <code>git switch main</code> → <code>git switch -c &lt;github-id&gt;-retry origin/main</code> で fork の <code>main</code> から作業ブランチを切り直す（fork や <code>main</code> は消さない）。ローカル clone ごと作り直したい場合は、フォルダを消して <a href="./student-setup-guide.md">student-setup-guide §4-2</a> から<strong>自分の fork</strong>を clone し直す</li>
 <li>何もかも分からない → 講師に「何を試して何が起きたか」を 3 行で報告する</li>
 </ul>
 </section>

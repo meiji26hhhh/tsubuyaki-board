@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>rubric</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -122,7 +126,7 @@ vertical-align: middle;
 <tr>
 <td>B4</td>
 <td>受講生ブランチで <code>./mvnw -B -Ph2 verify</code> が緑</td>
-<td>受講生の <code>&lt;github-id&gt;</code> ブランチを <code>git fetch</code> → <code>git switch &lt;github-id&gt;</code> して基本検証が BUILD SUCCESS</td>
+<td>受講生の PR を <code>gh pr checkout &lt;PR番号&gt;</code>（または fork を remote 追加して fetch）して基本検証が BUILD SUCCESS</td>
 </tr>
 <tr>
 <td>B5</td>
@@ -196,14 +200,14 @@ vertical-align: middle;
 <li>COULD を 2 つ以上完了</li>
 <li><code>MODE=Oracle</code> の落とし穴に 2 つ以上自力で気付いた</li>
 <li>Codex の生成コードを「ここはこう直しました」と言語化できる</li>
-<li>相互レビューで他者のブランチ（Compare ビュー）に有意義なコメントを付けた</li>
+<li>相互レビューで他者の PR に有意義なコメントを付けた</li>
 </ul>
 </section>
 <section id="採点フォーマット-講師用" class="level2">
 <h2>採点フォーマット (講師用)</h2>
 <pre><code>受講生: &lt;name&gt; (GitHub: &lt;github-id&gt;)
-ブランチ: &lt;github-id&gt;
-Compare: https://github.com/&lt;org&gt;/tsubuyaki-board/compare/main...&lt;github-id&gt;
+ブランチ: &lt;github-id&gt;（fork: &lt;github-id&gt;/tsubuyaki-board）
+PR: https://github.com/&lt;owner&gt;/tsubuyaki-board/pull/&lt;PR番号&gt;
 
 A. 機能 [_/6]  A1[ ] A2[ ] A3[ ] A4[ ] A5[ ] A6[ ]
 B. テスト [_/5] B1[ ] B2[ ] B3[ ] B4[ ] B5[ ]
