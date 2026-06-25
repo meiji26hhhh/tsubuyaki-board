@@ -55,7 +55,13 @@ vertical-align: middle;
 <li>0 件なら「まだ投稿はありません」を表示</li>
 <li><code>model.posts</code> 属性に List<Post> を積む</li>
 </ul>
-<p>受入基準: - [ ] <code>PostRepository.findTop50ByOrderByCreatedAtDesc()</code> が定義され DataJpaTest で検証される - [ ] <code>PostService.latest()</code> が Repository を呼んで結果を返す - [ ] <code>PostController</code> が <code>GET /posts</code> で <code>posts/list</code> ビューを返す - [ ] WebMvcTest で <code>model().attributeExists(&quot;posts&quot;)</code> を確認</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>PostRepository.findTop50ByOrderByCreatedAtDesc()</code> が定義され DataJpaTest で検証される</label></li>
+<li><label><input type="checkbox"></input><code>PostService.latest()</code> が Repository を呼んで結果を返す</label></li>
+<li><label><input type="checkbox"></input><code>PostController</code> が <code>GET /posts</code> で <code>posts/list</code> ビューを返す</label></li>
+<li><label><input type="checkbox"></input>WebMvcTest で <code>model().attributeExists(&quot;posts&quot;)</code> を確認</label></li>
+</ul>
 </section>
 <section id="m2-投稿作成フォーム-get-postsnew" class="level3">
 <h3>M2: 投稿作成フォーム <code>GET /posts/new</code></h3>
@@ -63,7 +69,11 @@ vertical-align: middle;
 <li><code>posts/form.html</code> を表示</li>
 <li>フォームバインド用に <code>postForm</code> (PostForm) を model に積む</li>
 </ul>
-<p>受入基準: - [ ] フォームが描画される - [ ] <code>_csrf</code> トークンを含む (Spring Security 適用後)</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>フォームが描画される</label></li>
+<li><label><input type="checkbox"></input><code>_csrf</code> トークンを含む (Spring Security 適用後)</label></li>
+</ul>
 </section>
 <section id="m3-投稿登録-post-posts" class="level3">
 <h3>M3: 投稿登録 <code>POST /posts</code></h3>
@@ -72,7 +82,12 @@ vertical-align: middle;
 <li>成功: 302 で <code>/posts</code> にリダイレクト</li>
 <li>失敗: 200 で <code>posts/form</code> を再表示しエラー表示</li>
 </ul>
-<p>受入基準: - [ ] <code>PostService.create(author, body)</code> が <code>Post</code> を保存する - [ ] WebMvcTest で異常系 (空 body) が 200 + エラー文字列で再表示されることを確認 - [ ] 正常系で DB に行が増える (DataJpaTest)</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>PostService.create(author, body)</code> が <code>Post</code> を保存する</label></li>
+<li><label><input type="checkbox"></input>WebMvcTest で異常系 (空 body) が 200 + エラー文字列で再表示されることを確認</label></li>
+<li><label><input type="checkbox"></input>正常系で DB に行が増える (DataJpaTest)</label></li>
+</ul>
 </section>
 <section id="m4-投稿詳細-get-postsid" class="level3">
 <h3>M4: 投稿詳細 <code>GET /posts/{id}</code></h3>
@@ -80,14 +95,22 @@ vertical-align: middle;
 <li><code>posts/detail.html</code> を表示</li>
 <li>存在しない id は 404</li>
 </ul>
-<p>受入基準: - [ ] <code>PostService.findById(id)</code> が <code>Optional&lt;Post&gt;</code> を返す - [ ] Controller で <code>Optional.isEmpty()</code> → 404</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>PostService.findById(id)</code> が <code>Optional&lt;Post&gt;</code> を返す</label></li>
+<li><label><input type="checkbox"></input>Controller で <code>Optional.isEmpty()</code> → 404</label></li>
+</ul>
 </section>
 <section id="m5-ヘルスチェック回帰確認" class="level3">
 <h3>M5: ヘルスチェック（回帰確認）</h3>
 <ul>
 <li><code>/actuator/health</code> が UP を返す（0-1h セットアップ確認時に既に通る想定。M4 までの実装で UP が壊れていないことを再確認する位置づけ）</li>
 </ul>
-<p>受入基準: - [ ] <code>./mvnw -B -Ph2 spring-boot:run</code> で起動した状態で <code>curl http://localhost:8080/actuator/health</code> が 200 を返す - [ ] M4 完了時点で <code>{&quot;status&quot;:&quot;UP&quot;}</code> が変わっていないこと（DataSource 等の破壊回帰が無い）</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>./mvnw -B -Ph2 spring-boot:run</code> で起動した状態で <code>curl http://localhost:8080/actuator/health</code> が 200 を返す</label></li>
+<li><label><input type="checkbox"></input>M4 完了時点で <code>{&quot;status&quot;:&quot;UP&quot;}</code> が変わっていないこと（DataSource 等の破壊回帰が無い）</label></li>
+</ul>
 </section>
 </section>
 <section id="should-9.5-14.5時間目で3つすべて必達" class="level2">
@@ -103,7 +126,12 @@ vertical-align: middle;
 <li>同一 <code>clientHash</code> (= ハッシュ化された IP + UA、SHA-256 の先頭 8 文字) が再度押したら解除</li>
 <li>詳細画面でいいね数と Like ボタン表示</li>
 </ul>
-<p>受入基準: - [ ] Flyway V2__likes.sql で <code>post_likes</code> テーブルを作る - [ ] サービス層で「冪等性」をテスト (連続 POST で count が 0 → 1 → 0 と変わる) - [ ] IP は <strong>生で保存しない</strong>。SHA-256 + アプリ内 salt でハッシュ化</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Flyway V2__likes.sql で <code>post_likes</code> テーブルを作る</label></li>
+<li><label><input type="checkbox"></input>サービス層で「冪等性」をテスト (連続 POST で count が 0 → 1 → 0 と変わる)</label></li>
+<li><label><input type="checkbox"></input>IP は <strong>生で保存しない</strong>。SHA-256 + アプリ内 salt でハッシュ化</label></li>
+</ul>
 </section>
 <section id="s2-キーワード検索" class="level3">
 <h3>S2: キーワード検索</h3>
@@ -111,14 +139,24 @@ vertical-align: middle;
 <li><code>GET /posts?q=xxx</code> で本文 LIKE 検索</li>
 <li>一覧画面を再利用 (検索ボックスを上部に追加)</li>
 </ul>
-<p>受入基準: - [ ] <code>@Query</code> の bind 変数を使う (文字列連結禁止) - [ ] 空文字なら通常の最新 50 件にフォールバック</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>@Query</code> の bind 変数を使う (文字列連結禁止)</label></li>
+<li><label><input type="checkbox"></input>空文字なら通常の最新 50 件にフォールバック</label></li>
+</ul>
 </section>
 <section id="s3-投稿者名フィールド拡張" class="level3">
 <h3>S3: 投稿者名フィールド拡張</h3>
 <ul>
 <li>投稿者名を必須にし、フォームに任意のアバター色を選択させる (簡易)</li>
 </ul>
-<p>受入基準: - [ ] <code>posts</code> テーブルに <code>avatar_color</code> 相当の列を追加する Flyway migration がある - [ ] <code>PostForm</code> で投稿者名 1..30 文字、アバター色は許可リスト内だけを受け付ける - [ ] 一覧 / 詳細 / フォームで投稿者名とアバター色が表示・保持される - [ ] Service または Controller テストで不正なアバター色が保存されないことを確認する</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>posts</code> テーブルに <code>avatar_color</code> 相当の列を追加する Flyway migration がある</label></li>
+<li><label><input type="checkbox"></input><code>PostForm</code> で投稿者名 1..30 文字、アバター色は許可リスト内だけを受け付ける</label></li>
+<li><label><input type="checkbox"></input>一覧 / 詳細 / フォームで投稿者名とアバター色が表示・保持される</label></li>
+<li><label><input type="checkbox"></input>Service または Controller テストで不正なアバター色が保存されないことを確認する</label></li>
+</ul>
 </section>
 </section>
 <section id="could-14.5-17時間目で1つ選択して必達" class="level2">
@@ -127,17 +165,35 @@ vertical-align: middle;
 <section id="c1-タグ機能" class="level3">
 <h3>C1: タグ機能</h3>
 <p>本文中の <code>#tag</code> をパースして Tag テーブルに保存、<code>GET /tags/{name}</code> で関連投稿一覧。</p>
-<p>受入基準: - [ ] Flyway migration で <code>tags</code> と関連テーブルを追加する - [ ] 投稿作成時に本文中の <code>#tag</code> を抽出し、重複タグを 1 つに正規化する - [ ] <code>GET /tags/{name}</code> で対象タグの投稿だけを新着順に表示する - [ ] Repository / Service のいずれかでタグ抽出と検索のテストがある</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Flyway migration で <code>tags</code> と関連テーブルを追加する</label></li>
+<li><label><input type="checkbox"></input>投稿作成時に本文中の <code>#tag</code> を抽出し、重複タグを 1 つに正規化する</label></li>
+<li><label><input type="checkbox"></input><code>GET /tags/{name}</code> で対象タグの投稿だけを新着順に表示する</label></li>
+<li><label><input type="checkbox"></input>Repository / Service のいずれかでタグ抽出と検索のテストがある</label></li>
+</ul>
 </section>
 <section id="c2-投稿削除" class="level3">
 <h3>C2: 投稿削除</h3>
 <p>論理削除 (<code>deleted_at</code> カラム)、論理削除済みは一覧で非表示。</p>
-<p>受入基準: - [ ] Flyway migration で <code>deleted_at</code> を追加し、既存投稿は未削除として扱う - [ ] <code>POST /posts/{id}/delete</code> で論理削除し、成功時は <code>/posts</code> にリダイレクトする - [ ] 一覧 / 検索 / 詳細で論理削除済み投稿を表示しない - [ ] Service テストで削除済み投稿が検索結果に出ないことを確認する</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Flyway migration で <code>deleted_at</code> を追加し、既存投稿は未削除として扱う</label></li>
+<li><label><input type="checkbox"></input><code>POST /posts/{id}/delete</code> で論理削除し、成功時は <code>/posts</code> にリダイレクトする</label></li>
+<li><label><input type="checkbox"></input>一覧 / 検索 / 詳細で論理削除済み投稿を表示しない</label></li>
+<li><label><input type="checkbox"></input>Service テストで削除済み投稿が検索結果に出ないことを確認する</label></li>
+</ul>
 </section>
 <section id="c3-rest-api" class="level3">
 <h3>C3: REST API</h3>
 <p><code>GET /api/posts</code> で JSON 返却、簡易 OpenAPI ドキュメント。</p>
-<p>受入基準: - [ ] <code>GET /api/posts</code> が最新 50 件を JSON 配列で返す - [ ] JSON には <code>id</code>, <code>author</code>, <code>body</code>, <code>createdAt</code> を含め、内部 Entity を直接返さない - [ ] MockMvc テストで status 200、JSON フィールド、件数上限を確認する - [ ] <code>docs/api.md</code> を<strong>新規作成</strong>し、エンドポイント、レスポンス例、エラー時の扱いを記載する (スターターには存在しない。C3 を選んだ受講生が作る)</p>
+<p>受入基準:</p>
+<ul class="task-list">
+<li><label><input type="checkbox"></input><code>GET /api/posts</code> が最新 50 件を JSON 配列で返す</label></li>
+<li><label><input type="checkbox"></input>JSON には <code>id</code>, <code>author</code>, <code>body</code>, <code>createdAt</code> を含め、内部 Entity を直接返さない</label></li>
+<li><label><input type="checkbox"></input>MockMvc テストで status 200、JSON フィールド、件数上限を確認する</label></li>
+<li><label><input type="checkbox"></input><code>docs/api.md</code> を<strong>新規作成</strong>し、エンドポイント、レスポンス例、エラー時の扱いを記載する (スターターには存在しない。C3 を選んだ受講生が作る)</label></li>
+</ul>
 </section>
 </section>
 <section id="意図的に外す機能" class="level2">
