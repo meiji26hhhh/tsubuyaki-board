@@ -241,7 +241,8 @@ java -jar tools/plantuml.jar -tpng -charset UTF-8 \
   docs/diagrams/system-overview.puml \
   docs/diagrams/dev-flow.puml \
   docs/diagrams/spring-class.puml \
-  docs/diagrams/er-posts.puml
+  docs/diagrams/er-posts.puml \
+  docs/diagrams/setup-flow.puml
 ```
 
 ### 図ソースを編集したい場合
