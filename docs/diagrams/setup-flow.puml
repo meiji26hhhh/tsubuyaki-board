@@ -1,0 +1,52 @@
+@startuml setup-flow
+title 受講生セットアップ作業フロー（研修 0-1 時間目）
+skinparam shadowing false
+skinparam defaultFontName "Yu Gothic UI"
+skinparam ArrowColor #555555
+skinparam activity {
+  BackgroundColor #F0F7FF
+  BorderColor #4A90E2
+}
+
+|#E8F0FE|ブラウザ（GitHub）|
+start
+:研修リポを Fork（§3-1）;
+:Personal Access Token を取得（§3-3）;
+
+|#EFEAF7|PowerShell（Windows）|
+:Pleiades を配置 → 自分の fork を clone（§4-1〜4-2）;
+
+|#FFF6E5|かんたんセットアップ（バッチ）|
+:セットアップ1_Windows準備.bat → PC 再起動（§4-3〜4-4）;
+
+|#EAF7EE|Ubuntu（WSL）|
+:Ubuntu 初回ログイン（ユーザ名・パスワード設定）（§5-1）;
+
+|#FFF6E5|かんたんセットアップ（バッチ）|
+:セットアップ2_Ubuntu準備.bat（§5-4）;
+
+|#EAF7EE|Ubuntu（WSL）|
+:作業ブランチ（GitHub ユーザ名）を fork の main から作成（§6）;
+
+|#FFF6E5|かんたんセットアップ（バッチ）|
+:セットアップ3_APIキー設定.bat（OPENAI_API_KEY・.env・git 設定）（§7）;
+:環境チェック.bat（全行 OK / WARN）（§8-1）;
+:Oracle起動.bat → "Oracle XE is ready."（§8-2）;
+
+|#EAF7EE|Ubuntu（WSL）|
+:./mvnw -B -Ph2 verify → BUILD SUCCESS（§8-3）;
+:アプリ起動 + curl /actuator/health = UP（§8-4）;
+:codex-shell でコンテナへ（§8-5）;
+
+|#FCEEF3|Codex コンテナ|
+:codex --help が表示される（スモークテスト合格）（§8-5-1）;
+
+|#EAF7EE|Ubuntu（WSL）|
+:git push（自分の作業ブランチを fork へ）（§9-2）;
+:./mvnw -B -Ph2 verify を緑化（§9-3）;
+
+|#E8F0FE|ブラウザ（GitHub）|
+:upstream へ Draft Pull Request を作成（§9-4）;
+stop
+
+@enduml
