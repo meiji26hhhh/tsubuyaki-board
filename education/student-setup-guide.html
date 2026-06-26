@@ -209,7 +209,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 <tr>
 <td><strong>Pleiades</strong></td>
-<td>日本語化済み Eclipse 配布物。本研修ではエディタとしてのみ使い、<strong>ビルドは WSL の <code>./mvnw</code></strong> で行う。</td>
+<td>日本語化済み Eclipse 配布物。コード編集に加え、アプリの起動・デバッグにも使える（<a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a>）。テスト・最終検証（<code>./mvnw verify</code>）は WSL の <code>./mvnw</code> を基本とする。</td>
 </tr>
 <tr>
 <td><strong>研修ハーネス (Codex Guard)</strong></td>
@@ -766,6 +766,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <p>現在のターミナル（タブ A とする）でアプリを起動：</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>h2 <span class="ex">./mvnw</span> spring-boot:run</span></code></pre></div>
 <p><code>Started TsubuyakiApplication in X seconds</code> の行が出たら起動完了。<strong>このターミナルはアプリのログを表示し続けるので、閉じずに残しておく</strong>。</p>
+<blockquote>
+<p>💡 Eclipse から起動・デバッグすることもできます（H2 / Oracle 両対応）。手順は <a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a>。</p>
+</blockquote>
 </section>
 <section id="ヘルスチェックタブ-b-新規タブ" class="level4">
 <h4>8-4-2. ヘルスチェック（タブ B — 新規タブ）</h4>

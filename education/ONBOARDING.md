@@ -36,7 +36,7 @@ EXERCISES.md と一緒に読む。
 | Windows ユーザのホーム `C:\Users\<name>` | `/mnt/c/Users/<name>` |
 | WSL ホーム（Ubuntu 内） | `~`（= `/home/<wsl-ユーザ名>`） |
 
-**ビルド・テスト・Codex は全て WSL 側で実行**。Eclipse はエディタ用途のみ。
+**テスト・Codex・最終検証は WSL 側で実行**。Eclipse はコード編集に加え、アプリの起動・デバッグにも使える（[docs/eclipse-guide.md](../docs/eclipse-guide.md)）。
 
 ### 確認チェックリスト（朝一の動作確認）
 
@@ -48,7 +48,7 @@ EXERCISES.md と一緒に読む。
 4. **空アプリ起動 → `/actuator/health`** が `{"status":"UP"}`
 5. **`./mvnw -B -Ph2 verify`** が BUILD SUCCESS
 
-Eclipse (Pleiades) を使う場合は、ワークスペースを `C:\workspace\<repo>` にし `Project > Build Automatically` をオフにすること（ビルドは WSL の `./mvnw` 経由）。新たな PC でセットアップし直す場合も student-setup-guide §3〜§9 を再走すれば良い。
+Eclipse (Pleiades) を使う場合は、ワークスペースを `C:\workspace\<repo>` にすること。WSL で `./mvnw verify` を回す間は `Project > Build Automatically` をオフにして二重ビルドを避ける（Eclipse からアプリを起動・デバッグする場合の運用は [docs/eclipse-guide.md](../docs/eclipse-guide.md)）。新たな PC でセットアップし直す場合も student-setup-guide §3〜§9 を再走すれば良い。
 
 ## 各日朝のウォームアップ (4-4.25時間目、13-13.25時間目)
 
@@ -88,7 +88,7 @@ Codex CLI の起動、モデル / effort の使い分け、Plan Mode、resume、
 1. **MUST 5 個を 2日目午前までに終わらせる**。SHOULD は必達、COULD は選択必達。
 2. **コミットを小さく**。1 機能 = 1 コミット。失敗したら戻し方は [TROUBLESHOOTING.md の Git 安全ガイド](./TROUBLESHOOTING.md#git-操作の安全ガイド) を参照（`git restore` は未コミット変更の破棄、戻したくない変更がある時は先に `git stash`）。
 3. **Codex の出力を必ず読む**。理解できないコードはマージしない。
-4. **詰まったら H2 に逃げる**。`SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run` で進行は止めない。
+4. **詰まったら H2 に逃げる**。`SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run`（または Eclipse で H2 起動 → [docs/eclipse-guide.md](../docs/eclipse-guide.md)）で進行は止めない。
 5. **講師に質問するときは「何を試して何が起きたか」を最初に**。
 6. **各日終わりに作業を push する**。翌日のウォームアップで自分のブランチの diff を読み返すと記憶が定着する。
 7. **使ったプロンプトを `docs/prompts-i-used.md` に残す**。仕上げフェーズで整理する時間が短くて済む。

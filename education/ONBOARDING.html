@@ -251,7 +251,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </tr>
 </tbody>
 </table>
-<p><strong>ビルド・テスト・Codex は全て WSL 側で実行</strong>。Eclipse はエディタ用途のみ。</p>
+<p><strong>テスト・Codex・最終検証は WSL 側で実行</strong>。Eclipse はコード編集に加え、アプリの起動・デバッグにも使える（<a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a>）。</p>
 </section>
 <section id="確認チェックリスト朝一の動作確認" class="level3">
 <h3>確認チェックリスト（朝一の動作確認）</h3>
@@ -263,7 +263,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><strong>空アプリ起動 → <code>/actuator/health</code></strong> が <code>{&quot;status&quot;:&quot;UP&quot;}</code></li>
 <li><strong><code>./mvnw -B -Ph2 verify</code></strong> が BUILD SUCCESS</li>
 </ol>
-<p>Eclipse (Pleiades) を使う場合は、ワークスペースを <code>C:\workspace\&lt;repo&gt;</code> にし <code>Project &gt; Build Automatically</code> をオフにすること（ビルドは WSL の <code>./mvnw</code> 経由）。新たな PC でセットアップし直す場合も student-setup-guide §3〜§9 を再走すれば良い。</p>
+<p>Eclipse (Pleiades) を使う場合は、ワークスペースを <code>C:\workspace\&lt;repo&gt;</code> にすること。WSL で <code>./mvnw verify</code> を回す間は <code>Project &gt; Build Automatically</code> をオフにして二重ビルドを避ける（Eclipse からアプリを起動・デバッグする場合の運用は <a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a>）。新たな PC でセットアップし直す場合も student-setup-guide §3〜§9 を再走すれば良い。</p>
 </section>
 </section>
 <section id="各日朝のウォームアップ-4-4.25時間目13-13.25時間目" class="level2">
@@ -303,7 +303,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <li><strong>MUST 5 個を 2日目午前までに終わらせる</strong>。SHOULD は必達、COULD は選択必達。</li>
 <li><strong>コミットを小さく</strong>。1 機能 = 1 コミット。失敗したら戻し方は <a href="./TROUBLESHOOTING.md#git-操作の安全ガイド">TROUBLESHOOTING.md の Git 安全ガイド</a> を参照（<code>git restore</code> は未コミット変更の破棄、戻したくない変更がある時は先に <code>git stash</code>）。</li>
 <li><strong>Codex の出力を必ず読む</strong>。理解できないコードはマージしない。</li>
-<li><strong>詰まったら H2 に逃げる</strong>。<code>SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run</code> で進行は止めない。</li>
+<li><strong>詰まったら H2 に逃げる</strong>。<code>SPRING_PROFILES_ACTIVE=h2 ./mvnw spring-boot:run</code>（または Eclipse で H2 起動 → <a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a>）で進行は止めない。</li>
 <li><strong>講師に質問するときは「何を試して何が起きたか」を最初に</strong>。</li>
 <li><strong>各日終わりに作業を push する</strong>。翌日のウォームアップで自分のブランチの diff を読み返すと記憶が定着する。</li>
 <li><strong>使ったプロンプトを <code>docs/prompts-i-used.md</code> に残す</strong>。仕上げフェーズで整理する時間が短くて済む。</li>

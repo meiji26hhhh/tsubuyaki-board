@@ -128,7 +128,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="q3.-eclipse-と-maven-の二重ビルドで-target-が壊れる" class="level3">
 <h3>Q3. Eclipse と Maven の二重ビルドで <code>target/</code> が壊れる</h3>
-<p>Eclipse の Project &gt; Build Automatically をオフに。Eclipse はあくまでエディタとして使い、ビルドは WSL の <code>./mvnw</code> で。</p>
+<p>WSL で <code>./mvnw verify</code> を回す間は Eclipse の <code>Project &gt; Build Automatically</code> をオフにして二重ビルドを避ける。Eclipse からアプリを起動・デバッグする運用は <a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a> を参照（その場合は Build Automatically を ON のままで構わない）。</p>
 </section>
 </section>
 <section id="codex" class="level2">
@@ -199,6 +199,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">podman</span> exec tsubuyaki-oracle healthcheck.sh</span></code></pre></div>
 <p>それでもダメなら <strong>H2 に逃がす</strong>:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">SPRING_PROFILES_ACTIVE</span><span class="op">=</span>h2 <span class="ex">./mvnw</span> spring-boot:run</span></code></pre></div>
+<blockquote>
+<p>Eclipse から H2 で起動する場合は <a href="../docs/eclipse-guide.md">docs/eclipse-guide.md</a> §5。</p>
+</blockquote>
 </section>
 <section id="q8.-接続時に-ora-01017-invalid-usernamepassword" class="level3">
 <h3>Q8. 接続時に <code>ORA-01017: invalid username/password</code></h3>

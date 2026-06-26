@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>eclipse-guide</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">:root {--fg: #1a1a1a;--muted: #555;--accent: #1565c0;--bg: #ffffff;--surface: #f5f7fa;--border: #d8dee6;--warn-bg: #fff8e1;--warn-border: #f0c000;--code-bg: #f3f3f3; --code-fg: #222; }* {font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;box-sizing: border-box;font-size: 12px;}body {color: var(--fg);background: var(--bg);line-height: 1.8;max-width: 1280px;margin: 0 auto;padding: 2.5rem 1.5rem 6rem;}h1 {font-size: 1.9rem;border-bottom: 4px solid var(--accent);padding-bottom: 0.4rem;line-height: 1.4;}h2 {font-size: 1.4rem;margin-top: 2.6rem;padding: 0.3rem 0.7rem;background: var(--surface);border-left: 6px solid var(--accent);}h3 {font-size: 1.15rem;margin-top: 1.8rem;color: var(--accent);}p, li { font-size: 1rem; }a { color: var(--accent); }code {background: var(--surface);border: 1px solid var(--border);border-radius: 4px;padding: 0.1em 0.4em;font-family: "Consolas", "Courier New", monospace;font-size: 0.92em;}pre {background: var(--code-bg);color: var(--code-fg);padding: 1rem 1.2rem;border-radius: 8px;overflow-x: auto;}pre code { background: none; border: none; color: inherit; padding: 0; }table {border-collapse: collapse;width: 100%;margin: 1rem 0;}th, td {border: 1px solid var(--border);padding: 0.55rem 0.8rem;text-align: left;vertical-align: top;}th { background: var(--surface); }.note {background: var(--warn-bg);border: 1px solid var(--warn-border);border-radius: 8px;padding: 0.9rem 1.1rem;margin: 1.2rem 0;}.file { font-weight: 700; color: #0d47a1; }hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }ol li, ul li { margin: 0.35rem 0; }.appendix { color: var(--muted); }.appendix h2 { border-left-color: #999; }.appendix h3 { color: #444; }img {max-width: 100%;height: auto;display: block;margin: 1rem auto;}@media print {section {page-break-before: auto !important;break-before: auto !important;}h1,section > h1:first-child {page-break-before: always !important;break-before: page !important;}h1:first-of-type,section:first-of-type > h1:first-child {page-break-before: auto !important;break-before: auto !important;}h1, h2, h3 {-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}body {margin: 1cm;padding: 0;img {max-width: 100% !important;height: auto !important;page-break-inside: avoid !important;}th {background-color: #f0f0f0 !important;-webkit-print-color-adjust: exact !important;print-color-adjust: exact !important;}}</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eclipse-pleiades-でアプリを起動操作するガイド" id="toc-eclipse-pleiades-でアプリを起動操作するガイド">Eclipse (Pleiades) でアプリを起動・操作するガイド</a>
+<ul>
+<li><a href="#このガイドの位置づけ" id="toc-このガイドの位置づけ">0. このガイドの位置づけ</a></li>
+<li><a href="#前提" id="toc-前提">1. 前提</a></li>
+<li><a href="#プロジェクトをインポートする" id="toc-プロジェクトをインポートする">2. プロジェクトをインポートする</a></li>
+<li><a href="#文字コードを-utf-8-にする" id="toc-文字コードを-utf-8-にする">3. 文字コードを UTF-8 にする</a></li>
+<li><a href="#build-automatically-と二重ビルドの扱い" id="toc-build-automatically-と二重ビルドの扱い">4. Build Automatically と「二重ビルド」の扱い</a></li>
+<li><a href="#アプリを起動するh2-oracle-不要" id="toc-アプリを起動するh2-oracle-不要">5. アプリを起動する（H2 / Oracle 不要）</a></li>
+<li><a href="#アプリを起動するoracle-xe-local-プロファイル" id="toc-アプリを起動するoracle-xe-local-プロファイル">6. アプリを起動する（Oracle XE / local プロファイル）</a></li>
+<li><a href="#ヘルスチェック" id="toc-ヘルスチェック">7. ヘルスチェック</a></li>
+<li><a href="#停止する" id="toc-停止する">8. 停止する</a></li>
+<li><a href="#デバッグ実行ブレークポイント" id="toc-デバッグ実行ブレークポイント">9. デバッグ実行（ブレークポイント）</a></li>
+<li><a href="#テストを-eclipse-から実行する" id="toc-テストを-eclipse-から実行する">10. テストを Eclipse から実行する</a></li>
+<li><a href="#困ったとき" id="toc-困ったとき">11. 困ったとき</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="eclipse-pleiades-でアプリを起動操作するガイド" class="level1">
+<h1>Eclipse (Pleiades) でアプリを起動・操作するガイド</h1>
+<p>この文書は、WSL の <code>./mvnw spring-boot:run</code> と並ぶ <strong>もう一つのアプリ起動手段</strong>として、 Eclipse (Pleiades) からアプリを起動・デバッグする手順をまとめたものです。 初回セットアップは <a href="../education/student-setup-guide.md">受講生向けセットアップガイド</a> を正本とし、 ここでは Pleiades が <code>C:\Pleiades</code> に配置済みの状態から先を扱います。</p>
+<section id="このガイドの位置づけ" class="level2">
+<h2>0. このガイドの位置づけ</h2>
+<p>本研修では、アプリの起動方法が 2 つあります。<strong>どちらを使っても構いません</strong>。</p>
+<ul>
+<li><strong>(A) WSL の <code>./mvnw spring-boot:run</code></strong> — ターミナルから起動する方法。CI と同じ条件で動かせます。</li>
+<li><strong>(B) Eclipse から起動</strong> — GUI から起動する方法。<strong>ブレークポイントを使ったデバッグ</strong>が手軽にできます。</li>
+</ul>
+<p>使い分けの目安は次の通りです。</p>
+<ul>
+<li>アプリを起動して動きを確認したい・コードをデバッグしたい → どちらでも可。Eclipse はデバッグが得意。</li>
+<li>テスト・カバレッジ・最終検証（<code>./mvnw -B -Ph2 verify</code>）→ <strong>WSL の <code>./mvnw</code> を基本</strong>とします（CI と条件を揃えるため）。</li>
+</ul>
+<p>つまり Eclipse は「エディタ ＋ アプリの起動・デバッグ」に使い、仕上げの検証は WSL で行う、という分担です。</p>
+</section>
+<section id="前提" class="level2">
+<h2>1. 前提</h2>
+<ul>
+<li>Pleiades を <code>C:\Pleiades</code> に配置済み（<a href="../education/student-setup-guide.md">student-setup-guide §4</a>）。</li>
+<li>Eclipse のワークスペースは <code>C:\workspace</code>。リポジトリは <code>C:\workspace\tsubuyaki-board</code>（= WSL の <code>/mnt/c/workspace/tsubuyaki-board</code> と同じ実体）。</li>
+<li><strong>Windows 側に別途 JDK をインストールする必要はありません</strong>。Pleiades 同梱の JDK 21 をそのまま使います。</li>
+<li>WSL 側のセットアップ（<code>scripts/setup-wsl.sh</code>）が完了していること。</li>
+</ul>
+</section>
+<section id="プロジェクトをインポートする" class="level2">
+<h2>2. プロジェクトをインポートする</h2>
+<ol type="1">
+<li>Eclipse を起動し、ワークスペースに <code>C:\workspace</code> を指定します。</li>
+<li>メニュー <code>File &gt; Import...</code> を開きます。</li>
+<li><code>Maven &gt; Existing Maven Projects</code> を選び <code>Next</code>。</li>
+<li><code>Root Directory</code> に <code>C:\workspace\tsubuyaki-board</code> を指定し、<code>pom.xml</code> にチェックが入っていることを確認して <code>Finish</code>。</li>
+</ol>
+<p>初回は依存ライブラリのダウンロードで数分かかります。完了するとパッケージエクスプローラに <code>tsubuyaki-board</code> が表示されます。</p>
+</section>
+<section id="文字コードを-utf-8-にする" class="level2">
+<h2>3. 文字コードを UTF-8 にする</h2>
+<ol type="1">
+<li><code>Window &gt; Preferences &gt; General &gt; Workspace</code> を開きます。</li>
+<li><code>Text file encoding</code> を <code>Other &gt; UTF-8</code> にします。</li>
+</ol>
+<p><code>.java</code> が文字化けする場合は <a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md の Q2</a> を参照してください。</p>
+</section>
+<section id="build-automatically-と二重ビルドの扱い" class="level2">
+<h2>4. Build Automatically と「二重ビルド」の扱い</h2>
+<p>Eclipse の自動ビルドと WSL の <code>./mvnw</code> を<strong>同時に</strong>走らせると、出力先 <code>target/</code> が競合して壊れることがあります（<a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md の Q3</a>）。次の方針で運用してください。</p>
+<ul>
+<li><strong>Eclipse からアプリを起動・デバッグするとき</strong> — Eclipse がコンパイルを担うので、<code>Project &gt; Build Automatically</code> は ON のままで構いません。</li>
+<li><strong>WSL で <code>./mvnw verify</code> を回すとき</strong> — その間は Eclipse 側のビルドを走らせないようにします（<code>Project &gt; Build Automatically</code> を一時的に OFF にするか、verify 中は Eclipse のビルド操作を控える）。</li>
+<li>迷ったら「<strong>片方ずつ使う</strong>」のが安全です。Eclipse で起動・デバッグする時間帯と、WSL で <code>verify</code> する時間帯を分けてください。</li>
+</ul>
+</section>
+<section id="アプリを起動するh2-oracle-不要" class="level2">
+<h2>5. アプリを起動する（H2 / Oracle 不要）</h2>
+<p>H2 はメモリ DB なので、Oracle を起動しなくても単体で動きます。<strong>まずはこちらを推奨</strong>します。</p>
+<p>起動方法は環境により 2 通りあります。Pleiades に Spring Tools が含まれていれば方法A が手軽です。無ければ方法B を使います。</p>
+<section id="方法a-spring-boot-ダッシュボードspring-tools-がある場合" class="level3">
+<h3>方法A: Spring Boot ダッシュボード（Spring Tools がある場合）</h3>
+<ol type="1">
+<li><code>Window &gt; Show View &gt; Other... &gt; Spring &gt; Boot Dashboard</code> を開きます。</li>
+<li>一覧に表示される <code>tsubuyaki-board</code>（<code>TsubuyakiApplication</code>）を選びます。</li>
+<li>起動構成を編集し、<code>Profile</code> に <code>h2</code> を指定します。</li>
+<li>起動ボタン（▶）でアプリを起動します。</li>
+</ol>
+</section>
+<section id="方法b-java-アプリケーションとして起動汎用" class="level3">
+<h3>方法B: Java アプリケーションとして起動（汎用）</h3>
+<ol type="1">
+<li><p>パッケージエクスプローラで <code>src/main/java/com/example/tsubuyaki/TsubuyakiApplication.java</code> を右クリックします。</p></li>
+<li><p><code>Run As &gt; Java Application</code> を選びます。</p>
+<blockquote>
+<p>💡 プロファイル未指定だと既定の <code>local</code> で起動し、Oracle を探しに行きます。Oracle 未起動なら一度失敗しますが、次の手順でプロファイルを <code>h2</code> に変えるので問題ありません。</p>
+</blockquote></li>
+<li><p>メニュー <code>Run &gt; Run Configurations...</code> を開き、左の <code>Java Application</code> 配下から先ほどの <code>TsubuyakiApplication</code> を選びます。</p></li>
+<li><p><code>Environment</code> タブで <code>Add...</code> を押し、次を追加します。</p>
+<ul>
+<li>Name: <code>SPRING_PROFILES_ACTIVE</code></li>
+<li>Value: <code>h2</code></li>
+</ul>
+<p>（<code>Arguments</code> タブの <code>VM arguments</code> に <code>-Dspring.profiles.active=h2</code> を書いても同じ効果です。）</p></li>
+<li><p><code>Run</code> で起動します。</p></li>
+</ol>
+<p>起動成功のサインは、コンソールに <code>Started TsubuyakiApplication in X seconds</code> が出ることです。</p>
+</section>
+</section>
+<section id="アプリを起動するoracle-xe-local-プロファイル" class="level2">
+<h2>6. アプリを起動する（Oracle XE / local プロファイル）</h2>
+<p>Oracle に接続して動かす場合の手順です。</p>
+<ol type="1">
+<li><p><strong>事前に WSL で Oracle を起動</strong>します。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 🐧 WSL Ubuntu</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/start-oracle.sh</span></code></pre></div>
+<p>Oracle XE が <code>localhost:1521</code> で待ち受けます。WSL2 のポート転送により、<strong>Windows の Eclipse からも <code>localhost</code> で届きます</strong>。</p></li>
+<li><p>プロファイルは <code>local</code>（既定）です。方法B の <code>Environment</code> で <code>SPRING_PROFILES_ACTIVE=local</code> を指定するか、未指定のままでも <code>application.yml</code> の既定が <code>local</code> なので Oracle に接続します。</p></li>
+<li><p><strong>パスワードの注意点</strong>:</p>
+<ul>
+<li><code>application-local.yml</code> は接続パスワードに <code>${ORACLE_APP_PWD:tsubuyaki_pw}</code> を使います（環境変数 <code>ORACLE_APP_PWD</code> があればそれ、無ければ既定値 <code>tsubuyaki_pw</code>）。</li>
+<li><code>.env</code> で <code>ORACLE_APP_PWD</code> を既定値から<strong>変更している</strong>場合は、Eclipse の <code>Run Configurations &gt; Environment</code> にも同名・同値の <code>ORACLE_APP_PWD</code> を追加してください。設定しないと <code>ORA-01017</code>（認証失敗）になります。</li>
+</ul></li>
+<li><p><code>Run</code> で起動します。</p></li>
+</ol>
+</section>
+<section id="ヘルスチェック" class="level2">
+<h2>7. ヘルスチェック</h2>
+<p>アプリ起動後、ブラウザで次を開きます。</p>
+<pre class="text"><code>http://localhost:8080/actuator/health</code></pre>
+<p>次の表示が出れば起動成功です。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">&quot;status&quot;</span><span class="fu">:</span><span class="st">&quot;UP&quot;</span><span class="fu">}</span></span></code></pre></div>
+</section>
+<section id="停止する" class="level2">
+<h2>8. 停止する</h2>
+<p>コンソールビュー右上の赤い停止ボタン（■）でアプリを停止します。</p>
+</section>
+<section id="デバッグ実行ブレークポイント" class="level2">
+<h2>9. デバッグ実行（ブレークポイント）</h2>
+<p>Eclipse から起動する最大の利点は、ブレークポイントを使ったデバッグです。</p>
+<ol type="1">
+<li>止めたい行の<strong>行番号の左端</strong>をダブルクリックしてブレークポイントを置きます。</li>
+<li><code>TsubuyakiApplication</code> を右クリック <code>&gt; Debug As &gt; Java Application</code>（プロファイルの指定方法は §5 と同じ）。</li>
+<li>ブラウザや <code>curl</code> でリクエストを送ると、その行で実行が止まります。変数の値を見たり、ステップ実行（F6）したりできます。</li>
+</ol>
+</section>
+<section id="テストを-eclipse-から実行する" class="level2">
+<h2>10. テストを Eclipse から実行する</h2>
+<ol type="1">
+<li>テストクラス（例: <code>SamplePostServiceTest</code>）を右クリック <code>&gt; Run As &gt; JUnit Test</code>。</li>
+<li>テストは<strong>常に H2 で動きます</strong>（<code>src/test/resources</code> の設定で固定。プロファイル指定は不要）。</li>
+</ol>
+<p>ただし、<strong>カバレッジ閾値判定や静的解析を含む最終検証は WSL の <code>./mvnw -B -Ph2 verify</code> が正本</strong>です。Eclipse の JUnit 実行は、書いたテストを素早く回す用途に使ってください。</p>
+</section>
+<section id="困ったとき" class="level2">
+<h2>11. 困ったとき</h2>
+<ul>
+<li><strong>文字化け</strong> → <a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md の Q2</a></li>
+<li><strong><code>target/</code> 競合・二重ビルド</strong> → <a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md の Q3</a></li>
+<li><strong>Oracle に接続できない</strong> → まず WSL で <code>bash scripts/start-oracle.sh</code> を実行。それでもダメなら H2（§5）に切り替えれば進行を止めません。<a href="../education/TROUBLESHOOTING.md">TROUBLESHOOTING.md の Q7 / Q8</a> も参照。</li>
+</ul>
+</section>
+</section>
+</body>
+</html>
