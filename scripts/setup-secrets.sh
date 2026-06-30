@@ -31,9 +31,9 @@ ATTEMPT=0
 while true; do
     ATTEMPT=$(( ATTEMPT + 1 ))
     if [[ -n "${EXISTING_KEY}" ]]; then
-        read -rsp "  OPENAI_API_KEY を貼り付けて Enter (設定済みのため、空 Enter でいまのキーを維持): " KEY
+        read -rp "  OPENAI_API_KEY を貼り付けて Enter (設定済みのため、空 Enter でいまのキーを維持): " KEY
     else
-        read -rsp "  OPENAI_API_KEY を貼り付けて Enter (中止する場合は何も入れずに Enter): " KEY
+        read -rp "  OPENAI_API_KEY を貼り付けて Enter (中止する場合は何も入れずに Enter): " KEY
     fi
     echo ""
     if [[ -z "${KEY}" ]]; then

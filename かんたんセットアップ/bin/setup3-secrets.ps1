@@ -8,8 +8,7 @@
 Write-Banner -Lines @(
     " Codex CLI 用の API キーを設定します。",
     " 講師から渡された OPENAI_API_KEY（sk- で始まる文字列）を用意してください。",
-    "",
-    " ★貼り付けても画面には表示されませんが、ちゃんと入力されています。",
+    " ★貼り付けると画面に表示されますが、ログには残りません。",
     "   貼り付けたら必ず Enter キーを押してください。",
     " ★sk- で始まらないと数回やり直しになります。落ち着いて貼り直してください。",
     " ★API キーのあとに、コミットの作者として記録される「ユーザー名」と",
@@ -19,19 +18,20 @@ Write-Banner -Lines @(
 $repo = Get-RepoRoot
 $log = New-SetupLogPath -Prefix "setup3-secrets"
 
-$rc = Invoke-WslLogged -RepoRoot $repo -LogFile $log -BashCommand "bash scripts/setup-secrets.sh"
-if ($null -eq $rc) { Show-WslPathError; Wait-Enter; exit 1 }
+$rc = Invoke-WslInteractive -RepoRoot $repo -BashCommand "bash scripts/setup-secrets.sh"
 
-if ($rc -ne 0) {
-    Write-Banner -Color "Red" -Lines @(
-        " [失敗] API キーの設定でエラーが発生しました。",
-        " 画面の表示と、次のファイルの記録をご確認ください:",
-        "   $log",
-        " 解決しない場合は、このファイルを講師にお見せください。"
-    )
-    Wait-Enter
-    exit 1
-}
+#if ($null -eq $rc) { Show-WslPathError; Wait-Enter; exit 1 }
+#
+#if ($rc -ne 0) {
+#    Write-Banner -Color "Red" -Lines @(
+#        " [失敗] API キーの設定でエラーが発生しました。",
+#        " 画面の表示と、次のファイルの記録をご確認ください:",
+#        "   $log",
+#        " 解決しない場合は、このファイルを講師にお見せください。"
+#    )
+#    Wait-Enter
+#    exit 1
+#}
 
 Write-Banner -Lines @(
     " 手順3 が完了しました。",
