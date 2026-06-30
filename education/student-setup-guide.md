@@ -475,7 +475,10 @@ EOF
 
 ### 8-3. ビルド & テスト（H2 で）
 
+ここからはubuntsuからリポルート（`/mnt/c/workspace/tsubuyaki-board`）で実行します。
+
 ```bash
+cd /mnt/c/workspace/tsubuyaki-board
 ./mvnw -B -Ph2 verify
 ```
 

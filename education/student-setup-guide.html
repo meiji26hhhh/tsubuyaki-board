@@ -745,7 +745,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 </section>
 <section id="ビルド-テストh2-で" class="level3">
 <h3>8-3. ビルド &amp; テスト（H2 で）</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span></code></pre></div>
+<p>ここからはubuntsuからリポルート（<code>/mnt/c/workspace/tsubuyaki-board</code>）で実行します。</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt/c/workspace/tsubuyaki-board</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./mvnw</span> <span class="at">-B</span> <span class="at">-Ph2</span> verify</span></code></pre></div>
 <p><code>-Ph2</code> は「H2 メモリ DB プロファイルを有効化」の意味。Oracle に依存せず軽量に動かせるので、まず H2 で確認。</p>
 <p>期待出力（最後の方）:</p>
 <pre><code>[INFO] BUILD SUCCESS

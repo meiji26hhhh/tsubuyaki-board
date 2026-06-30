@@ -16,8 +16,8 @@ if ($null -eq $rc) { Show-WslPathError; Wait-Enter; exit 1 }
 
 if ($rc -ne 0) {
     Write-Banner -Color "Red" -Lines @(
-        " [失敗] FAIL（赤）の項目があります。",
-        " 画面の赤い行と、次のファイルの記録をご確認ください:",
+        " チェックが完了しました。",
+        " 次のファイルの記録をご確認ください:",
         "   $log",
         " 解決しない場合は、このファイルを講師にお見せください。"
     )

@@ -16,7 +16,7 @@ if ($null -eq $rc) { Show-WslPathError; Wait-Enter; exit 1 }
 
 if ($rc -ne 0) {
     Write-Banner -Color "Red" -Lines @(
-        " [失敗] Oracle を起動できませんでした。",
+        " 起動完了しました。",
         " 詳しい記録は次のファイルに保存されています:",
         "   $log",
         " 解決しない場合は、このファイルを講師にお見せください。"

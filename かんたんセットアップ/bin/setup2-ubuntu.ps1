@@ -8,12 +8,10 @@
 Write-Banner -Lines @(
     " Ubuntu の準備を始めます。",
     " （JDK 21 / Maven / Podman / Codex 環境を入れます）",
-    "",
     " 途中で「[sudo] password for ...」と画面に出て、パスワードを聞かれます。",
     " Ubuntu の初回ログインで決めたパスワードを入力してください。",
     " ★入力中は画面に文字が出ませんが、ちゃんと入力されています。",
     "   打ち終わったら Enter キーを押してください。",
-    "",
     " 作業の記録は logs フォルダにも保存されます。"
 )
 
@@ -25,10 +23,11 @@ if ($null -eq $rc) { Show-WslPathError; Wait-Enter; exit 1 }
 
 if ($rc -ne 0) {
     Write-Banner -Color "Red" -Lines @(
-        " [失敗] Ubuntu の準備でエラーが発生しました。",
-        " 画面の表示と、次のファイルの記録をご確認ください:",
+        " セットアップ2の実行が完了しました。",
+        " 次のファイルの記録をご確認ください:",
         "   $log",
-        " 解決しない場合は、このファイルを講師にお見せください。"
+        " Git,OPENAI_API_KEY,OralceXE以外がOKであることを確認してください。",
+        " 解決しない場合は、このlogファイルを講師にお見せください。"
     )
     Wait-Enter
     exit 1

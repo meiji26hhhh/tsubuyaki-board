@@ -42,7 +42,17 @@ function New-SetupLogPath {
 # Windows パスを WSL パス (/mnt/c/...) に変換する。失敗したら $null。
 function ConvertTo-WslPath {
     param([Parameter(Mandatory = $true)][string]$WindowsPath)
-    $converted = & wsl -d $script:Distro wslpath "$WindowsPath" 2>$null
+    # wsl 経由で引数を渡すと相互運用層がバックスラッシュを食べ、
+    # C:\workspace\... が C:workspace... に化けて wslpath が失敗する。
+    # wslpath はスラッシュ区切りの Windows パスも受理するため、先に置換して渡す。
+    $forwardPath = $WindowsPath -replace '\\', '/'
+    try {
+        $converted = & wsl -d $script:Distro wslpath "$forwardPath" 2>$null
+    } catch {
+        # WSL 未導入・ディストリ未登録などで wsl.exe 自体が失敗したケースは
+        # 生エラーを伝播させず $null を返し、呼び出し側の Show-WslPathError に委ねる。
+        return $null
+    }
     if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($converted)) {
         return $null
     }
@@ -104,5 +114,22 @@ function Invoke-WslLogged {
     }
 
     & wsl -d $script:Distro -- bash -c $cmd
+    return $LASTEXITCODE
+}
+
+# 対話スクリプトを WSL でそのまま実行する (標準入出力をコンソールに直結)。
+#   tee やパイプ、script(1) を一切挟まないため、案内 (echo) や改行なしの
+#   read -p プロンプトがバッファされず即時に画面へ出て、キーボード入力もそのまま
+#   届く。秘密情報を扱う手順用にログファイルへは記録しない (echo 抑制 read -s で
+#   画面に出ない API キーを、ログにも残さないため)。
+# 戻り値: スクリプトの終了コード。WSL パス変換に失敗したら $null。
+function Invoke-WslInteractive {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$BashCommand  # 例: "bash scripts/setup-secrets-git.sh"
+    )
+    $wrepo = ConvertTo-WslPath $RepoRoot
+    if (-not $wrepo) { return $null }
+    & wsl -d $script:Distro -- bash -c "cd '$wrepo' && $BashCommand"
     return $LASTEXITCODE
 }

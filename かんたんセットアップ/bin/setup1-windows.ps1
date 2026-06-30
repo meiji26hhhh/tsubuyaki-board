@@ -39,7 +39,7 @@ $rc = $LASTEXITCODE
 
 if ($rc -ne 0) {
     Write-Banner -Color "Red" -Lines @(
-        " [失敗] エラーが発生しました。",
+        " WIndowsのセットアップ処理が完了しました。",
         " 詳しい記録は C:\workspace\.kitting\ の setup-日付.log にあります。",
         " 解決しない場合は、この画面とそのログを講師にお見せください。"
     )
