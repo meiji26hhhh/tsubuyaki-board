@@ -57,8 +57,8 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("新規投稿フォーム_POST_posts_new_PostFormをビューに渡す")
-    void 新規投稿フォーム_POST_posts_new_PostFormをビューに渡す() throws Exception {
+    @DisplayName("新規投稿_POST_posts_new_入力不正ならフォームを再表示する")
+    void 新規投稿_POST_posts_new_入力不正ならフォームを再表示する() throws Exception {
         mockMvc.perform(post("/posts/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
@@ -69,6 +69,18 @@ class PostControllerTest {
     @DisplayName("新規投稿_POST_posts_Serviceで作成し一覧へリダイレクトする")
     void 新規投稿_POST_posts_Serviceで作成し一覧へリダイレクトする() throws Exception {
         mockMvc.perform(post("/posts")
+                        .param("author", "alice")
+                        .param("body", "初めての投稿"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/posts"));
+
+        verify(postService).create("alice", "初めての投稿");
+    }
+
+    @Test
+    @DisplayName("新規投稿_POST_posts_new_Serviceで作成し一覧へリダイレクトする")
+    void 新規投稿_POST_posts_new_Serviceで作成し一覧へリダイレクトする() throws Exception {
+        mockMvc.perform(post("/posts/new")
                         .param("author", "alice")
                         .param("body", "初めての投稿"))
                 .andExpect(status().is3xxRedirection())

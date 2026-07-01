@@ -32,12 +32,7 @@ public class PostController {
         return prepareNewForm(model);
     }
 
-    @PostMapping("/posts/new")
-    public String showNewFormByPost(Model model) {
-        return prepareNewForm(model);
-    }
-
-    @PostMapping("/posts")
+    @PostMapping({ "/posts/new", "/posts" })
     public String create(@Valid @ModelAttribute("postForm") PostForm postForm,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
