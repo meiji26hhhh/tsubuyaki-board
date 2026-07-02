@@ -55,8 +55,8 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("新規投稿_POST_posts_new_入力不正ならフォームを再表示する")
-    void 新規投稿_POST_posts_new_入力不正ならフォームを再表示する() throws Exception {
+    @DisplayName("新規投稿フォーム_POST_posts_new_PostFormをビューに渡す")
+    void 新規投稿フォーム_POST_posts_new_PostFormをビューに渡す() throws Exception {
         mockMvc.perform(post("/posts/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
