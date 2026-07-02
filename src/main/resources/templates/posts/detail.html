@@ -20,6 +20,12 @@
                   th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-23 09:00</span>
         </header>
         <p class="post__body" th:text="${post.body}">本文</p>
+        <form th:action="@{/posts/{id}/likes(id=${post.id})}" method="post">
+            <input th:if="${_csrf != null}" type="hidden"
+                   th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit">Like</button>
+            <span th:text="${likeCount}">0</span>
+        </form>
     </article>
 </main>
 </body>

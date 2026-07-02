@@ -1,6 +1,7 @@
 package com.example.tsubuyaki.repository;
 
 import com.example.tsubuyaki.domain.Post;
+import com.example.tsubuyaki.domain.PostLike;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ class PostRepositoryTest {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private PostLikeRepository postLikeRepository;
+
     @Test
     @DisplayName("投稿一覧_51件保存済み_最新50件を新着順で返す")
     void 投稿一覧_51件保存済み_最新50件を新着順で返す() {
@@ -42,6 +46,32 @@ class PostRepositoryTest {
         assertThat(actual)
                 .extracting(Post::getBody)
                 .containsExactlyElementsOf(expectedBodiesNewestFirst());
+    }
+
+    @Test
+    @DisplayName("いいね_登録削除件数取得_clientHash単位で永続化できる")
+    void いいね_登録削除件数取得_clientHash単位で永続化できる() {
+        Post post = postRepository.save(new Post(
+                "alice",
+                "Repositoryでいいねを検証する投稿",
+                LocalDateTime.parse("2026-05-23T10:00:00")
+        ));
+        postLikeRepository.save(new PostLike(
+                post,
+                "abcd1234",
+                LocalDateTime.parse("2026-05-23T10:01:00")
+        ));
+
+        assertThat(postLikeRepository.existsByPost_IdAndClientHash(post.getId(), "abcd1234"))
+                .isTrue();
+        assertThat(postLikeRepository.countByPost_Id(post.getId())).isEqualTo(1L);
+
+        postLikeRepository.deleteByPost_IdAndClientHash(post.getId(), "abcd1234");
+        postLikeRepository.flush();
+
+        assertThat(postLikeRepository.existsByPost_IdAndClientHash(post.getId(), "abcd1234"))
+                .isFalse();
+        assertThat(postLikeRepository.countByPost_Id(post.getId())).isZero();
     }
 
     private List<String> expectedBodiesNewestFirst() {
