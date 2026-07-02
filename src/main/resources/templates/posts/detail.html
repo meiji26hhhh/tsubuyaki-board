@@ -7,24 +7,31 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>投稿詳細</h1>
-    <nav>
-        <a th:href="@{/posts}">一覧に戻る</a>
-    </nav>
+<main class="page-shell page-shell--narrow">
+    <header class="site-header">
+        <a class="site-header__brand" th:href="@{/posts}">社内つぶやきボード</a>
+        <nav class="site-header__nav">
+            <a th:href="@{/posts}">一覧に戻る</a>
+        </nav>
+    </header>
 
-    <article class="post">
+    <section class="detail-heading">
+        <p class="hero__eyebrow">Post Detail</p>
+        <h1>投稿詳細</h1>
+    </section>
+
+    <article class="post post--feature">
         <header>
             <span class="post__author" th:text="${post.author}">投稿者</span>
             <span class="post__created-at"
                   th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-23 09:00</span>
         </header>
         <p class="post__body" th:text="${post.body}">本文</p>
-        <form th:action="@{/posts/{id}/likes(id=${post.id})}" method="post">
+        <form class="like-form" th:action="@{/posts/{id}/likes(id=${post.id})}" method="post">
             <input th:if="${_csrf != null}" type="hidden"
                    th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-            <button type="submit">Like</button>
-            <span th:text="${likeCount}">0</span>
+            <button class="like-form__button" type="submit">Like</button>
+            <span class="like-form__count" th:text="${likeCount}">0</span>
         </form>
     </article>
 </main>

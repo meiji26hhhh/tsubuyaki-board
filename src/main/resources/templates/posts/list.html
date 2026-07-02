@@ -7,13 +7,20 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>社内つぶやきボード</h1>
-    <nav>
-        <a th:href="@{/posts}">一覧</a>
-        |
-        <a th:href="@{/posts/new}">新規投稿</a>
-    </nav>
+<main class="page-shell">
+    <header class="site-header">
+        <a class="site-header__brand" th:href="@{/posts}">社内つぶやきボード</a>
+        <nav class="site-header__nav">
+            <a th:href="@{/posts}">一覧</a>
+            <a class="site-header__action" th:href="@{/posts/new}">新規投稿</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <p class="hero__eyebrow">Internal Stream</p>
+        <h1>社内つぶやきボード</h1>
+        <p class="hero__lead">チームの近況、気づき、相談をすぐに追えるミニSNS。</p>
+    </section>
 
     <form class="search-form" th:action="@{/posts}" method="get">
         <label class="search-form__label" for="post-search">投稿検索</label>
@@ -24,9 +31,12 @@
         </div>
     </form>
 
-    <section>
-        <p th:if="${hasQuery and #lists.isEmpty(posts)}">該当する投稿はありません</p>
-        <p th:if="${!hasQuery and #lists.isEmpty(posts)}">まだ投稿はありません。最初の一言を投稿しよう。</p>
+    <section class="post-lane" aria-label="投稿一覧">
+        <div class="post-lane__header">
+            <h2>Latest Posts</h2>
+        </div>
+        <p class="empty-message" th:if="${hasQuery and #lists.isEmpty(posts)}">該当する投稿はありません</p>
+        <p class="empty-message" th:if="${!hasQuery and #lists.isEmpty(posts)}">まだ投稿はありません。最初の一言を投稿しよう。</p>
         <article class="post" th:each="post : ${posts}">
             <header>
                 <span class="post__author" th:text="${post.author}">投稿者</span>
@@ -34,7 +44,7 @@
                       th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-23 09:00</span>
             </header>
             <p class="post__body" th:text="${post.body}">本文</p>
-            <a th:href="@{/posts/{id}(id=${post.id})}">詳細</a>
+            <a class="post__link" th:href="@{/posts/{id}(id=${post.id})}">詳細</a>
         </article>
     </section>
 </main>

@@ -7,24 +7,33 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>新規投稿</h1>
-    <nav>
-        <a th:href="@{/posts}">一覧に戻る</a>
-    </nav>
+<main class="page-shell page-shell--narrow">
+    <header class="site-header">
+        <a class="site-header__brand" th:href="@{/posts}">社内つぶやきボード</a>
+        <nav class="site-header__nav">
+            <a th:href="@{/posts}">一覧に戻る</a>
+        </nav>
+    </header>
 
-    <form th:action="@{/posts}" th:object="${postForm}" method="post">
-        <div>
+    <section class="detail-heading">
+        <p class="hero__eyebrow">New Post</p>
+        <h1>新規投稿</h1>
+    </section>
+
+    <form class="post-form" th:action="@{/posts}" th:object="${postForm}" method="post">
+        <input th:if="${_csrf != null}" type="hidden"
+               th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="field">
             <label for="author">投稿者</label>
             <input type="text" id="author" th:field="*{author}" maxlength="30" required>
             <p class="error" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">エラー</p>
         </div>
-        <div>
+        <div class="field">
             <label for="body">本文 (280 文字まで)</label>
             <textarea id="body" th:field="*{body}" maxlength="280" rows="4" required></textarea>
             <p class="error" th:if="${#fields.hasErrors('body')}" th:errors="*{body}">エラー</p>
         </div>
-        <button type="submit">投稿</button>
+        <button class="post-form__submit" type="submit">投稿</button>
     </form>
 </main>
 </body>
