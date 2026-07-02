@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
@@ -49,6 +50,29 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/list"))
                 .andExpect(model().attribute("posts", posts));
+    }
+
+    @Test
+    @DisplayName("投稿詳細_GET_posts_id_Serviceの投稿をビューに渡す")
+    void 投稿詳細_GET_posts_id_Serviceの投稿をビューに渡す() throws Exception {
+        Post post = new Post("alice", "詳細を表示する投稿", LocalDateTime.parse("2026-05-23T10:00:00"));
+        given(postService.findById(1L)).willReturn(Optional.of(post));
+
+        mockMvc.perform(get("/posts/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/detail"))
+                .andExpect(model().attribute("post", post));
+    }
+
+    @Test
+    @DisplayName("投稿詳細_GET_posts_id_存在しないidなら404を返す")
+    void 投稿詳細_GET_posts_id_存在しないidなら404を返す() throws Exception {
+        given(postService.findById(999L)).willReturn(Optional.empty());
+
+        mockMvc.perform(get("/posts/999"))
+                .andExpect(status().isNotFound());
+
+        verify(postService).findById(999L);
     }
 
     @Test
