@@ -62,6 +62,8 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/detail"))
                 .andExpect(model().attribute("post", post));
+
+        verify(postService).findById(1L);
     }
 
     @Test
