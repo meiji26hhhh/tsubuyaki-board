@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +51,19 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/list"))
                 .andExpect(model().attribute("posts", posts));
+    }
+
+    @Test
+    @DisplayName("投稿一覧_GET_posts_各投稿の詳細リンクを表示する")
+    void 投稿一覧_GET_posts_各投稿の詳細リンクを表示する() throws Exception {
+        Post post = new Post("alice", "詳細へ遷移する投稿", LocalDateTime.parse("2026-05-23T10:00:00"));
+        ReflectionTestUtils.setField(post, "id", 1L);
+        given(postService.findLatest50()).willReturn(List.of(post));
+
+        mockMvc.perform(get("/posts"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("href=\"/posts/1\"")))
+                .andExpect(content().string(containsString(">詳細</a>")));
     }
 
     @Test
