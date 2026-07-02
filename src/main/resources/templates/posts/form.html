@@ -13,7 +13,7 @@
         <a th:href="@{/posts}">一覧に戻る</a>
     </nav>
 
-    <form th:action="@{/posts/new}" th:object="${postForm}" method="post">
+    <form th:action="@{/posts}" th:object="${postForm}" method="post">
         <div>
             <label for="author">投稿者</label>
             <input type="text" id="author" th:field="*{author}" maxlength="30" required>

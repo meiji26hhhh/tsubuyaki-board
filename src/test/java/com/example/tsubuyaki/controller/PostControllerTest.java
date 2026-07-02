@@ -13,11 +13,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,16 +57,40 @@ class PostControllerTest {
         mockMvc.perform(get("/posts/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
-                .andExpect(model().attribute("postForm", instanceOf(PostForm.class)));
+                .andExpect(model().attribute("postForm", instanceOf(PostForm.class)))
+                .andExpect(content().string(containsString("action=\"/posts\"")));
     }
 
     @Test
-    @DisplayName("新規投稿_POST_posts_new_入力不正ならフォームを再表示する")
-    void 新規投稿_POST_posts_new_入力不正ならフォームを再表示する() throws Exception {
-        mockMvc.perform(post("/posts/new"))
+    @DisplayName("新規投稿_POST_posts_入力が空白のみならフォームを再表示しエラーを表示する")
+    void 新規投稿_POST_posts_入力が空白のみならフォームを再表示しエラーを表示する() throws Exception {
+        mockMvc.perform(post("/posts")
+                        .param("author", "   ")
+                        .param("body", "   "))
                 .andExpect(status().isOk())
                 .andExpect(view().name("posts/form"))
-                .andExpect(model().attribute("postForm", instanceOf(PostForm.class)));
+                .andExpect(model().attribute("postForm", instanceOf(PostForm.class)))
+                .andExpect(model().attributeHasFieldErrors("postForm", "author", "body"))
+                .andExpect(content().string(containsString("投稿者名を入力してください")))
+                .andExpect(content().string(containsString("本文を入力してください")));
+
+        verify(postService, never()).create(anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("新規投稿_POST_posts_入力が上限超過ならフォームを再表示しエラーを表示する")
+    void 新規投稿_POST_posts_入力が上限超過ならフォームを再表示しエラーを表示する() throws Exception {
+        mockMvc.perform(post("/posts")
+                        .param("author", "あ".repeat(31))
+                        .param("body", "い".repeat(281)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/form"))
+                .andExpect(model().attribute("postForm", instanceOf(PostForm.class)))
+                .andExpect(model().attributeHasFieldErrors("postForm", "author", "body"))
+                .andExpect(content().string(containsString("投稿者名は 30 文字以内で入力してください")))
+                .andExpect(content().string(containsString("本文は 280 文字以内で入力してください")));
+
+        verify(postService, never()).create(anyString(), anyString());
     }
 
     @Test
