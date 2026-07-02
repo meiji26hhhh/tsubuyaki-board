@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +28,7 @@ class PostServiceTest {
     @DisplayName("投稿一覧_最新50件取得_Repositoryの結果を返す")
     void 投稿一覧_最新50件取得_Repositoryの結果を返す() {
         List<Post> posts = List.of(
-                new Post("alice", "新しい投稿", Instant.parse("2026-05-23T10:00:00Z"))
+                new Post("alice", "新しい投稿", LocalDateTime.parse("2026-05-23T10:00:00"))
         );
         given(postRepository.findTop50ByOrderByCreatedAtDesc()).willReturn(posts);
 

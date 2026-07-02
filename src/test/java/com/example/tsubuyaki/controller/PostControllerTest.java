@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -36,8 +36,8 @@ class PostControllerTest {
     @DisplayName("投稿一覧_GET_posts_Serviceの最新50件をビューに渡す")
     void 投稿一覧_GET_posts_Serviceの最新50件をビューに渡す() throws Exception {
         List<Post> posts = List.of(
-                new Post("alice", "新しい投稿", Instant.parse("2026-05-23T10:00:00Z")),
-                new Post("bob", "古い投稿", Instant.parse("2026-05-23T09:00:00Z"))
+                new Post("alice", "新しい投稿", LocalDateTime.parse("2026-05-23T10:00:00")),
+                new Post("bob", "古い投稿", LocalDateTime.parse("2026-05-23T09:00:00"))
         );
         given(postService.findLatest50()).willReturn(posts);
 
