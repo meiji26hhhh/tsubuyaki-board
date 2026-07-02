@@ -49,6 +49,32 @@ class PostRepositoryTest {
     }
 
     @Test
+    @DisplayName("投稿検索_本文にキーワードを含む投稿_新着順で返す")
+    void 投稿検索_本文にキーワードを含む投稿_新着順で返す() {
+        postRepository.save(new Post(
+                "alice",
+                "Oracle Database のLIKE検索",
+                LocalDateTime.parse("2026-05-23T10:00:00")
+        ));
+        postRepository.save(new Post(
+                "bob",
+                "検索対象外の投稿",
+                LocalDateTime.parse("2026-05-23T11:00:00")
+        ));
+        postRepository.save(new Post(
+                "carol",
+                "Spring Data JPAからOracleを検索",
+                LocalDateTime.parse("2026-05-23T12:00:00")
+        ));
+
+        List<Post> actual = postRepository.findTop50ByBodyContainingOrderByCreatedAtDesc("Oracle");
+
+        assertThat(actual)
+                .extracting(Post::getAuthor)
+                .containsExactly("carol", "alice");
+    }
+
+    @Test
     @DisplayName("いいね_登録削除件数取得_clientHash単位で永続化できる")
     void いいね_登録削除件数取得_clientHash単位で永続化できる() {
         Post post = postRepository.save(new Post(

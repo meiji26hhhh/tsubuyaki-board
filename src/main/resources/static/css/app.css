@@ -31,6 +31,38 @@ h1 {
     margin-bottom: 1rem;
 }
 
+.search-form {
+    margin: 1.5rem 0;
+}
+
+.search-form__label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.search-form__controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-form__input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+.search-form__button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 8px;
+    background: var(--color-accent);
+    color: white;
+    font-weight: 600;
+}
+
 .post {
     padding: 1rem;
     border: 1px solid var(--color-border);

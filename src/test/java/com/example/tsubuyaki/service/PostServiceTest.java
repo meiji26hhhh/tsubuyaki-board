@@ -48,6 +48,19 @@ class PostServiceTest {
     }
 
     @Test
+    @DisplayName("投稿検索_本文キーワード指定_Repositoryの検索結果を返す")
+    void 投稿検索_本文キーワード指定_Repositoryの検索結果を返す() {
+        List<Post> posts = List.of(
+                new Post("alice", "Oracle Database を検索する", LocalDateTime.parse("2026-05-23T10:00:00"))
+        );
+        given(postRepository.findTop50ByBodyContainingOrderByCreatedAtDesc("Oracle")).willReturn(posts);
+
+        List<Post> actual = postService.searchByBody("Oracle");
+
+        assertThat(actual).isSameAs(posts);
+    }
+
+    @Test
     @DisplayName("投稿詳細_IDで取得_Repositoryの結果を返す")
     void 投稿詳細_IDで取得_Repositoryの結果を返す() {
         Post post = new Post("alice", "詳細を表示する投稿", LocalDateTime.parse("2026-05-23T10:00:00"));

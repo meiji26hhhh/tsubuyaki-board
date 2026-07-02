@@ -15,8 +15,18 @@
         <a th:href="@{/posts/new}">新規投稿</a>
     </nav>
 
+    <form class="search-form" th:action="@{/posts}" method="get">
+        <label class="search-form__label" for="post-search">投稿検索</label>
+        <div class="search-form__controls">
+            <input id="post-search" class="search-form__input" type="search" name="q"
+                   th:value="${query}" placeholder="本文キーワード">
+            <button class="search-form__button" type="submit">検索</button>
+        </div>
+    </form>
+
     <section>
-        <p th:if="${#lists.isEmpty(posts)}">まだ投稿はありません。最初の一言を投稿しよう。</p>
+        <p th:if="${hasQuery and #lists.isEmpty(posts)}">該当する投稿はありません</p>
+        <p th:if="${!hasQuery and #lists.isEmpty(posts)}">まだ投稿はありません。最初の一言を投稿しよう。</p>
         <article class="post" th:each="post : ${posts}">
             <header>
                 <span class="post__author" th:text="${post.author}">投稿者</span>

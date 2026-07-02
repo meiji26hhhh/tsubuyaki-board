@@ -67,6 +67,58 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("投稿検索_GET_posts_q指定_Serviceの検索結果とキーワードをビューに渡す")
+    void 投稿検索_GET_posts_q指定_Serviceの検索結果とキーワードをビューに渡す() throws Exception {
+        List<Post> posts = List.of(
+                new Post("alice", "Oracle Database のLIKE検索", LocalDateTime.parse("2026-05-23T10:00:00"))
+        );
+        given(postService.searchByBody("Oracle")).willReturn(posts);
+
+        mockMvc.perform(get("/posts").param("q", "Oracle"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"))
+                .andExpect(model().attribute("posts", posts))
+                .andExpect(model().attribute("query", "Oracle"))
+                .andExpect(content().string(containsString("value=\"Oracle\"")));
+
+        verify(postService).searchByBody("Oracle");
+        verify(postService, never()).findLatest50();
+    }
+
+    @Test
+    @DisplayName("投稿検索_GET_posts_q空文字_最新50件をビューに渡す")
+    void 投稿検索_GET_posts_q空文字_最新50件をビューに渡す() throws Exception {
+        List<Post> posts = List.of(
+                new Post("alice", "最新投稿", LocalDateTime.parse("2026-05-23T10:00:00"))
+        );
+        given(postService.findLatest50()).willReturn(posts);
+
+        mockMvc.perform(get("/posts").param("q", "   "))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"))
+                .andExpect(model().attribute("posts", posts))
+                .andExpect(model().attribute("query", ""));
+
+        verify(postService).findLatest50();
+        verify(postService, never()).searchByBody(anyString());
+    }
+
+    @Test
+    @DisplayName("投稿検索_GET_posts_q指定で0件_該当なしメッセージを表示する")
+    void 投稿検索_GET_posts_q指定で0件_該当なしメッセージを表示する() throws Exception {
+        given(postService.searchByBody("missing")).willReturn(List.of());
+
+        mockMvc.perform(get("/posts").param("q", "missing"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("posts/list"))
+                .andExpect(model().attribute("posts", List.of()))
+                .andExpect(model().attribute("query", "missing"))
+                .andExpect(content().string(containsString("該当する投稿はありません")));
+
+        verify(postService).searchByBody("missing");
+    }
+
+    @Test
     @DisplayName("投稿詳細_GET_posts_id_Serviceの投稿をビューに渡す")
     void 投稿詳細_GET_posts_id_Serviceの投稿をビューに渡す() throws Exception {
         Post post = new Post("alice", "詳細を表示する投稿", LocalDateTime.parse("2026-05-23T10:00:00"));

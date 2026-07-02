@@ -1,5 +1,6 @@
 package com.example.tsubuyaki.controller;
 
+import com.example.tsubuyaki.domain.Post;
 import com.example.tsubuyaki.service.PostService;
 import com.example.tsubuyaki.web.dto.PostForm;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -35,8 +38,13 @@ public class PostController {
     }
 
     @GetMapping({ "/", "/posts" })
-    public String list(Model model) {
-        model.addAttribute("posts", postService.findLatest50());
+    public String list(@RequestParam(name = "q", required = false) String q, Model model) {
+        String query = normalizeQuery(q);
+        boolean hasQuery = !query.isEmpty();
+        List<Post> posts = hasQuery ? postService.searchByBody(query) : postService.findLatest50();
+        model.addAttribute("posts", posts);
+        model.addAttribute("query", query);
+        model.addAttribute("hasQuery", hasQuery);
         return "posts/list";
     }
 
@@ -74,6 +82,13 @@ public class PostController {
     private String prepareNewForm(Model model) {
         model.addAttribute("postForm", new PostForm());
         return POST_FORM_VIEW;
+    }
+
+    private String normalizeQuery(String q) {
+        if (q == null) {
+            return "";
+        }
+        return q.trim();
     }
 
     private String clientHash(HttpServletRequest request) {
