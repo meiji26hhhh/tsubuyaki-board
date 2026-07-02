@@ -17,6 +17,7 @@ bin/
 !EasySetupForMacOS/bin/
 !EasySetupForMacOS/bin/**
 .metadata
+Servers/
 *.launch
 
 # IDE - IntelliJ IDEA
