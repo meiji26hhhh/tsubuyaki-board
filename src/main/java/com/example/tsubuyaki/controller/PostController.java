@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class PostController {
 
+    private static final String POST_FORM_ATTRIBUTE = "postForm";
     private static final String POST_FORM_VIEW = "posts/form";
+    private static final String POSTS_REDIRECT = "redirect:/posts";
 
     private final PostService postService;
 
@@ -29,22 +31,18 @@ public class PostController {
 
     @GetMapping("/posts/new")
     public String showNewForm(Model model) {
-        return prepareNewForm(model);
+        model.addAttribute(POST_FORM_ATTRIBUTE, new PostForm());
+        return POST_FORM_VIEW;
     }
 
-    @PostMapping({ "/posts/new", "/posts" })
-    public String create(@Valid @ModelAttribute("postForm") PostForm postForm,
+    @PostMapping("/posts/new")
+    public String create(@Valid @ModelAttribute(POST_FORM_ATTRIBUTE) PostForm postForm,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return POST_FORM_VIEW;
         }
         postService.create(postForm.getAuthor(), postForm.getBody());
-        return "redirect:/posts";
-    }
-
-    private String prepareNewForm(Model model) {
-        model.addAttribute("postForm", new PostForm());
-        return POST_FORM_VIEW;
+        return POSTS_REDIRECT;
     }
 
     // 演習中に追加するエンドポイント:
